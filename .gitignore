@@ -1,10 +1,14 @@
-# compiled output
-/dist
-
-# dependencies
-/node_modules
-
-# misc
-/coverage
 npm-debug.log
 .turbo
+.nyc_output
+**/*.tsbuildinfo
+coverage
+dist
+node_modules
+scratchpad
+debug.log
+/packages/**/library/test
+/packages/**/library/enviroment
+/packages/**/library/scratchpad
+/packages/**/library/build
+!/enviroment/project_blueprint/scratchpad
