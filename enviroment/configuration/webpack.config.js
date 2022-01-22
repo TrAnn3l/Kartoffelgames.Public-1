@@ -143,7 +143,7 @@ const gGetProjectName = () => {
  * @param pEnviroment - { buildType: 'release' | 'debug' | 'test' | 'scratchpad'; coverage: boolan; }
  */
 module.exports = (pEnviroment) => {
-    const lProjectName = gGetProjectName();
+    const lProjectName = gGetProjectName().toLowerCase();
 
     // Set variable configuration default values.
     let lEntryFile = '';

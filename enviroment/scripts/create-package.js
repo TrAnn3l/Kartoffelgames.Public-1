@@ -129,12 +129,13 @@ module.exports.createPackage = async() => {
     console.log('//// Create Project ////');
 
     // Needed questions.
-    const lProjectName = await gPromt('Project Name: ', /^[a-zA-Z\.]+$/);
-    const lPackageName = await gPromt('Package Name: ', /^(@[a-z]+\/)?[a-z\.]+$/);
+    const lProjectName = await gPromt('Project Name: ', /^[a-zA-Z\_\.]+$/);
+    const lPackageName = await gPromt('Package Name: ', /^(@[a-z]+\/)?[a-z\.\-]+$/);
+    const lProjectFolder = lProjectName.toLowerCase();
 
     try {
         // Create paths.
-        const lPackagePath = gPath.resolve(__dirname, '../../packages', lProjectName);
+        const lPackagePath = gPath.resolve(__dirname, '../../packages', lProjectFolder);
         const lBlueprintPath = gPath.resolve(__dirname, '../project_blueprint');
         const lPackageFolderPath = gPath.resolve(__dirname, '../../packages');
 
@@ -172,6 +173,7 @@ module.exports.createPackage = async() => {
         gCopyDirectory(lBlueprintPath, lPackagePath, false, {
             [lProjectName]: /{{PROJECT_NAME}}/g,
             [lPackageName]: /{{PACKAGE_NAME}}/g,
+            [lProjectFolder]: /{{PROJECT_FOLDER}}/g,
         });
 
         console.log('Project successfull created.', `Call "npm install -w ${lPackageName}" to initialize this project`);

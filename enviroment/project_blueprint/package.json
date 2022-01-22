@@ -56,7 +56,7 @@
     "repository": {
         "type": "git",
         "url": "git+https://github.com/KartoffelGames/KartoffelGames.Public.git",
-        "directory": "packages/{{PROJECT_NAME}}"
+        "directory": "packages/{{PROJECT_FOLDER}}"
     },
     "bugs": {
         "url": "https://github.com/KartoffelGames/KartoffelGames.Public/issues"
