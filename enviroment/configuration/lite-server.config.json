@@ -1,0 +1,17 @@
+{
+    "port": 5500,
+    "server": {
+        "baseDir": "./scratchpad"
+    },
+    "injectChanges": true,
+    "open": "local",
+    "startPath": "",
+    "logLevel": "silent",
+    "codeSync": true,
+    "files": [
+        "./scratchpad/**/*.js",
+        "./scratchpad/**/*.html",
+        "./scratchpad/**/*.css"
+    ],
+    "watchEvents": ["add", "change"]
+}

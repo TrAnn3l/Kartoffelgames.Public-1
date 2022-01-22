@@ -1,0 +1,27 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			".nyc_output": true,
+			"**/*.code-workspace": true,
+			"**/*.tsbuildinfo": true,
+			"coverage": true,
+			"dist": true,
+			"node_modules": true,
+		},
+		"typescript.implementationsCodeLens.enabled": true,
+		"typescript.referencesCodeLens.enabled": true,
+		"javascript.format.semicolons": "insert",
+		"javascript.referencesCodeLens.enabled": true,
+		"typescript.format.semicolons": "insert",
+		"typescript.referencesCodeLens.showOnAllFunctions": true,
+		"eslint.options": {
+			"configFile": "./Enviroment/Lint/eslint.config.js"
+		},
+		"typescript.tsdk": "node_modules\\typescript\\lib"
+	}
+}

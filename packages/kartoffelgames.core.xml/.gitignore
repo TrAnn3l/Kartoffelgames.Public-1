@@ -1,0 +1,11 @@
+.nyc_output
+**/*.tsbuildinfo
+coverage
+dist
+node_modules
+scratchpad
+debug.log
+/library/test
+/library/enviroment
+/library/scratchpad
+/library/build

@@ -1,0 +1,36 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "noEmit": true,
+        "build": true,
+        "declarationMap": true,
+        "composite": true,
+        "noImplicitAny": true,
+        "noEmitOnError": true,
+        "removeComments": false,
+        "sourceMap": true,
+        "target": "es2018",
+        "declaration": true,
+        "moduleResolution": "node",
+        "module": "CommonJS",
+        "lib": [
+            "es2015",
+            "es2018",
+            "dom"
+        ],
+        "baseUrl": "./",
+    },
+    "exclude": [
+        "**/node_modules/*",
+        "node_modules",
+        "**/tmp/*",
+        "tmp",
+        "**/Library/*",
+        "Library"
+    ],
+    "files": [
+        "declaration/module-declaration.d.ts"
+    ]
+}

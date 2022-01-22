@@ -1,0 +1,42 @@
+{
+    "name": "kartoffelgames",
+    "version": "0.0.0",
+    "license": "MIT",
+    "scripts": {
+        "preinstall": "git config core.hooksPath ./enviroment/git_hooks",
+        "lint": "npx eslint \"**/*.ts\" --config enviroment/configuration/eslint.config.js",
+        "lint:fix": "npm run lint -- --fix",
+        "create-project": "node -e \"require('./enviroment/scripts/create-package').createPackage()\"",
+        "update-dependency-versions": "node -e \"require('./enviroment/scripts/update-dependency-versions').updateDependencyVersions()\""
+    },
+    "private": true,
+    "workspaces": [
+        "./packages/*"
+    ],
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "~5.3.0",
+        "@typescript-eslint/parser": "~5.3.0",
+        "eslint": "8.2.0",
+        "turbo": "^1.0.28"
+    },
+    "turbo": {
+        "baseBranch": "origin/master",
+        "pipeline": {
+            "build:debug": {
+                "dependsOn": [
+                    "^build:debug"
+                ]
+            },
+            "build:release": {
+                "dependsOn": [
+                    "^build:release"
+                ]
+            },
+            "test": {
+                "dependsOn": [
+                    "^build:debug"
+                ]
+            }
+        }
+    }
+}

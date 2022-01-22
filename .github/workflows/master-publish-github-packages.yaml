@@ -1,0 +1,48 @@
+name: Node.js Package
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+      - run: npm ci --ignore-scripts
+      - run: npx turbo run test --force
+
+  publish-github-packages:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@kartoffelgames'
+      - name: Npm install
+        run: npm ci --ignore-scripts
+      - name: Increase version numbers
+        run: |
+          npx turbo run build:release --force
+          git config --global user.name 'KartoffelGames CI'
+          git config --global user.email 'kartoffelgames@users.noreply.github.com'
+          npm version patch -ws
+          npm run update-dependency-versions
+          git commit -am "Increase package versions."
+          git push
+      - run: npm publish -ws
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+      
