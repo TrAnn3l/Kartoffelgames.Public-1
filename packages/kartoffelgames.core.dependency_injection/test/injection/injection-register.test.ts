@@ -2,21 +2,46 @@ import { expect } from 'chai';
 import { InjectMode } from '../../source/enum/inject-mode';
 import { InjectionRegister } from '../../source/injection/injection-register';
 import { Injector } from '../../source/injector';
+import { InjectionConstructor } from '../../source/type';
+
+/**
+ * Decorator.
+ * Layers constructor with extends.
+ * @param pConstructor - Constructor.
+ */
+const gPlaceholderDecorator = (pConstructor: InjectionConstructor) => {
+    // Layer constructor.
+    return class extends pConstructor { };
+};
 
 describe('InjectionRegister', () => {
-    it('Static Method: registerInjectableObject', () => {
+    describe('Static Method: createObject', () => {
+        // Not registered.
+        // Default without parameter.
+        // Default with patameter.
+        // Default with parameter that has singleton.
+        // Default with parameter, parameter not registered.
+        // Singleton.
+        // Singleton double creation.
+        // Singleton force create. 
+        // Default with layerd history.
+        // Default with layerd history, change parameter, should fail.
+        // Default with parameter, parameter is layered.
+    });
+
+    it('Static Method: registerInjectable', () => {
         // Setup.
         class Type { }
 
         // Process.
-        InjectionRegister.registerInjectableObject(Type, InjectMode.Instanced);
+        InjectionRegister.registerInjectable(Type, InjectMode.Instanced);
         const lCreatedObject = InjectionRegister.createObject<Type>(Type);
 
         // Evaluation.
         expect(lCreatedObject).to.be.an.instanceOf(Type);
     });
 
-    describe('Static Method: changeInjectableObject', () => {
+    describe('Static Method: replaceInjectable', () => {
         it('-- Default', () => {
             // Setup. Types.
             class OriginalType { }
@@ -32,8 +57,8 @@ describe('InjectionRegister', () => {
             }
 
             // Setup. Register injectable.
-            InjectionRegister.registerInjectableObject(OriginalType, InjectMode.Instanced);
-            InjectionRegister.registerInjectableObject(ReplacementType, InjectMode.Instanced);
+            InjectionRegister.registerInjectable(OriginalType, InjectMode.Instanced);
+            InjectionRegister.registerInjectable(ReplacementType, InjectMode.Instanced);
 
             // Process.
             InjectionRegister.replaceInjectable(OriginalType, ReplacementType);
@@ -49,7 +74,7 @@ describe('InjectionRegister', () => {
             class ReplacementType { }
 
             // Setup. Register injectable.
-            InjectionRegister.registerInjectableObject(ReplacementType, InjectMode.Instanced);
+            InjectionRegister.registerInjectable(ReplacementType, InjectMode.Instanced);
 
             // Process.
             const lThrowErrorFunction = () => {
@@ -66,7 +91,7 @@ describe('InjectionRegister', () => {
             class ReplacementType { }
 
             // Setup. Register injectable.
-            InjectionRegister.registerInjectableObject(OriginalType, InjectMode.Instanced);
+            InjectionRegister.registerInjectable(OriginalType, InjectMode.Instanced);
 
             // Process.
             const lThrowErrorFunction = () => {

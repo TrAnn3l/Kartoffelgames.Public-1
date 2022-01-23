@@ -1,7 +1,7 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { MemberType } from '../enum/member-type';
 import { InjectionConstructor } from '../type';
-import { TypeStorage } from '../type_storage/type-storage';
+import { TypeRegister } from '../type_register/type-register';
 import { DecorationHistory } from './decoration-history';
 
 type MemberDecorator = <T>(pTarget: object, pPropertyKey: string | symbol, pDescriptor?: TypedPropertyDescriptor<T>) => TypedPropertyDescriptor<T> | undefined;
@@ -162,9 +162,9 @@ export class ReflectInitialiser {
                     const lTypeValueArrayCopy: Array<InjectionConstructor> = new Array<InjectionConstructor>();
                     lTypeValueArrayCopy.push(...lTypeValues);
 
-                    TypeStorage.setConstructorTypes(lConstructor, lTypeValueArrayCopy);
+                    TypeRegister.setConstructorTypes(lConstructor, lTypeValueArrayCopy);
                 } else {
-                    TypeStorage.setMemberTypes(lConstructor, pPropertyKey, MemberType.Parameter, ...lTypeValues);
+                    TypeRegister.setMemberTypes(lConstructor, pPropertyKey, MemberType.Parameter, ...lTypeValues);
                 }
 
                 return undefined;
@@ -178,7 +178,7 @@ export class ReflectInitialiser {
                 const lConstructor: InjectionConstructor = ReflectInitialiser.getConstructor(pConstructor);
 
                 // Set member type.
-                TypeStorage.setMemberTypes(lConstructor, pPropertyKey, MemberType.Member, lTypeValues);
+                TypeRegister.setMemberTypes(lConstructor, pPropertyKey, MemberType.Member, lTypeValues);
                 return undefined;
             };
         } else if (pKey === 'design:returntype') {
@@ -190,7 +190,7 @@ export class ReflectInitialiser {
                 const lConstructor: InjectionConstructor = ReflectInitialiser.getConstructor(pConstructor);
 
                 // Set result type of function.
-                TypeStorage.setMemberTypes(lConstructor, pPropertyKey, MemberType.Result, lTypeValues);
+                TypeRegister.setMemberTypes(lConstructor, pPropertyKey, MemberType.Result, lTypeValues);
                 return undefined;
             };
         } else {

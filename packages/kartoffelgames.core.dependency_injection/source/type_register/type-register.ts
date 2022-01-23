@@ -4,12 +4,12 @@ import { DecorationHistory } from '../reflect/decoration-history';
 import { InjectionConstructor } from '../type';
 import { MemberTypeInformation } from './type_container/member-type-information';
 
-export class TypeStorage {
+export class TypeRegister {
     private static readonly mConstructorToType: Dictionary<InjectionConstructor, Array<InjectionConstructor>> = new Dictionary<InjectionConstructor, Array<InjectionConstructor>>();
     private static readonly mMemberToType: Dictionary<InjectionConstructor, Dictionary<string | symbol, MemberTypeInformation>> = new Dictionary<InjectionConstructor, Dictionary<string | symbol, MemberTypeInformation>>();
 
     /**
-     * Get all types the constructor needs for construction.
+     * Get all types the constructor needs for construction in order.
      * @param pConstructor - Constructor.
      */
     public static getConstructorTypes(pConstructor: InjectionConstructor): Array<InjectionConstructor> {

@@ -11,5 +11,5 @@ ReflectInitialiser.initialize();
  * @param pConstructor - Constructor.
  */
 export function Injectable(pConstructor: InjectionConstructor): void {
-    InjectionRegister.registerInjectableObject(pConstructor, InjectMode.Instanced);
+    InjectionRegister.registerInjectable(pConstructor, InjectMode.Instanced);
 }

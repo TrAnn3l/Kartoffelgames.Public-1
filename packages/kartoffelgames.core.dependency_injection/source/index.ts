@@ -3,7 +3,7 @@ export { Injector } from './injector';
 export { InjectionConstructor } from './type';
 
 // Type lookup
-export { TypeStorage } from './type_storage/type-storage';
+export { TypeRegister as TypeStorage } from './type_register/type-register';
 
 // Decoration
 export { DecorationHistory } from './reflect/decoration-history';
