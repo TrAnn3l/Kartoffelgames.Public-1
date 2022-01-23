@@ -23,7 +23,7 @@ const gCleanBuild = () => {
             if (lRemoveFileStatus.isDirectory()) {
                 // Delete everything except the build directory.
                 if (lChildItemName.toLowerCase() !== 'build') {
-                    gFilereader.rmdirSync(lRemovePath, { recursive: true, force: true });
+                    gFilereader.rmSync(lRemovePath, { recursive: true, force: true });
                 }
             } else {
                 gFilereader.rmSync(lRemovePath);
