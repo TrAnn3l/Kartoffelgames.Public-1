@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Mocha Test",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run-script",
+                "test",
+                "-w",
+                "@kartoffelgames/core.dependency-injection"
+            ],
+            "port": 9229,
+            "sourceMapPathOverrides": {
+                "webpack:///./~/*": "${workspaceRoot}/node_modules/*",
+                "webpack:///./*": "${workspaceRoot}/packages/kartoffelgames.core.dependency-injection/*",
+                "webpack:///*": "*",
+                "webpack://@kartoffelgames/core.dependency-injection/*": "${workspaceRoot}/packages/kartoffelgames.core.dependency-injection/*",
+            }
+        }
+    ]
+}
