@@ -4,81 +4,89 @@ exports.InjectionRegister = void 0;
 const core_data_1 = require("@kartoffelgames/core.data");
 const inject_mode_1 = require("../enum/inject-mode");
 const decoration_history_1 = require("../reflect/decoration-history");
-const type_storage_1 = require("../type_storage/type-storage");
+const type_register_1 = require("../type_register/type-register");
 class InjectionRegister {
-    /**
-     * Create object and auto inject parameter.
-     * @param pConstructor - Constructor that should be created.
-     * @param pLocalInjections - [Optional] Type objects pairs that replaces parameter with given type.
-     *                           Does not inject those types any further into create object of parameters.
-     */
-    static createObject(pConstructor, pLocalInjections) {
-        // Check if constrcutor is registered or constructor is inside decorator history.
-        const lHistory = decoration_history_1.DecorationHistory.getBackwardHistoryOf(pConstructor);
-        // Check if constructor is registered.
-        let lIsRegistered = false;
-        for (const lConstructor of lHistory) {
-            if (InjectionRegister.mInjectableConstructor.has(lConstructor)) {
-                lIsRegistered = true;
-                break;
-            }
+    static createObject(pConstructor, pForceCreateOrLocalInjections, pLocalInjections) {
+        // Decide between local injection or force creation parameter.
+        let lLocalInjections;
+        let lForceCreate;
+        if (typeof pForceCreateOrLocalInjections === 'object' && pForceCreateOrLocalInjections !== null) {
+            lForceCreate = false;
+            lLocalInjections = pForceCreateOrLocalInjections;
         }
-        if (!lIsRegistered) {
+        else {
+            lForceCreate = !!pForceCreateOrLocalInjections;
+            lLocalInjections = pLocalInjections !== null && pLocalInjections !== void 0 ? pLocalInjections : new core_data_1.Dictionary();
+        }
+        // Find constructor in decoration history that was used for registering.
+        const lHistory = decoration_history_1.DecorationHistory.getBackwardHistoryOf(pConstructor);
+        let lRegisteredConstructor = lHistory.find((pConstructorHistory) => {
+            return InjectionRegister.mInjectableConstructor.has(pConstructorHistory);
+        });
+        // Exit if constructor is not register.
+        if (!lRegisteredConstructor) {
             throw new core_data_1.Exception(`Constructor "${pConstructor.name}" is not registered for injection and can not be build`, InjectionRegister);
         }
-        let lParameterTypeList = type_storage_1.TypeStorage.getConstructorTypes(pConstructor);
-        // Check if constructor has any typeinformation.
+        // Replace current constructor with global replacement.
+        let lConstructor;
+        const lReplacementConstructor = InjectionRegister.mInjectableReplacement.get(lRegisteredConstructor);
+        if (lReplacementConstructor) {
+            lConstructor = lReplacementConstructor;
+            // Find replacement constructor in decoration history that was used for registering. Is allways registered.
+            const lHistory = decoration_history_1.DecorationHistory.getBackwardHistoryOf(lReplacementConstructor);
+            lRegisteredConstructor = lHistory.find((pConstructorHistory) => {
+                return InjectionRegister.mInjectableConstructor.has(pConstructorHistory);
+            });
+        }
+        else {
+            lConstructor = pConstructor;
+        }
+        // Get constructor parameter type information and default to empty parameter list.
+        let lParameterTypeList = type_register_1.TypeRegister.getConstructorTypes(lRegisteredConstructor);
         if (typeof lParameterTypeList === 'undefined') {
-            // Default empty parameter list.
             lParameterTypeList = new Array();
         }
+        // Get injection mode.
+        const lInjecttionMode = InjectionRegister.mInjectMode.get(lRegisteredConstructor);
+        // Return cached sinleton object if not forced to create a new one.
+        if (!lForceCreate && lInjecttionMode === inject_mode_1.InjectMode.Singleton && InjectionRegister.mSingletonMapping.has(lRegisteredConstructor)) {
+            return InjectionRegister.mSingletonMapping.get(lRegisteredConstructor);
+        }
+        // Create parameter.
         const lConstructorParameter = new Array();
-        const lLocalInjections = pLocalInjections !== null && pLocalInjections !== void 0 ? pLocalInjections : new core_data_1.Dictionary();
-        // Create each parameter.
         for (const lParameterType of lParameterTypeList) {
             let lCreatedParameter;
             // Check if parameter can be replaced with an local injection
-            if (lLocalInjections.has(lParameterType)) {
+            if ((lInjecttionMode !== inject_mode_1.InjectMode.Singleton || lForceCreate) && lLocalInjections.has(lParameterType)) {
                 lCreatedParameter = lLocalInjections.get(lParameterType);
             }
             else {
-                // Get injectable parameter.
-                const lParameterConstructor = InjectionRegister.mInjectableConstructor.get(lParameterType);
-                // Check if parameter is registerd to be injected.
-                if (typeof lParameterConstructor !== 'undefined') {
-                    const lInjecttionMode = InjectionRegister.mInjectMode.get(lParameterConstructor);
-                    // Check injection mode.
-                    if (lInjecttionMode === inject_mode_1.InjectMode.Instanced) {
-                        lCreatedParameter = InjectionRegister.createObject(lParameterConstructor);
-                    }
-                    else {
-                        // Get already created object or create a new one if not already created.
-                        if (InjectionRegister.mSingletonMapping.has(lParameterConstructor)) {
-                            lCreatedParameter = InjectionRegister.mSingletonMapping.get(lParameterConstructor);
-                        }
-                        else {
-                            // Create new singleton instance and cache it.
-                            lCreatedParameter = InjectionRegister.createObject(lParameterConstructor);
-                            InjectionRegister.mSingletonMapping.add(lParameterConstructor, lCreatedParameter);
-                        }
-                    }
+                // Proxy exception.
+                try {
+                    // Get injectable parameter.
+                    lCreatedParameter = InjectionRegister.createObject(lParameterType, lLocalInjections);
                 }
-                else {
-                    throw new core_data_1.Exception(`Parameter "${lParameterType.name}" of ${pConstructor.name} is not injectable.`, InjectionRegister);
+                catch (pException) {
+                    throw new core_data_1.Exception(`Parameter "${lParameterType.name}" of ${lConstructor.name} is not injectable.\n` + pException.message, InjectionRegister);
                 }
             }
-            // Add created object to 
+            // Add parameter to construction parameter list.
             lConstructorParameter.push(lCreatedParameter);
         }
-        // create constructor with created parameter..
-        return new pConstructor(...lConstructorParameter);
+        // Create object.
+        const lCreatedObject = new lConstructor(...lConstructorParameter);
+        // Cache singleton objects but only if not forced to create.
+        if (!lForceCreate && lInjecttionMode === inject_mode_1.InjectMode.Singleton) {
+            InjectionRegister.mSingletonMapping.add(lRegisteredConstructor, lCreatedObject);
+        }
+        return lCreatedObject;
     }
     /**
      * Register an constructor for injection.
      * @param pConstructor - Constructor that can be injected.
      * @param pMode - Mode of injection.
      */
-    static registerInjectableObject(pConstructor, pMode) {
+    static registerInjectable(pConstructor, pMode) {
         InjectionRegister.mInjectableConstructor.add(pConstructor, pConstructor);
         InjectionRegister.mInjectMode.add(pConstructor, pMode);
     }
@@ -89,24 +97,31 @@ class InjectionRegister {
      * @param pReplacementConstructor - Replacement constructor that gets injected instead of original constructor.
      */
     static replaceInjectable(pOriginalConstructor, pReplacementConstructor) {
-        // Check if original constructor is registerd.
-        if (InjectionRegister.mInjectableConstructor.has(pOriginalConstructor)) {
-            // Check if replacement constructor is registerd.
-            if (InjectionRegister.mInjectableConstructor.has(pReplacementConstructor)) {
-                // Replace original with replaced constructor.
-                InjectionRegister.mInjectableConstructor.set(pOriginalConstructor, pReplacementConstructor);
-            }
-            else {
-                throw new core_data_1.Exception('Replacement constructor is not registered.', InjectionRegister);
-            }
-        }
-        else {
+        // Find original registered original.
+        const lOriginalHistory = decoration_history_1.DecorationHistory.getBackwardHistoryOf(pOriginalConstructor);
+        const lRegisteredOriginal = lOriginalHistory.find((pConstructorHistory) => {
+            return InjectionRegister.mInjectableConstructor.has(pConstructorHistory);
+        });
+        // Exit if original is not registered.
+        if (!lRegisteredOriginal) {
             throw new core_data_1.Exception('Original constructor is not registered.', InjectionRegister);
         }
+        // Find replacement registered original.
+        const lReplacementHistory = decoration_history_1.DecorationHistory.getBackwardHistoryOf(pReplacementConstructor);
+        const lRegisteredReplacement = lReplacementHistory.find((pConstructorHistory) => {
+            return InjectionRegister.mInjectableConstructor.has(pConstructorHistory);
+        });
+        // Exit if original is not registered.
+        if (!lRegisteredReplacement) {
+            throw new core_data_1.Exception('Replacement constructor is not registered.', InjectionRegister);
+        }
+        // Register replacement.
+        InjectionRegister.mInjectableReplacement.set(lRegisteredOriginal, pReplacementConstructor);
     }
 }
 exports.InjectionRegister = InjectionRegister;
 InjectionRegister.mInjectMode = new core_data_1.Dictionary();
 InjectionRegister.mInjectableConstructor = new core_data_1.Dictionary();
+InjectionRegister.mInjectableReplacement = new core_data_1.Dictionary();
 InjectionRegister.mSingletonMapping = new core_data_1.Dictionary();
 //# sourceMappingURL=injection-register.js.map

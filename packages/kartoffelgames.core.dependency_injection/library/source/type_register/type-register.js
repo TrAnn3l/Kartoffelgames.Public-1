@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TypeStorage = void 0;
+exports.TypeRegister = void 0;
 const core_data_1 = require("@kartoffelgames/core.data");
 const member_type_1 = require("../enum/member-type");
 const decoration_history_1 = require("../reflect/decoration-history");
 const member_type_information_1 = require("./type_container/member-type-information");
-class TypeStorage {
+class TypeRegister {
     /**
-     * Get all types the constructor needs for construction.
+     * Get all types the constructor needs for construction in order.
      * @param pConstructor - Constructor.
      */
     static getConstructorTypes(pConstructor) {
@@ -104,7 +104,7 @@ class TypeStorage {
         }
     }
 }
-exports.TypeStorage = TypeStorage;
-TypeStorage.mConstructorToType = new core_data_1.Dictionary();
-TypeStorage.mMemberToType = new core_data_1.Dictionary();
-//# sourceMappingURL=type-storage.js.map
+exports.TypeRegister = TypeRegister;
+TypeRegister.mConstructorToType = new core_data_1.Dictionary();
+TypeRegister.mMemberToType = new core_data_1.Dictionary();
+//# sourceMappingURL=type-register.js.map

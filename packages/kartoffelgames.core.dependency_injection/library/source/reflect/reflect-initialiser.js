@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReflectInitialiser = void 0;
 const core_data_1 = require("@kartoffelgames/core.data");
 const member_type_1 = require("../enum/member-type");
-const type_storage_1 = require("../type_storage/type-storage");
+const type_register_1 = require("../type_register/type-register");
 const decoration_history_1 = require("./decoration-history");
 class ReflectInitialiser {
     /**
@@ -142,10 +142,10 @@ class ReflectInitialiser {
                 if (typeof pPropertyKey === 'undefined') {
                     const lTypeValueArrayCopy = new Array();
                     lTypeValueArrayCopy.push(...lTypeValues);
-                    type_storage_1.TypeStorage.setConstructorTypes(lConstructor, lTypeValueArrayCopy);
+                    type_register_1.TypeRegister.setConstructorTypes(lConstructor, lTypeValueArrayCopy);
                 }
                 else {
-                    type_storage_1.TypeStorage.setMemberTypes(lConstructor, pPropertyKey, member_type_1.MemberType.Parameter, ...lTypeValues);
+                    type_register_1.TypeRegister.setMemberTypes(lConstructor, pPropertyKey, member_type_1.MemberType.Parameter, ...lTypeValues);
                 }
                 return undefined;
             };
@@ -157,7 +157,7 @@ class ReflectInitialiser {
                 // Get constructor from prototype if is an instanced member.
                 const lConstructor = ReflectInitialiser.getConstructor(pConstructor);
                 // Set member type.
-                type_storage_1.TypeStorage.setMemberTypes(lConstructor, pPropertyKey, member_type_1.MemberType.Member, lTypeValues);
+                type_register_1.TypeRegister.setMemberTypes(lConstructor, pPropertyKey, member_type_1.MemberType.Member, lTypeValues);
                 return undefined;
             };
         }
@@ -168,7 +168,7 @@ class ReflectInitialiser {
                 // Get constructor from prototype if is an instanced member.
                 const lConstructor = ReflectInitialiser.getConstructor(pConstructor);
                 // Set result type of function.
-                type_storage_1.TypeStorage.setMemberTypes(lConstructor, pPropertyKey, member_type_1.MemberType.Result, lTypeValues);
+                type_register_1.TypeRegister.setMemberTypes(lConstructor, pPropertyKey, member_type_1.MemberType.Result, lTypeValues);
                 return undefined;
             };
         }

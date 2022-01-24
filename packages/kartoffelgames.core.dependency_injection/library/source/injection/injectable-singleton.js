@@ -11,7 +11,7 @@ reflect_initialiser_1.ReflectInitialiser.initialize();
  * @param pConstructor - Constructor.
  */
 function InjectableSingleton(pConstructor) {
-    injection_register_1.InjectionRegister.registerInjectableObject(pConstructor, inject_mode_1.InjectMode.Singleton);
+    injection_register_1.InjectionRegister.registerInjectable(pConstructor, inject_mode_1.InjectMode.Singleton);
 }
 exports.InjectableSingleton = InjectableSingleton;
 //# sourceMappingURL=injectable-singleton.js.map

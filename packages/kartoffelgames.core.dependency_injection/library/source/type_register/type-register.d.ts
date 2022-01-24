@@ -1,10 +1,10 @@
 import { MemberType } from '../enum/member-type';
 import { InjectionConstructor } from '../type';
-export declare class TypeStorage {
+export declare class TypeRegister {
     private static readonly mConstructorToType;
     private static readonly mMemberToType;
     /**
-     * Get all types the constructor needs for construction.
+     * Get all types the constructor needs for construction in order.
      * @param pConstructor - Constructor.
      */
     static getConstructorTypes(pConstructor: InjectionConstructor): Array<InjectionConstructor>;
@@ -29,4 +29,4 @@ export declare class TypeStorage {
      */
     static setMemberTypes(pConstructor: InjectionConstructor, pMember: string | symbol, pType: MemberType, ...pTypes: Array<InjectionConstructor>): void;
 }
-//# sourceMappingURL=type-storage.d.ts.map
+//# sourceMappingURL=type-register.d.ts.map

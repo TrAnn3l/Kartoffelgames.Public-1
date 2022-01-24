@@ -11,7 +11,7 @@ reflect_initialiser_1.ReflectInitialiser.initialize();
  * @param pConstructor - Constructor.
  */
 function Injectable(pConstructor) {
-    injection_register_1.InjectionRegister.registerInjectableObject(pConstructor, inject_mode_1.InjectMode.Instanced);
+    injection_register_1.InjectionRegister.registerInjectable(pConstructor, inject_mode_1.InjectMode.Instanced);
 }
 exports.Injectable = Injectable;
 //# sourceMappingURL=injectable.js.map
