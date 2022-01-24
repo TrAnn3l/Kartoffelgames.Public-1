@@ -42,7 +42,7 @@ class InjectionRegister {
             lConstructor = pConstructor;
         }
         // Get constructor parameter type information and default to empty parameter list.
-        let lParameterTypeList = type_register_1.TypeRegister.getConstructorTypes(lRegisteredConstructor);
+        let lParameterTypeList = type_register_1.TypeRegister.getConstructorParameterTypes(lRegisteredConstructor);
         if (typeof lParameterTypeList === 'undefined') {
             lParameterTypeList = new Array();
         }

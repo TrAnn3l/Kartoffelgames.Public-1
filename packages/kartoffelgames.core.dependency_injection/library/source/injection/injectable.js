@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Injectable = void 0;
 const inject_mode_1 = require("../enum/inject-mode");
-const reflect_initialiser_1 = require("../reflect/reflect-initialiser");
+const reflect_initializer_1 = require("../reflect/reflect-initializer");
 const injection_register_1 = require("./injection-register");
-reflect_initialiser_1.ReflectInitialiser.initialize();
+reflect_initializer_1.ReflectInitializer.initialize();
 /**
  * AtScript.
  * Mark class to be injectable as an instanced object.

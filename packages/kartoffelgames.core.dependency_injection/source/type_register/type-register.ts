@@ -12,7 +12,7 @@ export class TypeRegister {
      * Get all types the constructor needs for construction in order.
      * @param pConstructor - Constructor.
      */
-    public static getConstructorTypes(pConstructor: InjectionConstructor): Array<InjectionConstructor> {
+    public static getConstructorParameterTypes(pConstructor: InjectionConstructor): Array<InjectionConstructor> {
         // Search for types in complete decoration history.
         for (const lConstructor of DecorationHistory.getBackwardHistoryOf(pConstructor)) {
             const lParameterTypeList: Array<InjectionConstructor> = this.mConstructorToType.get(lConstructor);

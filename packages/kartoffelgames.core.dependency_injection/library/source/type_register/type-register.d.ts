@@ -7,7 +7,7 @@ export declare class TypeRegister {
      * Get all types the constructor needs for construction in order.
      * @param pConstructor - Constructor.
      */
-    static getConstructorTypes(pConstructor: InjectionConstructor): Array<InjectionConstructor>;
+    static getConstructorParameterTypes(pConstructor: InjectionConstructor): Array<InjectionConstructor>;
     /**
      * Get typeinformation of a member.
      * @param pConstructor - Constructor.

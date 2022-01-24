@@ -1,4 +1,4 @@
-export declare class ReflectInitialiser {
+export declare class ReflectInitializer {
     private static mExported;
     /**
      * Initializes global defintions for decorate and metadata into the Reflect object.
@@ -44,4 +44,4 @@ export declare class ReflectInitialiser {
      */
     private static metadata;
 }
-//# sourceMappingURL=reflect-initialiser.d.ts.map
+//# sourceMappingURL=reflect-initializer.d.ts.map

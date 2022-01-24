@@ -1,9 +1,9 @@
 import { InjectMode } from '../enum/inject-mode';
-import { ReflectInitialiser } from '../reflect/reflect-initialiser';
+import { ReflectInitializer } from '../reflect/reflect-initializer';
 import { InjectionConstructor } from '../type';
 import { InjectionRegister } from './injection-register';
 
-ReflectInitialiser.initialize();
+ReflectInitializer.initialize();
 
 /**
  * AtScript.

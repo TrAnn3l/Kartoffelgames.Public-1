@@ -10,7 +10,7 @@ class TypeRegister {
      * Get all types the constructor needs for construction in order.
      * @param pConstructor - Constructor.
      */
-    static getConstructorTypes(pConstructor) {
+    static getConstructorParameterTypes(pConstructor) {
         // Search for types in complete decoration history.
         for (const lConstructor of decoration_history_1.DecorationHistory.getBackwardHistoryOf(pConstructor)) {
             const lParameterTypeList = this.mConstructorToType.get(lConstructor);

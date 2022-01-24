@@ -1,19 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReflectInitialiser = void 0;
+exports.ReflectInitializer = void 0;
 const core_data_1 = require("@kartoffelgames/core.data");
 const member_type_1 = require("../enum/member-type");
 const type_register_1 = require("../type_register/type-register");
 const decoration_history_1 = require("./decoration-history");
-class ReflectInitialiser {
+class ReflectInitializer {
     /**
      * Initializes global defintions for decorate and metadata into the Reflect object.
      */
     static initialize() {
-        if (!ReflectInitialiser.mExported) {
-            ReflectInitialiser.mExported = true;
-            ReflectInitialiser.export('decorate', ReflectInitialiser.decorate);
-            ReflectInitialiser.export('metadata', ReflectInitialiser.metadata);
+        if (!ReflectInitializer.mExported) {
+            ReflectInitializer.mExported = true;
+            ReflectInitializer.export('decorate', ReflectInitializer.decorate);
+            ReflectInitializer.export('metadata', ReflectInitializer.metadata);
         }
     }
     /**
@@ -24,12 +24,12 @@ class ReflectInitialiser {
      * @param pAttributes - Descriptor of member on member decorator.
      */
     static decorate(pDecoratorList, pTarget, pPropertyKey, pAttributes) {
-        // Check decorator type.
+        // Check if target is a property or a class.
         if (typeof pPropertyKey !== 'undefined') {
-            return ReflectInitialiser.decorateProperty(pDecoratorList, pTarget, pPropertyKey, pAttributes);
+            return ReflectInitializer.decorateProperty(pDecoratorList, pTarget, pPropertyKey, pAttributes);
         }
         else {
-            return ReflectInitialiser.decorateClass(pDecoratorList, pTarget);
+            return ReflectInitializer.decorateClass(pDecoratorList, pTarget);
         }
     }
     /**
@@ -137,7 +137,7 @@ class ReflectInitialiser {
             // Decorator. Adds type metadata to constructor or member.
             lResultDecorator = (pConstructor, pPropertyKey) => {
                 // Get constructor from prototype if is an instanced member.
-                const lConstructor = ReflectInitialiser.getConstructor(pConstructor);
+                const lConstructor = ReflectInitializer.getConstructor(pConstructor);
                 // Check if types are for constructor or for member.
                 if (typeof pPropertyKey === 'undefined') {
                     const lTypeValueArrayCopy = new Array();
@@ -155,7 +155,7 @@ class ReflectInitialiser {
             // Add member type
             lResultDecorator = (pConstructor, pPropertyKey, pDescriptor) => {
                 // Get constructor from prototype if is an instanced member.
-                const lConstructor = ReflectInitialiser.getConstructor(pConstructor);
+                const lConstructor = ReflectInitializer.getConstructor(pConstructor);
                 // Set member type.
                 type_register_1.TypeRegister.setMemberTypes(lConstructor, pPropertyKey, member_type_1.MemberType.Member, lTypeValues);
                 return undefined;
@@ -166,14 +166,14 @@ class ReflectInitialiser {
             // Add member type
             lResultDecorator = (pConstructor, pPropertyKey, pDescriptor) => {
                 // Get constructor from prototype if is an instanced member.
-                const lConstructor = ReflectInitialiser.getConstructor(pConstructor);
+                const lConstructor = ReflectInitializer.getConstructor(pConstructor);
                 // Set result type of function.
                 type_register_1.TypeRegister.setMemberTypes(lConstructor, pPropertyKey, member_type_1.MemberType.Result, lTypeValues);
                 return undefined;
             };
         }
         else {
-            // Dummy decorator. Does nothing. For constructor and member.
+            // Dummy decorator. Does nothing. For future releases.
             lResultDecorator = (pConstructor, pPropertyKey, pDescriptor) => {
                 return undefined;
             };
@@ -183,6 +183,6 @@ class ReflectInitialiser {
         return lResultDecorator;
     }
 }
-exports.ReflectInitialiser = ReflectInitialiser;
-ReflectInitialiser.mExported = false;
-//# sourceMappingURL=reflect-initialiser.js.map
+exports.ReflectInitializer = ReflectInitializer;
+ReflectInitializer.mExported = false;
+//# sourceMappingURL=reflect-initializer.js.map

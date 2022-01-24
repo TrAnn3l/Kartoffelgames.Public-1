@@ -6,18 +6,18 @@ import { DecorationHistory } from './decoration-history';
 
 type MemberDecorator = <T>(pTarget: object, pPropertyKey: string | symbol, pDescriptor?: TypedPropertyDescriptor<T>) => TypedPropertyDescriptor<T> | undefined;
 
-export class ReflectInitialiser {
+export class ReflectInitializer {
     private static mExported: boolean = false;
 
     /**
      * Initializes global defintions for decorate and metadata into the Reflect object.
      */
     public static initialize(): void {
-        if (!ReflectInitialiser.mExported) {
-            ReflectInitialiser.mExported = true;
+        if (!ReflectInitializer.mExported) {
+            ReflectInitializer.mExported = true;
             
-            ReflectInitialiser.export('decorate', ReflectInitialiser.decorate);
-            ReflectInitialiser.export('metadata', ReflectInitialiser.metadata); 
+            ReflectInitializer.export('decorate', ReflectInitializer.decorate);
+            ReflectInitializer.export('metadata', ReflectInitializer.metadata); 
         }
     }
 
@@ -29,12 +29,12 @@ export class ReflectInitialiser {
      * @param pAttributes - Descriptor of member on member decorator.
      */
     private static decorate(pDecoratorList: Array<ClassDecorator | MemberDecorator>, pTarget: any, pPropertyKey?: string | symbol, pAttributes?: PropertyDescriptor | null): any {
-        // Check decorator type.
+        // Check if target is a property or a class.
         if (typeof pPropertyKey !== 'undefined') {
-            return ReflectInitialiser.decorateProperty(<Array<MemberDecorator>>pDecoratorList, pTarget, pPropertyKey, pAttributes);
+            return ReflectInitializer.decorateProperty(<Array<MemberDecorator>>pDecoratorList, pTarget, pPropertyKey, pAttributes);
         }
         else {
-            return ReflectInitialiser.decorateClass(<Array<ClassDecorator>>pDecoratorList, <InjectionConstructor>pTarget);
+            return ReflectInitializer.decorateClass(<Array<ClassDecorator>>pDecoratorList, <InjectionConstructor>pTarget);
         }
     }
 
@@ -155,7 +155,7 @@ export class ReflectInitialiser {
             // Decorator. Adds type metadata to constructor or member.
             lResultDecorator = (pConstructor: InjectionConstructor | object, pPropertyKey?: string): InjectionConstructor | PropertyDescriptor => {
                 // Get constructor from prototype if is an instanced member.
-                const lConstructor: InjectionConstructor = ReflectInitialiser.getConstructor(pConstructor);
+                const lConstructor: InjectionConstructor = ReflectInitializer.getConstructor(pConstructor);
 
                 // Check if types are for constructor or for member.
                 if (typeof pPropertyKey === 'undefined') {
@@ -175,7 +175,7 @@ export class ReflectInitialiser {
             // Add member type
             lResultDecorator = (pConstructor: InjectionConstructor | object, pPropertyKey?: string | symbol, pDescriptor?: TypedPropertyDescriptor<any>): PropertyDescriptor => {
                 // Get constructor from prototype if is an instanced member.
-                const lConstructor: InjectionConstructor = ReflectInitialiser.getConstructor(pConstructor);
+                const lConstructor: InjectionConstructor = ReflectInitializer.getConstructor(pConstructor);
 
                 // Set member type.
                 TypeRegister.setMemberTypes(lConstructor, pPropertyKey, MemberType.Member, lTypeValues);
@@ -187,14 +187,14 @@ export class ReflectInitialiser {
             // Add member type
             lResultDecorator = (pConstructor: InjectionConstructor | object, pPropertyKey?: string | symbol, pDescriptor?: TypedPropertyDescriptor<any>): PropertyDescriptor => {
                 // Get constructor from prototype if is an instanced member.
-                const lConstructor: InjectionConstructor = ReflectInitialiser.getConstructor(pConstructor);
+                const lConstructor: InjectionConstructor = ReflectInitializer.getConstructor(pConstructor);
 
                 // Set result type of function.
                 TypeRegister.setMemberTypes(lConstructor, pPropertyKey, MemberType.Result, lTypeValues);
                 return undefined;
             };
         } else {
-            // Dummy decorator. Does nothing. For constructor and member.
+            // Dummy decorator. Does nothing. For future releases.
             lResultDecorator = (pConstructor: InjectionConstructor, pPropertyKey?: string | symbol, pDescriptor?: TypedPropertyDescriptor<any>): PropertyDescriptor | InjectionConstructor => {
                 return undefined;
             };

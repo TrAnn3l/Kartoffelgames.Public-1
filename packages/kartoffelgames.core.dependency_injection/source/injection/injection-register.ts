@@ -60,7 +60,7 @@ export class InjectionRegister {
         }
 
         // Get constructor parameter type information and default to empty parameter list.
-        let lParameterTypeList: Array<InjectionConstructor> = TypeRegister.getConstructorTypes(lRegisteredConstructor);
+        let lParameterTypeList: Array<InjectionConstructor> = TypeRegister.getConstructorParameterTypes(lRegisteredConstructor);
         if (typeof lParameterTypeList === 'undefined') {
             lParameterTypeList = new Array<InjectionConstructor>();
         }
