@@ -1,7 +1,7 @@
 {
     "name": "@kartoffelgames/core.dependency-injection",
     "projectName": "KartoffelGames.Core.Dependency_Injection",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "KartoffelGames.Core.Dependency_Injection",
     "author": {
         "name": "KartoffelGames"
@@ -38,7 +38,7 @@
         "webpack-cli": "^4.8.0"
     },
     "dependencies": {
-        "@kartoffelgames/core.data": "^0.0.4"
+        "@kartoffelgames/core.data": "^0.0.5"
     },
     "scripts": {
         "script:build": "npm run pre:build && webpack-cli --config ../../enviroment/configuration/webpack.config.js",
