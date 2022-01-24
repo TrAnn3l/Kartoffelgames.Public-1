@@ -31,14 +31,14 @@ jobs:
           scope: '@kartoffelgames'
       - name: Npm install
         run: npm ci --ignore-scripts
-      - name: Increase version numbers
+      - name: Bump version numbers
         run: |
           npx turbo run build:release --force
           git config --global user.name 'KartoffelGames CI'
           git config --global user.email 'kartoffelgames@users.noreply.github.com'
           npm version patch -ws
           npm run update-dependency-versions
-          git commit -am "Increase package versions."
+          git commit -am "Bump package versions."
           git push
       - run: npm publish -ws
         env:
