@@ -5,11 +5,11 @@ export declare class ReflectInitializer {
      */
     static initialize(): void;
     /**
-     * Decorate class or member.
+     * Decorate class, method, parameter or property.
      * @param pDecoratorList - List of decorators.
      * @param pTarget - Target for decorator.
      * @param pPropertyKey - Key of property on member decorator.
-     * @param pAttributes - Descriptor of member on member decorator.
+     * @param pDescriptor - Descriptor of member on member decorator.
      */
     private static decorate;
     /**
@@ -19,11 +19,18 @@ export declare class ReflectInitializer {
      */
     private static decorateClass;
     /**
-     * Decorate member.
+     * Decorate method or accessor.
      * @param pDecoratorList - Decorators.
      * @param pTarget - Is on instanced target the prototype and on static the constructor.s
      * @param pPropertyKey - Key of property decorator.
      * @param pDescriptor - Descriptor of property
+     */
+    private static decorateMethod;
+    /**
+     * Decorate property or parameter..
+     * @param pDecoratorList - Decorators.
+     * @param pTarget - Is on instanced target the prototype and on static the constructor.s
+     * @param pPropertyKey - Key of property decorator.
      */
     private static decorateProperty;
     /**
@@ -39,8 +46,8 @@ export declare class ReflectInitializer {
     private static getConstructor;
     /**
      * Entry point for Typescripts emitDecoratorMetadata data.
-     * @param pKey - Key of metadata.
-     * @param pValue - Value of metadata. Usually only "design:paramtypes" data.
+     * @param pMetadataKey - Key of metadata.
+     * @param pMetadataValue - Value of metadata. Usually only "design:paramtypes" data.
      */
     private static metadata;
 }

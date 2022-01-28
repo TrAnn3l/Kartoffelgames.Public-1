@@ -4,7 +4,7 @@ exports.InjectionRegister = void 0;
 const core_data_1 = require("@kartoffelgames/core.data");
 const inject_mode_1 = require("../enum/inject-mode");
 const decoration_history_1 = require("../reflect/decoration-history");
-const type_register_1 = require("../type_register/type-register");
+const metadata_1 = require("../metadata/metadata");
 class InjectionRegister {
     static createObject(pConstructor, pForceCreateOrLocalInjections, pLocalInjections) {
         // Decide between local injection or force creation parameter.
@@ -16,7 +16,7 @@ class InjectionRegister {
         }
         else {
             lForceCreate = !!pForceCreateOrLocalInjections;
-            lLocalInjections = pLocalInjections !== null && pLocalInjections !== void 0 ? pLocalInjections : new core_data_1.Dictionary();
+            lLocalInjections = pLocalInjections ?? new core_data_1.Dictionary();
         }
         // Find constructor in decoration history that was used for registering.
         const lHistory = decoration_history_1.DecorationHistory.getBackwardHistoryOf(pConstructor);
@@ -42,8 +42,8 @@ class InjectionRegister {
             lConstructor = pConstructor;
         }
         // Get constructor parameter type information and default to empty parameter list.
-        let lParameterTypeList = type_register_1.TypeRegister.getConstructorParameterTypes(lRegisteredConstructor);
-        if (typeof lParameterTypeList === 'undefined') {
+        let lParameterTypeList = metadata_1.Metadata.get(lRegisteredConstructor).parameterTypes;
+        if (!lParameterTypeList) {
             lParameterTypeList = new Array();
         }
         // Get injection mode.

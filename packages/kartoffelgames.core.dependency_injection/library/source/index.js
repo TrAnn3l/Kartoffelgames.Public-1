@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InjectableSingleton = exports.Injectable = exports.DecorationHistory = exports.TypeStorage = exports.Injector = void 0;
+exports.InjectableSingleton = exports.Injectable = exports.DecorationHistory = exports.Metadata = exports.Injector = void 0;
 // Injection
 var injector_1 = require("./injector");
 Object.defineProperty(exports, "Injector", { enumerable: true, get: function () { return injector_1.Injector; } });
-// Type lookup
-var type_register_1 = require("./type_register/type-register");
-Object.defineProperty(exports, "TypeStorage", { enumerable: true, get: function () { return type_register_1.TypeRegister; } });
+// Metadata
+var metadata_1 = require("./metadata/metadata");
+Object.defineProperty(exports, "Metadata", { enumerable: true, get: function () { return metadata_1.Metadata; } });
 // Decoration
 var decoration_history_1 = require("./reflect/decoration-history");
 Object.defineProperty(exports, "DecorationHistory", { enumerable: true, get: function () { return decoration_history_1.DecorationHistory; } });

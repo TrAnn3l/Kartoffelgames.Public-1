@@ -1,10 +1,9 @@
 import { Exception } from '@kartoffelgames/core.data';
-import { MemberType } from '../enum/member-type';
 import { InjectionConstructor } from '../type';
-import { TypeRegister } from '../type_register/type-register';
 import { DecorationHistory } from './decoration-history';
-
-type MemberDecorator = <T>(pTarget: object, pPropertyKey: string | symbol, pDescriptor?: TypedPropertyDescriptor<T>) => TypedPropertyDescriptor<T> | undefined;
+import { Metadata } from '../metadata/metadata';
+import { PropertyMetadata } from '../metadata/property-metadata';
+import { ConstructorMetadata } from '../metadata/constructor-metadata';
 
 export class ReflectInitializer {
     private static mExported: boolean = false;
@@ -15,27 +14,34 @@ export class ReflectInitializer {
     public static initialize(): void {
         if (!ReflectInitializer.mExported) {
             ReflectInitializer.mExported = true;
-            
+
             ReflectInitializer.export('decorate', ReflectInitializer.decorate);
-            ReflectInitializer.export('metadata', ReflectInitializer.metadata); 
+            ReflectInitializer.export('metadata', ReflectInitializer.metadata);
         }
     }
 
     /**
-     * Decorate class or member.
+     * Decorate class, method, parameter or property.
      * @param pDecoratorList - List of decorators.
      * @param pTarget - Target for decorator.
      * @param pPropertyKey - Key of property on member decorator.
-     * @param pAttributes - Descriptor of member on member decorator.
+     * @param pDescriptor - Descriptor of member on member decorator.
      */
-    private static decorate(pDecoratorList: Array<ClassDecorator | MemberDecorator>, pTarget: any, pPropertyKey?: string | symbol, pAttributes?: PropertyDescriptor | null): any {
-        // Check if target is a property or a class.
-        if (typeof pPropertyKey !== 'undefined') {
-            return ReflectInitializer.decorateProperty(<Array<MemberDecorator>>pDecoratorList, pTarget, pPropertyKey, pAttributes);
+    private static decorate(pDecoratorList: Array<Decorator>, pTarget: any, pPropertyKey?: string | symbol, pDescriptor?: PropertyDescriptor): any {
+        let lDecoratorResult: any;
+        if (pPropertyKey && pDescriptor) {
+            // Decorate accessor, function. Returns new descriptor.
+            lDecoratorResult = ReflectInitializer.decorateMethod(<Array<MethodDecorator>>pDecoratorList, pTarget, pPropertyKey, pDescriptor);
+        } else if (pPropertyKey && !pDescriptor) {
+            // Decorate property pr parameter. Has no return value.
+            ReflectInitializer.decorateProperty(<Array<PropertyDecorator | ParameterDecorator>>pDecoratorList, pTarget, pPropertyKey);
+            lDecoratorResult = null; // Is ignored.
+        } else { // Only target set.
+            // Decorate class. Returns replacement class.
+            lDecoratorResult = ReflectInitializer.decorateClass(<Array<ClassDecorator>>pDecoratorList, <InjectionConstructor>pTarget);
         }
-        else {
-            return ReflectInitializer.decorateClass(<Array<ClassDecorator>>pDecoratorList, <InjectionConstructor>pTarget);
-        }
+
+        return lDecoratorResult;
     }
 
     /**
@@ -44,26 +50,29 @@ export class ReflectInitializer {
      * @param pConstructor - Target constructor.
      */
     private static decorateClass(pDecoratorList: Array<ClassDecorator>, pConstructor: InjectionConstructor): InjectionConstructor {
-        const lMetadataDecoratorList: Array<ClassDecorator> = new Array<ClassDecorator>();
         let lCurrentConstrutor: InjectionConstructor = pConstructor;
+
+        // Run all metadata decorator first.
+        for (const lDecorator of pDecoratorList) {
+            if (lDecorator.isMetadata) {
+                // Metadata decorator doesn't return values.
+                lDecorator(pConstructor);
+            }
+        }
 
         // For each decorator included metadata decorator.
         for (const lDecorator of pDecoratorList) {
-            // If the decorator was a metadata decorator use the original class as target..
-            if ('isMetadata' in (<any>lDecorator) && (<any>lDecorator).isMetadata === true) {
-                lMetadataDecoratorList.push(lDecorator);
-            } else {
+            // If the decorator was a metadata decorator use the original class as target.
+            if (!lDecorator.isMetadata) {
                 // Execute decorator.
-                const lDecoratedClass = lDecorator(pConstructor);
+                const lNewConstructor = lDecorator(pConstructor);
 
                 // Check if decorator does return different class.
-                if (typeof lDecoratedClass !== 'undefined' && lDecoratedClass !== null && pConstructor !== lDecoratedClass) {
-                    if (typeof lDecoratedClass === 'function') {
+                if (!!lNewConstructor && lNewConstructor !== lCurrentConstrutor) {
+                    if (typeof lNewConstructor === 'function') {
                         // Add changed construtor to the decoration history.
-                        const lNextConstructor: InjectionConstructor = <InjectionConstructor>lDecoratedClass;
-                        DecorationHistory.addHistory(lCurrentConstrutor, lNextConstructor);
-
-                        lCurrentConstrutor = lNextConstructor;
+                        DecorationHistory.addHistory(lCurrentConstrutor, lNewConstructor);
+                        lCurrentConstrutor = lNewConstructor;
                     } else {
                         throw new Exception('Constructor decorator does not return supported value.', lDecorator);
                     }
@@ -71,39 +80,49 @@ export class ReflectInitializer {
             }
         }
 
-        // Apply metadata on original decorated constructor.
-        // Should typescript do automaticly, but just in case.  
-        for (const lMetadataDecorator of lMetadataDecoratorList) {
-            lMetadataDecorator(pConstructor);
-        }
-
         return lCurrentConstrutor;
     }
 
     /**
-     * Decorate member.
+     * Decorate method or accessor.
      * @param pDecoratorList - Decorators.
      * @param pTarget - Is on instanced target the prototype and on static the constructor.s
      * @param pPropertyKey - Key of property decorator. 
      * @param pDescriptor - Descriptor of property
      */
-    private static decorateProperty(pDecoratorList: Array<MemberDecorator>, pTarget: object, pPropertyKey: string | symbol, pDescriptor: PropertyDescriptor | undefined): PropertyDescriptor | undefined {
+    private static decorateMethod(pDecoratorList: Array<MethodDecorator>, pTarget: object, pPropertyKey: string | symbol, pDescriptor: PropertyDescriptor | undefined): PropertyDescriptor | undefined {
+        let lCurrentDescriptor: PropertyDescriptor = pDescriptor;
+
         // For each decorator.
         for (const lDecorator of pDecoratorList) {
             // Execute decorator.
-            const lDecoratedMember = lDecorator(pTarget, pPropertyKey, pDescriptor);
+            const lDecoratedMember = lDecorator(pTarget, pPropertyKey, lCurrentDescriptor);
 
             // Check if decorator does return different PropertyDescriptor.
-            if (typeof lDecoratedMember !== 'undefined' && lDecoratedMember !== null) {
+            if (lDecoratedMember) {
                 if (typeof lDecoratedMember === 'object') {
-                    pDescriptor = <PropertyDescriptor>lDecoratedMember;
+                    lCurrentDescriptor = <PropertyDescriptor>lDecoratedMember;
                 } else {
                     throw new Exception('Member decorator does not return supported value.', lDecorator);
                 }
             }
         }
 
-        return pDescriptor;
+        return lCurrentDescriptor;
+    }
+
+    /**
+     * Decorate property or parameter..
+     * @param pDecoratorList - Decorators.
+     * @param pTarget - Is on instanced target the prototype and on static the constructor.s
+     * @param pPropertyKey - Key of property decorator. 
+     */
+    private static decorateProperty(pDecoratorList: Array<PropertyDecorator | ParameterDecorator>, pTarget: object, pPropertyKey: string | symbol): void {
+        // For each decorator.
+        for (const lDecorator of pDecoratorList) {
+            // Execute decorator. Doesn't return any value.
+            lDecorator(pTarget, pPropertyKey);
+        }
     }
 
     /**
@@ -137,72 +156,88 @@ export class ReflectInitializer {
 
     /**
      * Entry point for Typescripts emitDecoratorMetadata data. 
-     * @param pKey - Key of metadata.
-     * @param pValue - Value of metadata. Usually only "design:paramtypes" data.
+     * @param pMetadataKey - Key of metadata.
+     * @param pMetadataValue - Value of metadata. Usually only "design:paramtypes" data.
      */
-    private static metadata(pKey: string, pValue: Array<InjectionConstructor> | InjectionConstructor): (pConstructor: InjectionConstructor) => InjectionConstructor | PropertyDescriptor {
-        let lResultDecorator: (pConstructor: InjectionConstructor) => InjectionConstructor | PropertyDescriptor;
-
-        /**
-           __metadata("design:type", Function),
-           __metadata("design:paramtypes", []),
-           __metadata("design:returntype", void 0)
+    private static metadata(pMetadataKey: string, pMetadataValue: Array<InjectionConstructor> | InjectionConstructor): Decorator {
+        /*
+           __metadata("design:type", Function), // Parameter Value
+           __metadata("design:paramtypes", [Number, String]), // Function or Constructor Parameter
+           __metadata("design:returntype", void 0) // Function return type.
         */
+        const lResultDecorator: Decorator = (pConstructorOrPrototype: object, pProperty?: string | symbol, pDescriptorOrIndex?: PropertyDescriptor | number): void => {
+            // Get constructor from prototype if is an instanced member.
+            const lConstructor: InjectionConstructor = ReflectInitializer.getConstructor(pConstructorOrPrototype);
+            const lConstructorMetadata: ConstructorMetadata = Metadata.get(lConstructor);
 
-        if (pKey === 'design:paramtypes') {
-            const lTypeValues: Array<InjectionConstructor> = <Array<InjectionConstructor>>pValue;
+            if (pProperty) {
+                const lPropertyMetadata: PropertyMetadata = lConstructorMetadata.getProperty(pProperty);
 
-            // Decorator. Adds type metadata to constructor or member.
-            lResultDecorator = (pConstructor: InjectionConstructor | object, pPropertyKey?: string): InjectionConstructor | PropertyDescriptor => {
-                // Get constructor from prototype if is an instanced member.
-                const lConstructor: InjectionConstructor = ReflectInitializer.getConstructor(pConstructor);
-
-                // Check if types are for constructor or for member.
-                if (typeof pPropertyKey === 'undefined') {
-                    const lTypeValueArrayCopy: Array<InjectionConstructor> = new Array<InjectionConstructor>();
-                    lTypeValueArrayCopy.push(...lTypeValues);
-
-                    TypeRegister.setConstructorTypes(lConstructor, lTypeValueArrayCopy);
-                } else {
-                    TypeRegister.setMemberTypes(lConstructor, pPropertyKey, MemberType.Parameter, ...lTypeValues);
+                // If not parameter index.
+                /* istanbul ignore else */
+                if (typeof pDescriptorOrIndex !== 'number') { 
+                    // Property decorator.
+                    /* istanbul ignore else */
+                    if (pMetadataKey === 'design:paramtypes') {
+                        lPropertyMetadata.parameterTypes = <Array<InjectionConstructor>>pMetadataValue;
+                    } else if (pMetadataKey === 'design:type') {
+                        lPropertyMetadata.type = <InjectionConstructor>pMetadataValue;
+                    } else if (pMetadataKey === 'design:returntype') {
+                        lPropertyMetadata.returnType = <InjectionConstructor>pMetadataValue;
+                    }
+                    // Ignore future metadata.
                 }
+                // Else. Parameter decorator.
+                // Ignore else case. Not supported.
+            } else {
+                // Class decorator.
+                /* istanbul ignore else */
+                if (pMetadataKey === 'design:paramtypes') {
+                    lConstructorMetadata.parameterTypes = <Array<InjectionConstructor>>pMetadataValue;
+                }
+                // Ignore future metadata.
+            }
+        };
 
-                return undefined;
-            };
-        } else if (pKey === 'design:type') {
-            const lTypeValues: InjectionConstructor = <InjectionConstructor>pValue;
-
-            // Add member type
-            lResultDecorator = (pConstructor: InjectionConstructor | object, pPropertyKey?: string | symbol, pDescriptor?: TypedPropertyDescriptor<any>): PropertyDescriptor => {
-                // Get constructor from prototype if is an instanced member.
-                const lConstructor: InjectionConstructor = ReflectInitializer.getConstructor(pConstructor);
-
-                // Set member type.
-                TypeRegister.setMemberTypes(lConstructor, pPropertyKey, MemberType.Member, lTypeValues);
-                return undefined;
-            };
-        } else if (pKey === 'design:returntype') {
-            const lTypeValues: InjectionConstructor = <InjectionConstructor>pValue;
-
-            // Add member type
-            lResultDecorator = (pConstructor: InjectionConstructor | object, pPropertyKey?: string | symbol, pDescriptor?: TypedPropertyDescriptor<any>): PropertyDescriptor => {
-                // Get constructor from prototype if is an instanced member.
-                const lConstructor: InjectionConstructor = ReflectInitializer.getConstructor(pConstructor);
-
-                // Set result type of function.
-                TypeRegister.setMemberTypes(lConstructor, pPropertyKey, MemberType.Result, lTypeValues);
-                return undefined;
-            };
-        } else {
-            // Dummy decorator. Does nothing. For future releases.
-            lResultDecorator = (pConstructor: InjectionConstructor, pPropertyKey?: string | symbol, pDescriptor?: TypedPropertyDescriptor<any>): PropertyDescriptor | InjectionConstructor => {
-                return undefined;
-            };
-        }
-
-        // Add metadata flag for the detect metadata decorator.
-        (<any>lResultDecorator).isMetadata = true;
-
+        // Set as metadata constructor and return.
+        lResultDecorator.isMetadata = true;
         return lResultDecorator;
     }
+}
+
+/**
+ * Allround decorator with custom isMetadata property.
+ */
+interface Decorator {
+    // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+    (pConstructor: InjectionConstructor | object, pPropertyKey?: string | symbol, pDescriptorOrIndex?: TypedPropertyDescriptor<any> | number): void | PropertyDescriptor | InjectionConstructor;
+    isMetadata?: boolean;
+}
+
+/**
+ * Property decorator.
+ */
+interface PropertyDecorator extends Decorator {
+    (pConstructor: InjectionConstructor | object, pPropertyKey: string | symbol): void;
+}
+
+/**
+ * Class decorator.
+ */
+interface ClassDecorator extends Decorator {
+    (pConstructor: InjectionConstructor | object): InjectionConstructor;
+}
+
+/**
+ * Method decorator for method, functions and accessors.
+ */
+interface MethodDecorator extends Decorator {
+    (pConstructor: InjectionConstructor | object, pPropertyKey: string | symbol, pDescriptor: TypedPropertyDescriptor<any>): PropertyDescriptor;
+}
+
+/**
+ * Parameter decorator.
+ */
+interface ParameterDecorator extends Decorator {
+    (pConstructor: InjectionConstructor | object, pPropertyKey: string | symbol): PropertyDescriptor;
 }

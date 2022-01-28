@@ -43,8 +43,7 @@ class ExecutionZone {
      * Get error callback.
      */
     get onError() {
-        var _a;
-        return (_a = this.mErrorCallback) !== null && _a !== void 0 ? _a : null;
+        return this.mErrorCallback ?? null;
     }
     /**
      * Set error callback.
@@ -56,8 +55,7 @@ class ExecutionZone {
      * Get change callback.
      */
     get onInteraction() {
-        var _a;
-        return (_a = this.mInteractionCallback) !== null && _a !== void 0 ? _a : null;
+        return this.mInteractionCallback ?? null;
     }
     /**
      * Set change callback.
@@ -140,11 +138,10 @@ class ExecutionZone {
      * @param pZoneName - Zone name.
      */
     dispatchChangeEvent(pZoneName, pFunction, pStacktrace) {
-        var _a, _b;
         // Execute only inside none silent zones.
-        if (!((_a = change_detection_1.ChangeDetection.current) === null || _a === void 0 ? void 0 : _a.isSilent)) {
+        if (!change_detection_1.ChangeDetection.current?.isSilent) {
             // Call change callbacks.
-            (_b = this.onInteraction) === null || _b === void 0 ? void 0 : _b.call(this, pZoneName, pFunction, pStacktrace);
+            this.onInteraction?.(pZoneName, pFunction, pStacktrace);
         }
     }
     /**
@@ -152,9 +149,8 @@ class ExecutionZone {
      * @param pZoneName - Zone name.
      */
     dispatchErrorEvent(pError) {
-        var _a;
         // Call error callbacks.
-        (_a = this.onError) === null || _a === void 0 ? void 0 : _a.call(this, pError);
+        this.onError?.(pError);
     }
 }
 exports.ExecutionZone = ExecutionZone;

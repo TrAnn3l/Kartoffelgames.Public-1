@@ -80,7 +80,7 @@ describe('InjectionRegister', () => {
             expect(lCreatedObjectOne.mSingleton).to.equal(lCreatedObjectTwo.mSingleton);
         });
 
-        it('Default with parameter, parameter not registered.', () => {
+        it('-- Default with parameter, parameter not registered.', () => {
             // Setup.
             class TestParameter { }
             @Injectable
@@ -250,28 +250,7 @@ describe('InjectionRegister', () => {
             expect(lCreatedObjectA).to.be.instanceOf(ReplacementTestA);
         });
 
-        it('-- Default with local injection', () => {
-            // Setup.
-            @Injectable
-            class TestParameter { }
-            class TestParameterLocalInjection { }
-            @Injectable
-            class TestA { constructor(public mParameter: TestParameter) { } }
-
-            // Setup. Create local injection.
-            const lLocalInjectionParameter: TestParameterLocalInjection = new TestParameterLocalInjection();
-            const lLocalInjectionMap: Dictionary<InjectionConstructor, any> = new Dictionary<InjectionConstructor, any>();
-            lLocalInjectionMap.add(TestParameter, lLocalInjectionParameter);
-
-            // Process.
-            const lCreatedObject: TestA = InjectionRegister.createObject(TestA, lLocalInjectionMap);
-
-            // Evaluation.
-            expect(lCreatedObject).to.be.instanceOf(TestA);
-            expect(lCreatedObject.mParameter).to.equal(lLocalInjectionParameter);
-        });
-
-        it('-- Default with local injection', () => {
+        it('-- Default with second layer local injection', () => {
             // Setup.
             @Injectable
             class TestParameterLayerTwo { }

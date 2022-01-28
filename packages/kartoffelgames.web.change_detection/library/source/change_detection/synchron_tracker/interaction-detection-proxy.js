@@ -33,12 +33,11 @@ class InteractionDetectionProxy {
      * @param pProxy - Possible ChangeDetectionProxy object.
      */
     static getOriginal(pProxy) {
-        var _a;
         let lOriginalValue;
         if (typeof pProxy === 'object' && pProxy !== null || typeof pProxy === 'function') {
             // Try to get Proxy wrapper.
             const lWrapper = InteractionDetectionProxy.getWrapper(pProxy);
-            lOriginalValue = (_a = lWrapper === null || lWrapper === void 0 ? void 0 : lWrapper.mOriginalObject) !== null && _a !== void 0 ? _a : pProxy;
+            lOriginalValue = lWrapper?.mOriginalObject ?? pProxy;
         }
         else {
             // Value can't be a proxy object.
@@ -74,8 +73,7 @@ class InteractionDetectionProxy {
      * Get change callback.
      */
     get onChange() {
-        var _a;
-        return (_a = this.mChangeCallback) !== null && _a !== void 0 ? _a : null;
+        return this.mChangeCallback ?? null;
     }
     /**
      * Set change callback.
@@ -198,10 +196,9 @@ class InteractionDetectionProxy {
      * Trigger change event.
      */
     dispatchChangeEvent(pSourceObject, pProperty, pStacktrace) {
-        var _a;
         // Only trigger if current change detection is not silent.
         if (change_detection_1.ChangeDetection.current === null || !change_detection_1.ChangeDetection.current.isSilent) {
-            (_a = this.onChange) === null || _a === void 0 ? void 0 : _a.call(this, pSourceObject, pProperty, pStacktrace);
+            this.onChange?.(pSourceObject, pProperty, pStacktrace);
         }
     }
 }

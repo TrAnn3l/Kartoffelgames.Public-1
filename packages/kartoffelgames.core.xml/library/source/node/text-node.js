@@ -17,8 +17,7 @@ class TextNode extends base_xml_node_1.BaseXmlNode {
      * Get nodes namespace.
      */
     get defaultNamespace() {
-        var _a, _b;
-        return (_b = (_a = this.parent) === null || _a === void 0 ? void 0 : _a.defaultNamespace) !== null && _b !== void 0 ? _b : null;
+        return this.parent?.defaultNamespace ?? null;
     }
     /**
      * Get text string of node.

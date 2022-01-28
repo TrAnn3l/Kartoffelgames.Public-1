@@ -144,7 +144,6 @@ class Patcher {
      * @param pGlobalObject - Global enviroment object
      */
     patchGlobals(pGlobalObject) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x;
         // Timer
         pGlobalObject.requestAnimationFrame = this.patchFunctionParameter(pGlobalObject.requestAnimationFrame);
         pGlobalObject.setInterval = this.patchFunctionParameter(pGlobalObject.setInterval);
@@ -160,36 +159,36 @@ class Patcher {
         // Patch HTML elements
         /* istanbul ignore next */
         {
-            this.patchOnProperties((_a = pGlobalObject.XMLHttpRequestEventTarget) === null || _a === void 0 ? void 0 : _a.prototype, event_names_1.EventNames.xmlHttpRequestEventNames);
-            this.patchOnProperties((_b = pGlobalObject.XMLHttpRequest) === null || _b === void 0 ? void 0 : _b.prototype, event_names_1.EventNames.xmlHttpRequestEventNames);
+            this.patchOnProperties(pGlobalObject.XMLHttpRequestEventTarget?.prototype, event_names_1.EventNames.xmlHttpRequestEventNames);
+            this.patchOnProperties(pGlobalObject.XMLHttpRequest?.prototype, event_names_1.EventNames.xmlHttpRequestEventNames);
             this.patchOnProperties(pGlobalObject, ['messageerror', ...event_names_1.EventNames.eventNames]);
-            this.patchOnProperties((_c = pGlobalObject.Document) === null || _c === void 0 ? void 0 : _c.prototype, event_names_1.EventNames.eventNames);
-            this.patchOnProperties((_d = pGlobalObject.SVGElement) === null || _d === void 0 ? void 0 : _d.prototype, event_names_1.EventNames.eventNames);
-            this.patchOnProperties((_e = pGlobalObject.Element) === null || _e === void 0 ? void 0 : _e.prototype, event_names_1.EventNames.eventNames);
-            this.patchOnProperties((_f = pGlobalObject.HTMLElement) === null || _f === void 0 ? void 0 : _f.prototype, event_names_1.EventNames.eventNames);
-            this.patchOnProperties((_g = pGlobalObject.HTMLMediaElement) === null || _g === void 0 ? void 0 : _g.prototype, event_names_1.EventNames.mediaElementEventNames);
-            this.patchOnProperties((_h = pGlobalObject.HTMLFrameSetElement) === null || _h === void 0 ? void 0 : _h.prototype, [...event_names_1.EventNames.windowEventNames, ...event_names_1.EventNames.frameSetEventNames]);
-            this.patchOnProperties((_j = pGlobalObject.HTMLBodyElement) === null || _j === void 0 ? void 0 : _j.prototype, [...event_names_1.EventNames.windowEventNames, ...event_names_1.EventNames.frameSetEventNames]);
-            this.patchOnProperties((_k = pGlobalObject.HTMLFrameElement) === null || _k === void 0 ? void 0 : _k.prototype, event_names_1.EventNames.frameEventNames);
-            this.patchOnProperties((_l = pGlobalObject.HTMLIFrameElement) === null || _l === void 0 ? void 0 : _l.prototype, event_names_1.EventNames.frameEventNames);
-            this.patchOnProperties((_m = pGlobalObject.HTMLMarqueeElement) === null || _m === void 0 ? void 0 : _m.prototype, event_names_1.EventNames.marqueeEventNames);
+            this.patchOnProperties(pGlobalObject.Document?.prototype, event_names_1.EventNames.eventNames);
+            this.patchOnProperties(pGlobalObject.SVGElement?.prototype, event_names_1.EventNames.eventNames);
+            this.patchOnProperties(pGlobalObject.Element?.prototype, event_names_1.EventNames.eventNames);
+            this.patchOnProperties(pGlobalObject.HTMLElement?.prototype, event_names_1.EventNames.eventNames);
+            this.patchOnProperties(pGlobalObject.HTMLMediaElement?.prototype, event_names_1.EventNames.mediaElementEventNames);
+            this.patchOnProperties(pGlobalObject.HTMLFrameSetElement?.prototype, [...event_names_1.EventNames.windowEventNames, ...event_names_1.EventNames.frameSetEventNames]);
+            this.patchOnProperties(pGlobalObject.HTMLBodyElement?.prototype, [...event_names_1.EventNames.windowEventNames, ...event_names_1.EventNames.frameSetEventNames]);
+            this.patchOnProperties(pGlobalObject.HTMLFrameElement?.prototype, event_names_1.EventNames.frameEventNames);
+            this.patchOnProperties(pGlobalObject.HTMLIFrameElement?.prototype, event_names_1.EventNames.frameEventNames);
+            this.patchOnProperties(pGlobalObject.HTMLMarqueeElement?.prototype, event_names_1.EventNames.marqueeEventNames);
             // Worker.
-            this.patchOnProperties(pGlobalObject.Worker && (Worker === null || Worker === void 0 ? void 0 : Worker.prototype), event_names_1.EventNames.workerEventNames);
+            this.patchOnProperties(pGlobalObject.Worker && Worker?.prototype, event_names_1.EventNames.workerEventNames);
             // Index DB.
-            this.patchOnProperties((_o = pGlobalObject.IDBIndex) === null || _o === void 0 ? void 0 : _o.prototype, event_names_1.EventNames.idbIndexEventNames);
-            this.patchOnProperties((_p = pGlobalObject.IDBRequest) === null || _p === void 0 ? void 0 : _p.prototype, event_names_1.EventNames.idbIndexEventNames);
-            this.patchOnProperties((_q = pGlobalObject.IDBOpenDBRequest) === null || _q === void 0 ? void 0 : _q.prototype, event_names_1.EventNames.idbIndexEventNames);
-            this.patchOnProperties((_r = pGlobalObject.IDBDatabase) === null || _r === void 0 ? void 0 : _r.prototype, event_names_1.EventNames.idbIndexEventNames);
-            this.patchOnProperties((_s = pGlobalObject.IDBTransaction) === null || _s === void 0 ? void 0 : _s.prototype, event_names_1.EventNames.idbIndexEventNames);
-            this.patchOnProperties((_t = pGlobalObject.IDBCursor) === null || _t === void 0 ? void 0 : _t.prototype, event_names_1.EventNames.idbIndexEventNames);
+            this.patchOnProperties(pGlobalObject.IDBIndex?.prototype, event_names_1.EventNames.idbIndexEventNames);
+            this.patchOnProperties(pGlobalObject.IDBRequest?.prototype, event_names_1.EventNames.idbIndexEventNames);
+            this.patchOnProperties(pGlobalObject.IDBOpenDBRequest?.prototype, event_names_1.EventNames.idbIndexEventNames);
+            this.patchOnProperties(pGlobalObject.IDBDatabase?.prototype, event_names_1.EventNames.idbIndexEventNames);
+            this.patchOnProperties(pGlobalObject.IDBTransaction?.prototype, event_names_1.EventNames.idbIndexEventNames);
+            this.patchOnProperties(pGlobalObject.IDBCursor?.prototype, event_names_1.EventNames.idbIndexEventNames);
             // Websocket.
-            this.patchOnProperties((_u = pGlobalObject.WebSocket) === null || _u === void 0 ? void 0 : _u.prototype, event_names_1.EventNames.websocketEventNames);
+            this.patchOnProperties(pGlobalObject.WebSocket?.prototype, event_names_1.EventNames.websocketEventNames);
             // Filereader
-            this.patchOnProperties((_v = pGlobalObject.FileReader) === null || _v === void 0 ? void 0 : _v.prototype, event_names_1.EventNames.xmlHttpRequestEventNames);
+            this.patchOnProperties(pGlobalObject.FileReader?.prototype, event_names_1.EventNames.xmlHttpRequestEventNames);
             // Notification
-            this.patchOnProperties((_w = pGlobalObject.Notification) === null || _w === void 0 ? void 0 : _w.prototype, event_names_1.EventNames.notificationEventNames);
+            this.patchOnProperties(pGlobalObject.Notification?.prototype, event_names_1.EventNames.notificationEventNames);
             // RTCPeerConnection
-            this.patchOnProperties((_x = pGlobalObject.RTCPeerConnection) === null || _x === void 0 ? void 0 : _x.prototype, event_names_1.EventNames.rtcPeerConnectionEventNames);
+            this.patchOnProperties(pGlobalObject.RTCPeerConnection?.prototype, event_names_1.EventNames.rtcPeerConnectionEventNames);
         }
         // HTMLCanvasElement.toBlob
         pGlobalObject.HTMLCanvasElement.prototype.toBlob = this.patchFunctionParameter(pGlobalObject.HTMLCanvasElement.prototype.toBlob);

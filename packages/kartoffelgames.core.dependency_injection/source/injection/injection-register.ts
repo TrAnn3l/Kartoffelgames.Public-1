@@ -2,7 +2,7 @@ import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { InjectMode } from '../enum/inject-mode';
 import { DecorationHistory } from '../reflect/decoration-history';
 import { InjectionConstructor } from '../type';
-import { TypeRegister } from '../type_register/type-register';
+import { Metadata } from '../metadata/metadata';
 
 export class InjectionRegister {
     private static readonly mInjectMode: Dictionary<InjectionConstructor, InjectMode> = new Dictionary<InjectionConstructor, InjectMode>();
@@ -60,8 +60,8 @@ export class InjectionRegister {
         }
 
         // Get constructor parameter type information and default to empty parameter list.
-        let lParameterTypeList: Array<InjectionConstructor> = TypeRegister.getConstructorParameterTypes(lRegisteredConstructor);
-        if (typeof lParameterTypeList === 'undefined') {
+        let lParameterTypeList: Array<InjectionConstructor> = Metadata.get(lRegisteredConstructor).parameterTypes;
+        if (!lParameterTypeList) {
             lParameterTypeList = new Array<InjectionConstructor>();
         }
 

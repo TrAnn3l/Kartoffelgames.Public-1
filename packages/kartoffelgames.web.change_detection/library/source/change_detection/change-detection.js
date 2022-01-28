@@ -27,7 +27,7 @@ class ChangeDetection {
         this.mChangeListenerList = new core_data_1.List();
         this.mErrorListenerList = new core_data_1.List();
         // Save parent.
-        this.mParent = pParentChangeDetection !== null && pParentChangeDetection !== void 0 ? pParentChangeDetection : null;
+        this.mParent = pParentChangeDetection ?? null;
         // Create new execution zone.
         this.mExecutionZone = new execution_zone_1.ExecutionZone(pName);
         this.mExecutionZone.onInteraction = (_pZoneName, pFunction, pStacktrace) => {
@@ -44,8 +44,7 @@ class ChangeDetection {
      * Get current change detection.
      */
     static get current() {
-        var _a;
-        return (_a = execution_zone_1.ExecutionZone.current.getZoneData(ChangeDetection.CURRENT_CHANGE_DETECTION_ZONE_DATA_KEY)) !== null && _a !== void 0 ? _a : null;
+        return execution_zone_1.ExecutionZone.current.getZoneData(ChangeDetection.CURRENT_CHANGE_DETECTION_ZONE_DATA_KEY) ?? null;
     }
     /**
      * Get current change detection.
@@ -53,10 +52,10 @@ class ChangeDetection {
      */
     static get currentNoneSilent() {
         let lCurrent = execution_zone_1.ExecutionZone.current.getZoneData(ChangeDetection.CURRENT_CHANGE_DETECTION_ZONE_DATA_KEY);
-        while (lCurrent === null || lCurrent === void 0 ? void 0 : lCurrent.isSilent) {
+        while (lCurrent?.isSilent) {
             lCurrent = lCurrent.mParent;
         }
-        return lCurrent !== null && lCurrent !== void 0 ? lCurrent : null;
+        return lCurrent ?? null;
     }
     /**
      * If change detection is silent.
@@ -74,8 +73,7 @@ class ChangeDetection {
      * Get change detection parent.
      */
     get parent() {
-        var _a;
-        return (_a = this.mParent) !== null && _a !== void 0 ? _a : null;
+        return this.mParent ?? null;
     }
     /**
      * Add listener for change events.
@@ -104,17 +102,15 @@ class ChangeDetection {
      * Trigger all change event.
      */
     dispatchChangeEvent(pReason) {
-        var _a;
         // One trigger if change detection is not silent.
         if (!this.mSilent) {
             // Get current executing zone.
-            const lCurrentChangeDetection = (_a = ChangeDetection.current) !== null && _a !== void 0 ? _a : this;
+            const lCurrentChangeDetection = ChangeDetection.current ?? this;
             // Execute all listener in event target zone.
             lCurrentChangeDetection.execute(() => {
-                var _a;
                 this.callChangeListener(pReason);
                 // Pass through change event to parent.
-                (_a = this.mParent) === null || _a === void 0 ? void 0 : _a.dispatchChangeEvent(pReason);
+                this.mParent?.dispatchChangeEvent(pReason);
             });
         }
     }
@@ -122,15 +118,13 @@ class ChangeDetection {
      * Trigger all change event.
      */
     dispatchErrorEvent(pError) {
-        var _a;
         // Get current executing zone.
-        const lCurrentChangeDetection = (_a = ChangeDetection.current) !== null && _a !== void 0 ? _a : this;
+        const lCurrentChangeDetection = ChangeDetection.current ?? this;
         // Execute all listener in event target zone.
         lCurrentChangeDetection.execute(() => {
-            var _a;
             this.callErrorListener(pError);
             // Pass through error event to parent.
-            (_a = this.mParent) === null || _a === void 0 ? void 0 : _a.dispatchErrorEvent(pError);
+            this.mParent?.dispatchErrorEvent(pError);
         });
     }
     /**

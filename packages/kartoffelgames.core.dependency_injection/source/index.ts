@@ -2,8 +2,8 @@
 export { Injector } from './injector';
 export { InjectionConstructor } from './type';
 
-// Type lookup
-export { TypeRegister as TypeStorage } from './type_register/type-register';
+// Metadata
+export { Metadata } from './metadata/metadata';
 
 // Decoration
 export { DecorationHistory } from './reflect/decoration-history';

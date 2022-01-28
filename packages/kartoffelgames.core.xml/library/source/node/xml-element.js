@@ -44,16 +44,14 @@ class XmlElement extends base_xml_node_1.BaseXmlNode {
      * Get default namespace.
      */
     get defaultNamespace() {
-        var _a;
         // Get default namespace.
-        return (_a = this.getNamespace()) !== null && _a !== void 0 ? _a : null;
+        return this.getNamespace() ?? null;
     }
     /**
      * Get namespace prefix of xml node.
      */
     get namespacePrefix() {
-        var _a;
-        return (_a = this.mNamespacePrefix) !== null && _a !== void 0 ? _a : null;
+        return this.mNamespacePrefix ?? null;
     }
     /**
      * Set namespace prefix of xml node.
@@ -76,8 +74,7 @@ class XmlElement extends base_xml_node_1.BaseXmlNode {
      * Get tagname without namespace prefix.
      */
     get tagName() {
-        var _a;
-        return (_a = this.mTagName) !== null && _a !== void 0 ? _a : '';
+        return this.mTagName ?? '';
     }
     /**
      * Set tagname without namespace prefix.
@@ -172,8 +169,7 @@ class XmlElement extends base_xml_node_1.BaseXmlNode {
             const lPrefixLowerCase = pPrefix.toLowerCase();
             // Check for local prefix namespace.
             const lPrefixNamespaceAttribute = this.attributeList.find((pAttribute) => {
-                var _a;
-                return ((_a = pAttribute.namespacePrefix) === null || _a === void 0 ? void 0 : _a.toLowerCase()) === 'xmlns' && pAttribute.name.toLowerCase() === lPrefixLowerCase;
+                return pAttribute.namespacePrefix?.toLowerCase() === 'xmlns' && pAttribute.name.toLowerCase() === lPrefixLowerCase;
             });
             // Return default namespace if it is defined.
             if (lPrefixNamespaceAttribute) {

@@ -24,8 +24,7 @@ class BaseTree {
      * Get parent branch.
      */
     get parent() {
-        var _a;
-        return (_a = this.mParent) !== null && _a !== void 0 ? _a : null;
+        return this.mParent ?? null;
     }
     /**
      * Adds new branch to tree.

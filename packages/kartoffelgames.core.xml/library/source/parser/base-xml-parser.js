@@ -13,11 +13,10 @@ class BaseXmlParser {
      * @param pParserMode - Mode how parser handles different characters.
      */
     constructor(pParserConfig = {}) {
-        var _a, _b;
         this.mConfig = {};
         // Set default config.
-        this.mConfig.allowedAttributeCharacters = (_a = pParserConfig.allowedAttributeCharacters) !== null && _a !== void 0 ? _a : 'abcdefghijklmnopqrstuvwxyz_:-.1234567890';
-        this.mConfig.allowedTagNameCharacters = (_b = pParserConfig.allowedTagNameCharacters) !== null && _b !== void 0 ? _b : 'abcdefghijklmnopqrstuvwxyz_:-.1234567890';
+        this.mConfig.allowedAttributeCharacters = pParserConfig.allowedAttributeCharacters ?? 'abcdefghijklmnopqrstuvwxyz_:-.1234567890';
+        this.mConfig.allowedTagNameCharacters = pParserConfig.allowedTagNameCharacters ?? 'abcdefghijklmnopqrstuvwxyz_:-.1234567890';
         this.mConfig.removeComments = !!pParserConfig.removeComments;
         // Extend allowed character for case insensitivity and escape.
         this.mConfig.allowedAttributeCharacters = this.escapeRegExp(this.mConfig.allowedAttributeCharacters.toLowerCase() + this.mConfig.allowedAttributeCharacters.toUpperCase());
@@ -141,7 +140,6 @@ class BaseXmlParser {
      * @param pAttributeString - Attribute string. String that only contains attributes.
      */
     getAttributesFromString(pAttributeString) {
-        var _a;
         const lAttributes = new Array();
         const lRegexAttributeParts = new RegExp(/([^\s=]+)(="([^"]*)")?|([^\s]+)/gs);
         const lRegexNameCheck = new RegExp(`^[${this.mConfig.allowedAttributeCharacters}]+$`);
@@ -154,7 +152,7 @@ class BaseXmlParser {
             }
             let lNamespacePrefix = null;
             let lName = lAttributeParts[1];
-            const lValue = (_a = lAttributeParts[3]) !== null && _a !== void 0 ? _a : '';
+            const lValue = lAttributeParts[3] ?? '';
             // Check if name is correct.
             if (!lRegexNameCheck.test(lName)) {
                 throw new core_data_1.Exception(`Can't parse attribute name: "${lName}"`, this);

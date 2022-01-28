@@ -2,23 +2,30 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Mocha Test",
             "type": "node",
             "request": "launch",
+            "name": "Mocha Test",
             "runtimeExecutable": "npm",
             "runtimeArgs": [
-                "run-script",
+                "run",
                 "test",
                 "-w",
                 "@kartoffelgames/core.dependency-injection"
             ],
+            "cwd": "${workspaceRoot}",
             "port": 9229,
-            "sourceMapPathOverrides": {
-                "webpack:///./~/*": "${workspaceRoot}/node_modules/*",
-                "webpack:///./*": "${workspaceRoot}/packages/kartoffelgames.core.dependency-injection/*",
-                "webpack:///*": "*",
-                "webpack://@kartoffelgames/core.dependency-injection/*": "${workspaceRoot}/packages/kartoffelgames.core.dependency-injection/*",
-            }
+            "skipFiles": [
+                "node_modules/**/*.js",
+                "<node_internals>/**/*.js"
+            ],
+            "sourceMaps": true,
+            "trace": true,
+            "sourceMapPathOverrides": {  // if you override this, you MUST provide all defaults again
+                "webpack://@kartoffelgames/core.dependency-injection/./*": "${workspaceRoot}/packages/kartoffelgames.core.dependency_injection/*"
+            },
+
+
+            "protocol": "inspector"
         }
     ]
 }
