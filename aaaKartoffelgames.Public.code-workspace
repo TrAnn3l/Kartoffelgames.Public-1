@@ -1,8 +1,25 @@
 {
 	"folders": [
 		{
+			"name": "_Enviroment",
 			"path": "."
-		}
+		},
+		{
+			"name": "Kartoffelgames.Core.Data",
+			"path": "./packages/kartoffelgames.core.data"
+		},
+		{
+			"name": "Kartoffelgames.Core.Xml",
+			"path": "./packages/kartoffelgames.core.xml"
+		},
+		{
+			"name": "Kartoffelgames.Web.Change_Detection",
+			"path": "./packages/kartoffelgames.web.change_detection"
+		},
+		{
+			"name": "Kartoffelgames.Core.Dependency_Injection",
+			"path": "./packages/kartoffelgames.core.dependency_injection"
+		},
 	],
 	"settings": {
 		"files.exclude": {
