@@ -54,6 +54,7 @@
         "build:test-coverage": "npm run script:build -- --env=buildType=test --env=coverage",
         "scratchpad": "run-p \"build:scratchpad -- --watch\" \"script:start-server\"",
         "test": "npm run build:test && npx mocha --config \"../../enviroment/configuration/mocha.config.js\"",
+        "test:debug": "npm run build:test && npx mocha --config \"../../enviroment/configuration/mocha.config.js\" --no-timeouts",
         "test:coverage": "npm run build:test-coverage && npx nyc --nycrc-path \"../../enviroment/configuration/nyc.config.json\" mocha --config \"../../enviroment/configuration/mocha.config.js\""
     },
     "repository": {

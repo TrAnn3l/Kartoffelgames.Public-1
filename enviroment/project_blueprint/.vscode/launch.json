@@ -16,8 +16,7 @@
                 "<node_internals>/**/*.js"
             ],
             "sourceMaps": true,
-            "trace": true,
-            "sourceMapPathOverrides": { // if you override this, you MUST provide all defaults again
+            "sourceMapPathOverrides": {
                 "webpack://{{PACKAGE_NAME}}/*": "${workspaceRoot}/*"
             },
             "protocol": "inspector"
