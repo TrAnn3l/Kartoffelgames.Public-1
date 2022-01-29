@@ -8,22 +8,18 @@
             "runtimeExecutable": "npm",
             "runtimeArgs": [
                 "run",
-                "test",
-                "-w",
-                "@kartoffelgames/core.dependency-injection"
+                "test:debug"
             ],
             "cwd": "${workspaceRoot}",
             "skipFiles": [
-                "node_modules/**/*.js",
+                "${workspaceFolder}/../../node_modules/**/*.js",
                 "<node_internals>/**/*.js"
             ],
             "sourceMaps": true,
             "trace": true,
-            "sourceMapPathOverrides": {  // if you override this, you MUST provide all defaults again
-                "webpack://@kartoffelgames/core.dependency-injection/./*": "${workspaceRoot}/packages/kartoffelgames.core.dependency_injection/*"
+            "sourceMapPathOverrides": { // if you override this, you MUST provide all defaults again
+                "webpack://{{PACKAGE_NAME}}/*": "${workspaceRoot}/*"
             },
-
-
             "protocol": "inspector"
         }
     ]

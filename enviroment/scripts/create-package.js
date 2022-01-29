@@ -124,6 +124,36 @@ const gPromt = async(pQuestion, pValidationRegex) => {
     }
 };
 
+/**
+ * Add packages as vs code workspace to workspace settings.
+ * @param pWorkspaceFile - Workspace setting file.
+ * @param pWorkspaceName - Name of workspace. 
+ * @param pWorkspaceFolder - Folder name of workspace.
+ */
+const gAddVSWorkspace = (pWorkspaceFile, pWorkspaceName, pWorkspaceFolder) => {
+    // Read workspace file json.
+    const lFileText = gFilereader.readFileSync(pWorkspaceFile, { encoding: 'utf8' });
+    const lPackageJson = JSON.parse(lFileText);
+
+    // Add new folder to folder list.
+    const lFolderList = lPackageJson['folders'];
+    lFolderList.push({
+        'name': pWorkspaceName,
+        'path': `./packages/${pWorkspaceFolder}`
+    });
+
+    // Sort folder alphabeticaly.
+    lFolderList.sort((pFirst, pSecond) => {
+        if (pFirst.name < pSecond.name) { return -1; }
+        if (pFirst.name > pSecond.name) { return 1; }
+        return 0;
+    });
+
+    // Update workspace file.
+    const lPackageJsonText = JSON.stringify(lPackageJson, null, 4);
+    gFilereader.writeFileSync(pWorkspaceFile, lPackageJsonText, { encoding: 'utf8' });
+};
+
 
 module.exports.createPackage = async() => {
     console.log('//// Create Project ////');
@@ -138,6 +168,7 @@ module.exports.createPackage = async() => {
         const lPackagePath = gPath.resolve(__dirname, '../../packages', lProjectFolder);
         const lBlueprintPath = gPath.resolve(__dirname, '../project_blueprint');
         const lPackageFolderPath = gPath.resolve(__dirname, '../../packages');
+        const lWorkspaceFile = gPath.resolve(__dirname, '../../kartoffelgames.public.code-workspace');
 
         // Get all package.json files.
         const lPackageFileList = gGetAllFilesOfName(lPackageFolderPath, 'package.json', 1);
@@ -175,6 +206,9 @@ module.exports.createPackage = async() => {
             [lPackageName]: /{{PACKAGE_NAME}}/g,
             [lProjectFolder]: /{{PROJECT_FOLDER}}/g,
         });
+
+        // Add package to workspace.
+        gAddVSWorkspace(lWorkspaceFile, lProjectName, lProjectFolder);
 
         console.log('Project successfull created.', `Call "npm install -w ${lPackageName}" to initialize this project`);
 
