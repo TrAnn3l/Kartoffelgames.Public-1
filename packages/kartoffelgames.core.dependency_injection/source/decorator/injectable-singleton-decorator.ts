@@ -1,7 +1,7 @@
 import { InjectMode } from '../enum/inject-mode';
+import { Injection } from '../injection/injection';
 import { ReflectInitializer } from '../reflect/reflect-initializer';
 import { InjectionConstructor } from '../type';
-import { InjectionRegister } from './injection-register';
 
 ReflectInitializer.initialize();
 
@@ -10,6 +10,6 @@ ReflectInitializer.initialize();
  * Mark class to be injectable as an singleton object.
  * @param pConstructor - Constructor.
  */
-export function InjectableSingleton(pConstructor: InjectionConstructor): void {
-    InjectionRegister.registerInjectable(pConstructor, InjectMode.Singleton);
+export function InjectableSingletonDecorator(pConstructor: InjectionConstructor): void {
+    Injection.registerInjectable(pConstructor, InjectMode.Singleton);
 }

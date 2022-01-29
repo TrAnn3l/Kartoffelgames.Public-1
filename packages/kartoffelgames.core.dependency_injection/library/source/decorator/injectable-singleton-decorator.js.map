@@ -1,0 +1,1 @@
+{"version":3,"file":"injectable-singleton-decorator.js","sourceRoot":"","sources":["../../../source/decorator/injectable-singleton-decorator.ts"],"names":[],"mappings":";;;AAAA,qDAAiD;AACjD,sDAAmD;AACnD,wEAAoE;AAGpE,wCAAkB,CAAC,UAAU,EAAE,CAAC;AAEhC;;;;GAIG;AACH,SAAgB,4BAA4B,CAAC,YAAkC;IAC3E,qBAAS,CAAC,kBAAkB,CAAC,YAAY,EAAE,wBAAU,CAAC,SAAS,CAAC,CAAC;AACrE,CAAC;AAFD,oEAEC"}

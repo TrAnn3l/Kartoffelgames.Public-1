@@ -1,30 +1,25 @@
-import { Injectable } from './injection/injectable';
-import { InjectableSingleton } from './injection/injectable-singleton';
-import { InjectionRegister } from './injection/injection-register';
+import { InjectableDecorator } from './decorator/injectable-decorator';
+import { InjectableSingletonDecorator } from './decorator/injectable-singleton-decorator';
+import { MetadataDecorator } from './decorator/metadata-decorator';
 export declare class Injector {
     /**
      * AtScript.
      * Mark class to be injectable as an instanced object.
      * @param pConstructor - Constructor.
      */
-    static readonly Injectable: typeof Injectable;
+    static readonly Injectable: typeof InjectableDecorator;
     /**
      * AtScript.
      * Mark class to be injectable as an singleton object.
      * @param pConstructor - Constructor.
      */
-    static readonly InjectableSingleton: typeof InjectableSingleton;
+    static readonly InjectableSingleton: typeof InjectableSingletonDecorator;
     /**
-     * Create object and auto inject parameter.
-     * @param pConstructor - Constructor that should be created.
+     * AtScript.
+     * Add metadata to class, method, accessor or property
+     * @param pMetadataKey - Key of metadata.
+     * @param pMetadataValue - Value of metadata.
      */
-    static createObject: typeof InjectionRegister.createObject;
-    /**
-     * Replaces an constructor so instead of the original, the replacement gets injected.
-     * Both consructors must be registered.
-     * @param pOriginalConstructor - Original constructor that should be replaced.
-     * @param pReplacementConstructor - Replacement constructor that gets injected instead of original constructor.
-     */
-    static replaceInjectable: typeof InjectionRegister.replaceInjectable;
+    static readonly Metadata: typeof MetadataDecorator;
 }
 //# sourceMappingURL=injector.d.ts.map

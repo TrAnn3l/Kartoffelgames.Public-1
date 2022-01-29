@@ -1,13 +1,10 @@
 // Injection
 export { Injector } from './injector';
+export { Injection } from './injection/injection';
 export { InjectionConstructor } from './type';
 
 // Metadata
-export { Metadata } from './metadata/metadata';
+export { Metadata as Metadata } from './metadata/metadata';
 
 // Decoration
-export { DecorationHistory } from './reflect/decoration-history';
-
-// Decorator
-export { Injectable } from './injection/injectable';
-export { InjectableSingleton } from './injection/injectable-singleton';
+export { DecorationHistory } from './decoration-history/decoration-history';

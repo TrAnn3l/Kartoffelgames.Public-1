@@ -1,6 +1,6 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { InjectionConstructor } from '../type';
-import { DecorationHistory } from './decoration-history';
+import { DecorationHistory } from '../decoration-history/decoration-history';
 import { Metadata } from '../metadata/metadata';
 import { PropertyMetadata } from '../metadata/property-metadata';
 import { ConstructorMetadata } from '../metadata/constructor-metadata';
@@ -179,7 +179,7 @@ export class ReflectInitializer {
                     // Property decorator.
                     /* istanbul ignore else */
                     if (pMetadataKey === 'design:paramtypes') {
-                        lPropertyMetadata.parameterTypes = <Array<InjectionConstructor>>pMetadataValue;
+                        lPropertyMetadata.parameterTypeList = <Array<InjectionConstructor>>pMetadataValue;
                     } else if (pMetadataKey === 'design:type') {
                         lPropertyMetadata.type = <InjectionConstructor>pMetadataValue;
                     } else if (pMetadataKey === 'design:returntype') {
@@ -193,7 +193,7 @@ export class ReflectInitializer {
                 // Class decorator.
                 /* istanbul ignore else */
                 if (pMetadataKey === 'design:paramtypes') {
-                    lConstructorMetadata.parameterTypes = <Array<InjectionConstructor>>pMetadataValue;
+                    lConstructorMetadata.parameterTypeList = <Array<InjectionConstructor>>pMetadataValue;
                 }
                 // Ignore future metadata.
             }

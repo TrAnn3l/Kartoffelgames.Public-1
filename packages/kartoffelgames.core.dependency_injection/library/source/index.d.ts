@@ -1,7 +1,6 @@
 export { Injector } from './injector';
+export { Injection } from './injection/injection';
 export { InjectionConstructor } from './type';
-export { Metadata } from './metadata/metadata';
-export { DecorationHistory } from './reflect/decoration-history';
-export { Injectable } from './injection/injectable';
-export { InjectableSingleton } from './injection/injectable-singleton';
+export { Metadata as Metadata } from './metadata/metadata';
+export { DecorationHistory } from './decoration-history/decoration-history';
 //# sourceMappingURL=index.d.ts.map

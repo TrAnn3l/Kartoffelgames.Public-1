@@ -1,6 +1,6 @@
-import { Injectable } from './injection/injectable';
-import { InjectableSingleton } from './injection/injectable-singleton';
-import { InjectionRegister } from './injection/injection-register';
+import { InjectableDecorator } from './decorator/injectable-decorator';
+import { InjectableSingletonDecorator } from './decorator/injectable-singleton-decorator';
+import { MetadataDecorator } from './decorator/metadata-decorator';
 
 export class Injector {
     /**
@@ -9,7 +9,7 @@ export class Injector {
      * @param pConstructor - Constructor.
      */
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    public static readonly Injectable = Injectable;
+    public static readonly Injectable = InjectableDecorator;
 
     /**
      * AtScript.
@@ -17,19 +17,14 @@ export class Injector {
      * @param pConstructor - Constructor.
      */
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    public static readonly InjectableSingleton = InjectableSingleton;
+    public static readonly InjectableSingleton = InjectableSingletonDecorator;
 
     /**
-     * Create object and auto inject parameter.
-     * @param pConstructor - Constructor that should be created.
+     * AtScript.
+     * Add metadata to class, method, accessor or property
+     * @param pMetadataKey - Key of metadata.
+     * @param pMetadataValue - Value of metadata.
      */
-    public static createObject = InjectionRegister.createObject;
-
-    /**
-     * Replaces an constructor so instead of the original, the replacement gets injected.
-     * Both consructors must be registered.
-     * @param pOriginalConstructor - Original constructor that should be replaced.
-     * @param pReplacementConstructor - Replacement constructor that gets injected instead of original constructor.
-     */
-    public static replaceInjectable = InjectionRegister.replaceInjectable;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    public static readonly Metadata = MetadataDecorator;
 }

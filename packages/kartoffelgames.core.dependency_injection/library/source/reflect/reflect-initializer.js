@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReflectInitializer = void 0;
 const core_data_1 = require("@kartoffelgames/core.data");
-const decoration_history_1 = require("./decoration-history");
+const decoration_history_1 = require("../decoration-history/decoration-history");
 const metadata_1 = require("../metadata/metadata");
 class ReflectInitializer {
     /**
@@ -161,7 +161,7 @@ class ReflectInitializer {
                     // Property decorator.
                     /* istanbul ignore else */
                     if (pMetadataKey === 'design:paramtypes') {
-                        lPropertyMetadata.parameterTypes = pMetadataValue;
+                        lPropertyMetadata.parameterTypeList = pMetadataValue;
                     }
                     else if (pMetadataKey === 'design:type') {
                         lPropertyMetadata.type = pMetadataValue;
@@ -178,7 +178,7 @@ class ReflectInitializer {
                 // Class decorator.
                 /* istanbul ignore else */
                 if (pMetadataKey === 'design:paramtypes') {
-                    lConstructorMetadata.parameterTypes = pMetadataValue;
+                    lConstructorMetadata.parameterTypeList = pMetadataValue;
                 }
                 // Ignore future metadata.
             }

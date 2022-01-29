@@ -18,22 +18,22 @@ class ConstructorMetadata {
     /**
      * Get parameter type information.
      */
-    get parameterTypes() {
+    get parameterTypeList() {
         return this.mParameterTypes ?? null;
     }
     /**
      * Set parameter type information.
      */
-    set parameterTypes(pParameterTypes) {
+    set parameterTypeList(pParameterTypes) {
         // Copy array.
-        this.mParameterTypes = core_data_1.List.newListWith(...pParameterTypes);
+        this.mParameterTypes = pParameterTypes;
     }
     /**
      * Get metadata of constructor.
      * @param pMetadataKey - Metadata key.
      */
     getMetadata(pMetadataKey) {
-        return this.mCustomMetadata.get(pMetadataKey);
+        return this.mCustomMetadata.get(pMetadataKey) ?? null;
     }
     /**
      * Get property by key.

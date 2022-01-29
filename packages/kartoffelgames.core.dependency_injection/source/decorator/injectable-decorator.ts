@@ -1,7 +1,7 @@
 import { InjectMode } from '../enum/inject-mode';
 import { ReflectInitializer } from '../reflect/reflect-initializer';
 import { InjectionConstructor } from '../type';
-import { InjectionRegister } from './injection-register';
+import { Injection } from '../injection/injection';
 
 ReflectInitializer.initialize();
 
@@ -10,6 +10,6 @@ ReflectInitializer.initialize();
  * Mark class to be injectable as an instanced object.
  * @param pConstructor - Constructor.
  */
-export function Injectable(pConstructor: InjectionConstructor): void {
-    InjectionRegister.registerInjectable(pConstructor, InjectMode.Instanced);
+export function InjectableDecorator(pConstructor: InjectionConstructor): void {
+    Injection.registerInjectable(pConstructor, InjectMode.Instanced);
 }

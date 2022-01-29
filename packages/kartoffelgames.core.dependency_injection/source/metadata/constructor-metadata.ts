@@ -13,16 +13,16 @@ export class ConstructorMetadata {
     /**
      * Get parameter type information.
      */
-    public get parameterTypes(): Array<InjectionConstructor> {
+    public get parameterTypeList(): Array<InjectionConstructor> {
         return this.mParameterTypes ?? null;
     }
 
     /**
      * Set parameter type information.
      */
-    public set parameterTypes(pParameterTypes: Array<InjectionConstructor>) {
+    public set parameterTypeList(pParameterTypes: Array<InjectionConstructor>) {
         // Copy array.
-        this.mParameterTypes = List.newListWith(...pParameterTypes);
+        this.mParameterTypes = pParameterTypes;
     }
 
     /**
@@ -38,8 +38,8 @@ export class ConstructorMetadata {
      * Get metadata of constructor.
      * @param pMetadataKey - Metadata key.
      */
-    public getMetadata(pMetadataKey: string): unknown {
-        return this.mCustomMetadata.get(pMetadataKey);
+    public getMetadata<T>(pMetadataKey: string): T {
+        return this.mCustomMetadata.get(pMetadataKey) ?? null;
     }
 
     /**
@@ -61,7 +61,7 @@ export class ConstructorMetadata {
      * @param pMetadataKey - Metadata key.
      * @param pMetadataValue - Metadata value.
      */
-    public setMetadata(pMetadataKey: string, pMetadataValue: any): void {
+    public setMetadata<T>(pMetadataKey: string, pMetadataValue: T): void {
         this.mCustomMetadata.set(pMetadataKey, pMetadataValue);
     }
 }

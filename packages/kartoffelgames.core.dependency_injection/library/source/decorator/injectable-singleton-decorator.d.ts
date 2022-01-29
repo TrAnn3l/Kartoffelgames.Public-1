@@ -4,5 +4,5 @@ import { InjectionConstructor } from '../type';
  * Mark class to be injectable as an singleton object.
  * @param pConstructor - Constructor.
  */
-export declare function InjectableSingleton(pConstructor: InjectionConstructor): void;
-//# sourceMappingURL=injectable-singleton.d.ts.map
+export declare function InjectableSingletonDecorator(pConstructor: InjectionConstructor): void;
+//# sourceMappingURL=injectable-singleton-decorator.d.ts.map

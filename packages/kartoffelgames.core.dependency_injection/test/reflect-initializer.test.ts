@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import { Metadata } from '../../source/metadata/metadata';
-import { ReflectInitializer } from '../../source/reflect/reflect-initializer';
-import { InjectionConstructor } from '../../source/type';
+import { Metadata } from '../source/metadata/metadata';
+import { ReflectInitializer } from '../source/reflect/reflect-initializer';
+import { InjectionConstructor } from '../source/type';
 
 /**
  * Decorator.
@@ -48,7 +48,7 @@ describe('ReflectInitializer', () => {
             }
 
             // Process. Get type information.
-            const lParameterTypeList: Array<InjectionConstructor> = Metadata.get(TestA).getProperty('function').parameterTypes;
+            const lParameterTypeList: Array<InjectionConstructor> = Metadata.get(TestA).getProperty('function').parameterTypeList;
 
             // Process.
             expect(lParameterTypeList).to.have.ordered.members([Number, String]);
@@ -76,7 +76,7 @@ describe('ReflectInitializer', () => {
             }
 
             // Process. Get type information.
-            const lConstructorParameterTypeList: Array<InjectionConstructor> = Metadata.get(TestA).parameterTypes;
+            const lConstructorParameterTypeList: Array<InjectionConstructor> = Metadata.get(TestA).parameterTypeList;
 
             // Process.
             expect(lConstructorParameterTypeList).to.have.ordered.members([String, Number]);
@@ -106,7 +106,7 @@ describe('ReflectInitializer', () => {
             }
 
             // Process. Get type information.
-            const lAccessorParameterTypeList: Array<InjectionConstructor> = Metadata.get(TestA).getProperty('value').parameterTypes;
+            const lAccessorParameterTypeList: Array<InjectionConstructor> = Metadata.get(TestA).getProperty('value').parameterTypeList;
 
             // Process.
             expect(lAccessorParameterTypeList).to.have.ordered.members([Number]);

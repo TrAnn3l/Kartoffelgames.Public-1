@@ -1,5 +1,5 @@
 import { Dictionary } from '@kartoffelgames/core.data';
-import { DecorationHistory } from '../reflect/decoration-history';
+import { DecorationHistory } from '../decoration-history/decoration-history';
 import { InjectionConstructor } from '../type';
 import { ConstructorMetadata } from './constructor-metadata';
 

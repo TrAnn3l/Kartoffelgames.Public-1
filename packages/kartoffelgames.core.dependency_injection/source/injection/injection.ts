@@ -1,10 +1,10 @@
 import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { InjectMode } from '../enum/inject-mode';
-import { DecorationHistory } from '../reflect/decoration-history';
+import { DecorationHistory } from '../decoration-history/decoration-history';
 import { InjectionConstructor } from '../type';
 import { Metadata } from '../metadata/metadata';
 
-export class InjectionRegister {
+export class Injection {
     private static readonly mInjectMode: Dictionary<InjectionConstructor, InjectMode> = new Dictionary<InjectionConstructor, InjectMode>();
     private static readonly mInjectableConstructor: Dictionary<InjectionConstructor, InjectionConstructor> = new Dictionary<InjectionConstructor, InjectionConstructor>();
     private static readonly mInjectableReplacement: Dictionary<InjectionConstructor, InjectionConstructor> = new Dictionary<InjectionConstructor, InjectionConstructor>();
@@ -35,14 +35,14 @@ export class InjectionRegister {
 
         // Find constructor in decoration history that was used for registering. Only root can be registered.
         let lRegisteredConstructor: InjectionConstructor = DecorationHistory.getRootOf(pConstructor);
-        if (!InjectionRegister.mInjectableConstructor.has(lRegisteredConstructor)) {
-            throw new Exception(`Constructor "${pConstructor.name}" is not registered for injection and can not be build`, InjectionRegister);
+        if (!Injection.mInjectableConstructor.has(lRegisteredConstructor)) {
+            throw new Exception(`Constructor "${pConstructor.name}" is not registered for injection and can not be build`, Injection);
         }
 
         // Replace current constructor with global replacement.
         let lConstructor: InjectionConstructor;
-        if (InjectionRegister.mInjectableReplacement.has(lRegisteredConstructor)) {
-            const lReplacementConstructor = InjectionRegister.mInjectableReplacement.get(lRegisteredConstructor);
+        if (Injection.mInjectableReplacement.has(lRegisteredConstructor)) {
+            const lReplacementConstructor = Injection.mInjectableReplacement.get(lRegisteredConstructor);
             lConstructor = lReplacementConstructor;
 
             // Set replacement constructor that was used for registering. Is allways registered.
@@ -52,17 +52,17 @@ export class InjectionRegister {
         }
 
         // Get constructor parameter type information and default to empty parameter list.
-        let lParameterTypeList: Array<InjectionConstructor> = Metadata.get(lRegisteredConstructor).parameterTypes;
+        let lParameterTypeList: Array<InjectionConstructor> = Metadata.get(lRegisteredConstructor).parameterTypeList;
         if (!lParameterTypeList) {
             lParameterTypeList = new Array<InjectionConstructor>();
         }
 
         // Get injection mode.
-        const lInjecttionMode: InjectMode = InjectionRegister.mInjectMode.get(lRegisteredConstructor);
+        const lInjecttionMode: InjectMode = Injection.mInjectMode.get(lRegisteredConstructor);
 
         // Return cached sinleton object if not forced to create a new one.
-        if (!lForceCreate && lInjecttionMode === InjectMode.Singleton && InjectionRegister.mSingletonMapping.has(lRegisteredConstructor)) {
-            return <T>InjectionRegister.mSingletonMapping.get(lRegisteredConstructor);
+        if (!lForceCreate && lInjecttionMode === InjectMode.Singleton && Injection.mSingletonMapping.has(lRegisteredConstructor)) {
+            return <T>Injection.mSingletonMapping.get(lRegisteredConstructor);
         }
 
         // Create parameter.
@@ -77,9 +77,9 @@ export class InjectionRegister {
                 // Proxy exception.
                 try {
                     // Get injectable parameter.
-                    lCreatedParameter = InjectionRegister.createObject(lParameterType, lLocalInjections);
+                    lCreatedParameter = Injection.createObject(lParameterType, lLocalInjections);
                 } catch (pException) {
-                    throw new Exception(`Parameter "${lParameterType.name}" of ${lConstructor.name} is not injectable.\n` + pException.message, InjectionRegister);
+                    throw new Exception(`Parameter "${lParameterType.name}" of ${lConstructor.name} is not injectable.\n` + pException.message, Injection);
                 }
             }
 
@@ -92,7 +92,7 @@ export class InjectionRegister {
 
         // Cache singleton objects but only if not forced to create.
         if (!lForceCreate && lInjecttionMode === InjectMode.Singleton) {
-            InjectionRegister.mSingletonMapping.add(lRegisteredConstructor, lCreatedObject);
+            Injection.mSingletonMapping.add(lRegisteredConstructor, lCreatedObject);
         }
 
         return lCreatedObject;
@@ -108,8 +108,8 @@ export class InjectionRegister {
         const lBaseConstructor: InjectionConstructor = DecorationHistory.getRootOf(pConstructor);
 
         // Map constructor.
-        InjectionRegister.mInjectableConstructor.add(lBaseConstructor, pConstructor);
-        InjectionRegister.mInjectMode.add(lBaseConstructor, pMode);
+        Injection.mInjectableConstructor.add(lBaseConstructor, pConstructor);
+        Injection.mInjectMode.add(lBaseConstructor, pMode);
     }
 
     /**
@@ -121,17 +121,17 @@ export class InjectionRegister {
     public static replaceInjectable(pOriginalConstructor: InjectionConstructor, pReplacementConstructor: InjectionConstructor): void {
         // Find original registered original. Only root can be registerd.
         const lRegisteredOriginal: InjectionConstructor = DecorationHistory.getRootOf(pOriginalConstructor);
-        if (!InjectionRegister.mInjectableConstructor.has(lRegisteredOriginal)) {
-            throw new Exception('Original constructor is not registered.', InjectionRegister);
+        if (!Injection.mInjectableConstructor.has(lRegisteredOriginal)) {
+            throw new Exception('Original constructor is not registered.', Injection);
         }
 
         // Find replacement registered original. Only root can be registered.
         const lRegisteredReplacement: InjectionConstructor = DecorationHistory.getRootOf(pReplacementConstructor);
-        if (!InjectionRegister.mInjectableConstructor.has(lRegisteredReplacement)) {
-            throw new Exception('Replacement constructor is not registered.', InjectionRegister);
+        if (!Injection.mInjectableConstructor.has(lRegisteredReplacement)) {
+            throw new Exception('Replacement constructor is not registered.', Injection);
         }
 
         // Register replacement.
-        InjectionRegister.mInjectableReplacement.set(lRegisteredOriginal, pReplacementConstructor);
+        Injection.mInjectableReplacement.set(lRegisteredOriginal, pReplacementConstructor);
     }
 }

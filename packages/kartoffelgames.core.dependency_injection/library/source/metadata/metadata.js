@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Metadata = void 0;
 const core_data_1 = require("@kartoffelgames/core.data");
-const decoration_history_1 = require("../reflect/decoration-history");
+const decoration_history_1 = require("../decoration-history/decoration-history");
 const constructor_metadata_1 = require("./constructor-metadata");
 /**
  * Static.

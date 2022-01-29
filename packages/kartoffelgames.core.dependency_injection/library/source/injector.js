@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Injector = void 0;
-const injectable_1 = require("./injection/injectable");
-const injectable_singleton_1 = require("./injection/injectable-singleton");
-const injection_register_1 = require("./injection/injection-register");
+const injectable_decorator_1 = require("./decorator/injectable-decorator");
+const injectable_singleton_decorator_1 = require("./decorator/injectable-singleton-decorator");
+const metadata_decorator_1 = require("./decorator/metadata-decorator");
 class Injector {
 }
 exports.Injector = Injector;
@@ -13,24 +13,20 @@ exports.Injector = Injector;
  * @param pConstructor - Constructor.
  */
 // eslint-disable-next-line @typescript-eslint/naming-convention
-Injector.Injectable = injectable_1.Injectable;
+Injector.Injectable = injectable_decorator_1.InjectableDecorator;
 /**
  * AtScript.
  * Mark class to be injectable as an singleton object.
  * @param pConstructor - Constructor.
  */
 // eslint-disable-next-line @typescript-eslint/naming-convention
-Injector.InjectableSingleton = injectable_singleton_1.InjectableSingleton;
+Injector.InjectableSingleton = injectable_singleton_decorator_1.InjectableSingletonDecorator;
 /**
- * Create object and auto inject parameter.
- * @param pConstructor - Constructor that should be created.
+ * AtScript.
+ * Add metadata to class, method, accessor or property
+ * @param pMetadataKey - Key of metadata.
+ * @param pMetadataValue - Value of metadata.
  */
-Injector.createObject = injection_register_1.InjectionRegister.createObject;
-/**
- * Replaces an constructor so instead of the original, the replacement gets injected.
- * Both consructors must be registered.
- * @param pOriginalConstructor - Original constructor that should be replaced.
- * @param pReplacementConstructor - Replacement constructor that gets injected instead of original constructor.
- */
-Injector.replaceInjectable = injection_register_1.InjectionRegister.replaceInjectable;
+// eslint-disable-next-line @typescript-eslint/naming-convention
+Injector.Metadata = metadata_decorator_1.MetadataDecorator;
 //# sourceMappingURL=injector.js.map

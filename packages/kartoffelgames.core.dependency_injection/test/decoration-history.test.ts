@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { DecorationHistory } from '../../source/reflect/decoration-history';
-import { InjectionConstructor } from '../../source/type';
+import { DecorationHistory } from '../source/decoration-history/decoration-history';
+import { InjectionConstructor } from '../source/type';
 
 describe('DecorationHistory', () => {
     it('Static Method: addHistory', () => {

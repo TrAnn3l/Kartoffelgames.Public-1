@@ -1,7 +1,7 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { InjectMode } from '../enum/inject-mode';
 import { InjectionConstructor } from '../type';
-export declare class InjectionRegister {
+export declare class Injection {
     private static readonly mInjectMode;
     private static readonly mInjectableConstructor;
     private static readonly mInjectableReplacement;
@@ -31,4 +31,4 @@ export declare class InjectionRegister {
      */
     static replaceInjectable(pOriginalConstructor: InjectionConstructor, pReplacementConstructor: InjectionConstructor): void;
 }
-//# sourceMappingURL=injection-register.d.ts.map
+//# sourceMappingURL=injection.d.ts.map

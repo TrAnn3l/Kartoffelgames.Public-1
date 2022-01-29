@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { ConstructorMetadata } from '../../source/metadata/constructor-metadata';
 import { Metadata } from '../../source/metadata/metadata';
-import { DecorationHistory } from '../../source/reflect/decoration-history';
+import { DecorationHistory } from '../../source/decoration-history/decoration-history';
 import { InjectionConstructor } from '../../source/type';
 
 /**

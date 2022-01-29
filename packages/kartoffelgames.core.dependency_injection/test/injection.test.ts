@@ -1,11 +1,10 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { expect } from 'chai';
-import { InjectMode } from '../../source/enum/inject-mode';
-import { Injectable } from '../../source/injection/injectable';
-import { InjectableSingleton } from '../../source/injection/injectable-singleton';
-import { InjectionRegister } from '../../source/injection/injection-register';
-import { Injector } from '../../source/injector';
-import { InjectionConstructor } from '../../source/type';
+import { InjectMode } from '../source/enum/inject-mode';
+import { InjectableDecorator } from '../source/decorator/injectable-decorator';
+import { InjectableSingletonDecorator } from '../source/decorator/injectable-singleton-decorator';
+import { Injection } from '../source/injection/injection';
+import { InjectionConstructor } from '../source/type';
 
 /**
  * Decorator.
@@ -17,7 +16,7 @@ const gPlaceholderDecorator = (pConstructor: InjectionConstructor): any => {
     return class extends pConstructor { constructor(...pArgs: Array<any>) { super(...pArgs); } };
 };
 
-describe('InjectionRegister', () => {
+describe('Injection', () => {
     describe('Static Method: createObject', () => {
         it('-- Not registered', () => {
             // Setup.
@@ -25,7 +24,7 @@ describe('InjectionRegister', () => {
 
             // Process.
             const lThrows = () => {
-                InjectionRegister.createObject(TestA);
+                Injection.createObject(TestA);
             };
 
             // Evaluation.
@@ -34,11 +33,11 @@ describe('InjectionRegister', () => {
 
         it('-- Default without parameter', () => {
             // Setup.
-            @Injectable
+            @InjectableDecorator
             class TestA { }
 
             // Process.
-            const lCreatedObject: TestA = InjectionRegister.createObject(TestA);
+            const lCreatedObject: TestA = Injection.createObject(TestA);
 
             // Evaluation.
             expect(lCreatedObject).to.be.instanceOf(TestA);
@@ -46,15 +45,15 @@ describe('InjectionRegister', () => {
 
         it('-- Default with parameter', () => {
             // Setup.
-            @Injectable
+            @InjectableDecorator
             class TestParameterA { }
-            @Injectable
+            @InjectableDecorator
             class TestParameterB { }
-            @Injectable
+            @InjectableDecorator
             class TestA { constructor(public mParameterA: TestParameterA, public mParameterB: TestParameterB) { } }
 
             // Process.
-            const lCreatedObject: TestA = InjectionRegister.createObject(TestA);
+            const lCreatedObject: TestA = Injection.createObject(TestA);
 
             // Evaluation.
             expect(lCreatedObject).to.be.instanceOf(TestA);
@@ -64,16 +63,16 @@ describe('InjectionRegister', () => {
 
         it('-- Default with parameter, parameter is singleton.', () => {
             // Setup.
-            @Injectable
+            @InjectableDecorator
             class TestParameterA { }
-            @InjectableSingleton
+            @InjectableSingletonDecorator
             class TestParameterB { }
-            @Injectable
+            @InjectableDecorator
             class TestA { constructor(public mDefault: TestParameterA, public mSingleton: TestParameterB) { } }
 
             // Process.
-            const lCreatedObjectOne: TestA = InjectionRegister.createObject(TestA);
-            const lCreatedObjectTwo: TestA = InjectionRegister.createObject(TestA);
+            const lCreatedObjectOne: TestA = Injection.createObject(TestA);
+            const lCreatedObjectTwo: TestA = Injection.createObject(TestA);
 
             // Evaluation.
             expect(lCreatedObjectOne.mDefault).to.be.instanceOf(TestParameterA);
@@ -84,12 +83,12 @@ describe('InjectionRegister', () => {
         it('-- Default with parameter, parameter not registered.', () => {
             // Setup.
             class TestParameter { }
-            @Injectable
+            @InjectableDecorator
             class TestA { constructor(public mParameter: TestParameter) { } }
 
             // Process.
             const lThrows = () => {
-                InjectionRegister.createObject(TestA);
+                Injection.createObject(TestA);
             };
 
             // Evaluation.
@@ -98,12 +97,12 @@ describe('InjectionRegister', () => {
 
         it('-- Singleton without parameter', () => {
             // Setup.
-            @InjectableSingleton
+            @InjectableSingletonDecorator
             class TestA { }
 
             // Process.
-            const lCreatedObjectOne: TestA = InjectionRegister.createObject(TestA);
-            const lCreatedObjectTwo: TestA = InjectionRegister.createObject(TestA);
+            const lCreatedObjectOne: TestA = Injection.createObject(TestA);
+            const lCreatedObjectTwo: TestA = Injection.createObject(TestA);
 
             // Evaluation.
             expect(lCreatedObjectOne).to.be.instanceOf(TestA);
@@ -112,15 +111,15 @@ describe('InjectionRegister', () => {
 
         it('-- Singleton with parameter', () => {
             // Setup.
-            @Injectable
+            @InjectableDecorator
             class TestParameterA { }
-            @Injectable
+            @InjectableDecorator
             class TestParameterB { }
-            @InjectableSingleton
+            @InjectableSingletonDecorator
             class TestA { constructor(public mParameterA: TestParameterA, public mParameterB: TestParameterB) { } }
 
             // Process.
-            const lCreatedObject: TestA = InjectionRegister.createObject(TestA);
+            const lCreatedObject: TestA = Injection.createObject(TestA);
 
             // Evaluation.
             expect(lCreatedObject).to.be.instanceOf(TestA);
@@ -130,12 +129,12 @@ describe('InjectionRegister', () => {
 
         it('-- Singleton force create', () => {
             // Setup.
-            @InjectableSingleton
+            @InjectableSingletonDecorator
             class TestA { }
 
             // Process.
-            const lCreatedObjectOne: TestA = InjectionRegister.createObject(TestA);
-            const lCreatedObjectTwo: TestA = InjectionRegister.createObject(TestA, true);
+            const lCreatedObjectOne: TestA = Injection.createObject(TestA);
+            const lCreatedObjectTwo: TestA = Injection.createObject(TestA, true);
 
             // Evaluation.
             expect(lCreatedObjectTwo).to.be.instanceOf(TestA);
@@ -144,16 +143,16 @@ describe('InjectionRegister', () => {
 
         it('-- Default with layered history', () => {
             // Setup.
-            @Injectable
+            @InjectableDecorator
             @gPlaceholderDecorator
             class TestA { }
             @gPlaceholderDecorator
-            @Injectable
+            @InjectableDecorator
             class TestB { }
 
             // Process.
-            const lCreatedObjectA: TestA = InjectionRegister.createObject(TestA);
-            const lCreatedObjectB: TestB = InjectionRegister.createObject(TestB);
+            const lCreatedObjectA: TestA = Injection.createObject(TestA);
+            const lCreatedObjectB: TestB = Injection.createObject(TestB);
 
             // Evaluation.
             expect(lCreatedObjectA).to.be.instanceOf(TestA);
@@ -162,16 +161,16 @@ describe('InjectionRegister', () => {
 
         it('-- Default with layered history with parameter', () => {
             // Setup.
-            @Injectable
+            @InjectableDecorator
             class TestParameterA { }
-            @Injectable
+            @InjectableDecorator
             class TestParameterB { }
-            @Injectable
+            @InjectableDecorator
             @gPlaceholderDecorator
             class TestA { constructor(public mParameterA: TestParameterA, public mParameterB: TestParameterB) { } }
 
             // Process.
-            const lCreatedObject: TestA = InjectionRegister.createObject(TestA);
+            const lCreatedObject: TestA = Injection.createObject(TestA);
 
             // Evaluation.
             expect(lCreatedObject).to.be.instanceOf(TestA);
@@ -181,14 +180,14 @@ describe('InjectionRegister', () => {
 
         it('-- Default with parameter with layered history', () => {
             // Setup.
-            @Injectable
+            @InjectableDecorator
             @gPlaceholderDecorator
             class TestParameterA { }
-            @Injectable
+            @InjectableDecorator
             class TestA { constructor(public mParameterA: TestParameterA) { } }
 
             // Process.
-            const lCreatedObject: TestA = InjectionRegister.createObject(TestA);
+            const lCreatedObject: TestA = Injection.createObject(TestA);
 
             // Evaluation.
             expect(lCreatedObject).to.be.instanceOf(TestA);
@@ -197,16 +196,16 @@ describe('InjectionRegister', () => {
 
         it('-- Default injection replacement without parameter', () => {
             // Setup.
-            @Injectable
+            @InjectableDecorator
             class TestA { }
-            @Injectable
+            @InjectableDecorator
             class ReplacementTestA { }
 
             // Setup. Set replacement.
-            InjectionRegister.replaceInjectable(TestA, ReplacementTestA);
+            Injection.replaceInjectable(TestA, ReplacementTestA);
 
             // Process.
-            const lCreatedObject: TestA = InjectionRegister.createObject(TestA);
+            const lCreatedObject: TestA = Injection.createObject(TestA);
 
             // Evaluation.
             expect(lCreatedObject).to.be.instanceOf(ReplacementTestA);
@@ -214,18 +213,18 @@ describe('InjectionRegister', () => {
 
         it('-- Default with parameter with injection replacement', () => {
             // Setup.
-            @Injectable
+            @InjectableDecorator
             class TestParameterA { }
-            @Injectable
+            @InjectableDecorator
             class ReplacementTestParameterA { }
-            @Injectable
+            @InjectableDecorator
             class TestA { constructor(public mParameterA: TestParameterA) { } }
 
             // Setup. Set replacement.
-            InjectionRegister.replaceInjectable(TestParameterA, ReplacementTestParameterA);
+            Injection.replaceInjectable(TestParameterA, ReplacementTestParameterA);
 
             // Process.
-            const lCreatedObject: TestA = InjectionRegister.createObject(TestA);
+            const lCreatedObject: TestA = Injection.createObject(TestA);
 
             // Evaluation.
             expect(lCreatedObject).to.be.instanceOf(TestA);
@@ -234,18 +233,18 @@ describe('InjectionRegister', () => {
 
         it('-- Default injection replacement with layered history', () => {
             // Setup.
-            @Injectable
+            @InjectableDecorator
             @gPlaceholderDecorator
             class TestA { }
-            @Injectable
+            @InjectableDecorator
             @gPlaceholderDecorator
             class ReplacementTestA { }
 
             // Setup. Set replacement.
-            InjectionRegister.replaceInjectable(TestA, ReplacementTestA);
+            Injection.replaceInjectable(TestA, ReplacementTestA);
 
             // Process.
-            const lCreatedObjectA: TestA = InjectionRegister.createObject(TestA);
+            const lCreatedObjectA: TestA = Injection.createObject(TestA);
 
             // Evaluation.
             expect(lCreatedObjectA).to.be.instanceOf(ReplacementTestA);
@@ -253,12 +252,12 @@ describe('InjectionRegister', () => {
 
         it('-- Default with second layer local injection', () => {
             // Setup.
-            @Injectable
+            @InjectableDecorator
             class TestParameterLayerTwo { }
             class TestParameterLayerTwoLocalInjection { }
-            @Injectable
+            @InjectableDecorator
             class TestParameterLayerOne { constructor(public mParameter: TestParameterLayerTwo) { } }
-            @Injectable
+            @InjectableDecorator
             class TestA { constructor(public mParameter: TestParameterLayerOne) { } }
 
             // Setup. Create local injection.
@@ -267,7 +266,7 @@ describe('InjectionRegister', () => {
             lLocalInjectionMap.add(TestParameterLayerTwo, lLocalInjectionParameter);
 
             // Process.
-            const lCreatedObject: TestA = InjectionRegister.createObject(TestA, lLocalInjectionMap);
+            const lCreatedObject: TestA = Injection.createObject(TestA, lLocalInjectionMap);
 
             // Evaluation.
             expect(lCreatedObject).to.be.instanceOf(TestA);
@@ -277,10 +276,10 @@ describe('InjectionRegister', () => {
 
         it('-- Default with local injection', () => {
             // Setup.
-            @Injectable
+            @InjectableDecorator
             class TestParameter { }
             class TestParameterLocalInjection { }
-            @InjectableSingleton
+            @InjectableSingletonDecorator
             class TestA { constructor(public mParameter: TestParameter) { } }
 
             // Setup. Create local injection.
@@ -289,7 +288,7 @@ describe('InjectionRegister', () => {
             lLocalInjectionMap.add(TestParameter, lLocalInjectionParameter);
 
             // Process.
-            const lCreatedObject: TestA = InjectionRegister.createObject(TestA, lLocalInjectionMap);
+            const lCreatedObject: TestA = Injection.createObject(TestA, lLocalInjectionMap);
 
             // Evaluation.
             expect(lCreatedObject).to.be.instanceOf(TestA);
@@ -299,10 +298,10 @@ describe('InjectionRegister', () => {
 
         it('-- Default with local injection with force', () => {
             // Setup.
-            @Injectable
+            @InjectableDecorator
             class TestParameter { }
             class TestParameterLocalInjection { }
-            @InjectableSingleton
+            @InjectableSingletonDecorator
             class TestA { constructor(public mParameter: TestParameter) { } }
 
             // Setup. Create local injection.
@@ -311,7 +310,7 @@ describe('InjectionRegister', () => {
             lLocalInjectionMap.add(TestParameter, lLocalInjectionParameter);
 
             // Process.
-            const lCreatedObject: TestA = InjectionRegister.createObject(TestA, true, lLocalInjectionMap);
+            const lCreatedObject: TestA = Injection.createObject(TestA, true, lLocalInjectionMap);
 
             // Evaluation.
             expect(lCreatedObject).to.be.instanceOf(TestA);
@@ -324,8 +323,8 @@ describe('InjectionRegister', () => {
         class Type { }
 
         // Process.
-        InjectionRegister.registerInjectable(Type, InjectMode.Instanced);
-        const lCreatedObject = InjectionRegister.createObject<Type>(Type);
+        Injection.registerInjectable(Type, InjectMode.Instanced);
+        const lCreatedObject = Injection.createObject<Type>(Type);
 
         // Evaluation.
         expect(lCreatedObject).to.be.an.instanceOf(Type);
@@ -338,7 +337,7 @@ describe('InjectionRegister', () => {
             class ReplacementType { }
 
             // Setup. Type with injected parameter.
-            @Injector.Injectable
+            @InjectableDecorator
             class TestClass {
                 public a: any;
                 constructor(pType: OriginalType) {
@@ -347,12 +346,12 @@ describe('InjectionRegister', () => {
             }
 
             // Setup. Register injectable.
-            InjectionRegister.registerInjectable(OriginalType, InjectMode.Instanced);
-            InjectionRegister.registerInjectable(ReplacementType, InjectMode.Instanced);
+            Injection.registerInjectable(OriginalType, InjectMode.Instanced);
+            Injection.registerInjectable(ReplacementType, InjectMode.Instanced);
 
             // Process.
-            InjectionRegister.replaceInjectable(OriginalType, ReplacementType);
-            const lCreatedObject = InjectionRegister.createObject<TestClass>(TestClass);
+            Injection.replaceInjectable(OriginalType, ReplacementType);
+            const lCreatedObject = Injection.createObject<TestClass>(TestClass);
 
             // Evaluation.
             expect(lCreatedObject.a).to.be.an.instanceOf(ReplacementType);
@@ -364,11 +363,11 @@ describe('InjectionRegister', () => {
             class ReplacementType { }
 
             // Setup. Register injectable.
-            InjectionRegister.registerInjectable(ReplacementType, InjectMode.Instanced);
+            Injection.registerInjectable(ReplacementType, InjectMode.Instanced);
 
             // Process.
             const lThrowErrorFunction = () => {
-                InjectionRegister.replaceInjectable(OriginalType, ReplacementType);
+                Injection.replaceInjectable(OriginalType, ReplacementType);
             };
 
             // Evaluation.
@@ -381,11 +380,11 @@ describe('InjectionRegister', () => {
             class ReplacementType { }
 
             // Setup. Register injectable.
-            InjectionRegister.registerInjectable(OriginalType, InjectMode.Instanced);
+            Injection.registerInjectable(OriginalType, InjectMode.Instanced);
 
             // Process.
             const lThrowErrorFunction = () => {
-                InjectionRegister.replaceInjectable(OriginalType, ReplacementType);
+                Injection.replaceInjectable(OriginalType, ReplacementType);
             };
 
             // Evaluation.

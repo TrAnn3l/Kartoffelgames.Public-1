@@ -10,11 +10,11 @@ export declare class ConstructorMetadata {
     /**
      * Get parameter type information.
      */
-    get parameterTypes(): Array<InjectionConstructor>;
+    get parameterTypeList(): Array<InjectionConstructor>;
     /**
      * Set parameter type information.
      */
-    set parameterTypes(pParameterTypes: Array<InjectionConstructor>);
+    set parameterTypeList(pParameterTypes: Array<InjectionConstructor>);
     /**
      * Constructor.
      * Initialize lists.
@@ -24,7 +24,7 @@ export declare class ConstructorMetadata {
      * Get metadata of constructor.
      * @param pMetadataKey - Metadata key.
      */
-    getMetadata(pMetadataKey: string): unknown;
+    getMetadata<T>(pMetadataKey: string): T;
     /**
      * Get property by key.
      * Creates new property metadata if it not already exists.
@@ -36,6 +36,6 @@ export declare class ConstructorMetadata {
      * @param pMetadataKey - Metadata key.
      * @param pMetadataValue - Metadata value.
      */
-    setMetadata(pMetadataKey: string, pMetadataValue: any): void;
+    setMetadata<T>(pMetadataKey: string, pMetadataValue: T): void;
 }
 //# sourceMappingURL=constructor-metadata.d.ts.map
