@@ -13,16 +13,13 @@ class Metadata {
      * Get metadata of constructor.
      */
     static get(pConstructor) {
-        // Find registered constructor that has the metadata information.
-        const lHistory = decoration_history_1.DecorationHistory.getBackwardHistoryOf(pConstructor);
-        const lRegisteredConstructor = lHistory.find((pConstructorHistory) => {
-            return Metadata.mConstructorMetadata.has(pConstructorHistory);
-        });
+        // Use root constructor to register metadata information.
+        const lRegisteredConstructor = decoration_history_1.DecorationHistory.getRootOf(pConstructor);
         // Create new or get metadata.
         let lMetadata;
-        if (!lRegisteredConstructor) {
+        if (!this.mConstructorMetadata.has(lRegisteredConstructor)) {
             lMetadata = new constructor_metadata_1.ConstructorMetadata();
-            Metadata.mConstructorMetadata.add(pConstructor, lMetadata);
+            Metadata.mConstructorMetadata.add(lRegisteredConstructor, lMetadata);
         }
         else {
             lMetadata = Metadata.mConstructorMetadata.get(lRegisteredConstructor);

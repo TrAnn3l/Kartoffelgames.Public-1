@@ -1,7 +1,8 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { expect } from 'chai';
-import { Injectable, InjectableSingleton } from '../../source';
 import { InjectMode } from '../../source/enum/inject-mode';
+import { Injectable } from '../../source/injection/injectable';
+import { InjectableSingleton } from '../../source/injection/injectable-singleton';
 import { InjectionRegister } from '../../source/injection/injection-register';
 import { Injector } from '../../source/injector';
 import { InjectionConstructor } from '../../source/type';

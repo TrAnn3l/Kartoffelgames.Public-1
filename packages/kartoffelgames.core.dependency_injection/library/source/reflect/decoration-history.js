@@ -12,19 +12,16 @@ class DecorationHistory {
         DecorationHistory.mBackwardHistory.add(pToConstructor, pFromConstructor);
     }
     /**
-     * The a history starting from the specified constructor and ending on the original undecorated constructor.
-     * @param pConstructor - Constructor where the search should begin.
+     * Get the root constructor of decoration history.
+     * @param pConstructor - Constructor with decorations.
      */
-    static getBackwardHistoryOf(pConstructor) {
-        // Create history and add starting constructor.
-        const lHistory = new Array();
-        lHistory.push(pConstructor);
+    static getRootOf(pConstructor) {
         // Iterate over history as long as history can't go back.
         let lNextEntry = pConstructor;
-        while (typeof (lNextEntry = DecorationHistory.mBackwardHistory.get(lNextEntry)) !== 'undefined') {
-            lHistory.push(lNextEntry);
+        while (DecorationHistory.mBackwardHistory.has(lNextEntry)) {
+            lNextEntry = DecorationHistory.mBackwardHistory.get(lNextEntry);
         }
-        return lHistory;
+        return lNextEntry;
     }
 }
 exports.DecorationHistory = DecorationHistory;

@@ -33,28 +33,20 @@ export class InjectionRegister {
             lLocalInjections = pLocalInjections ?? new Dictionary<InjectionConstructor, any>();
         }
 
-        // Find constructor in decoration history that was used for registering.
-        const lHistory: Array<InjectionConstructor> = DecorationHistory.getBackwardHistoryOf(pConstructor);
-        let lRegisteredConstructor: InjectionConstructor = lHistory.find((pConstructorHistory: InjectionConstructor) => {
-            return InjectionRegister.mInjectableConstructor.has(pConstructorHistory);
-        });
-
-        // Exit if constructor is not register.
-        if (!lRegisteredConstructor) {
+        // Find constructor in decoration history that was used for registering. Only root can be registered.
+        let lRegisteredConstructor: InjectionConstructor = DecorationHistory.getRootOf(pConstructor);
+        if (!InjectionRegister.mInjectableConstructor.has(lRegisteredConstructor)) {
             throw new Exception(`Constructor "${pConstructor.name}" is not registered for injection and can not be build`, InjectionRegister);
         }
 
         // Replace current constructor with global replacement.
         let lConstructor: InjectionConstructor;
-        const lReplacementConstructor = InjectionRegister.mInjectableReplacement.get(lRegisteredConstructor);
-        if (lReplacementConstructor) {
+        if (InjectionRegister.mInjectableReplacement.has(lRegisteredConstructor)) {
+            const lReplacementConstructor = InjectionRegister.mInjectableReplacement.get(lRegisteredConstructor);
             lConstructor = lReplacementConstructor;
 
-            // Find replacement constructor in decoration history that was used for registering. Is allways registered.
-            const lHistory: Array<InjectionConstructor> = DecorationHistory.getBackwardHistoryOf(lReplacementConstructor);
-            lRegisteredConstructor = lHistory.find((pConstructorHistory: InjectionConstructor) => {
-                return InjectionRegister.mInjectableConstructor.has(pConstructorHistory);
-            });
+            // Set replacement constructor that was used for registering. Is allways registered.
+            lRegisteredConstructor = DecorationHistory.getRootOf(lReplacementConstructor);
         } else {
             lConstructor = pConstructor;
         }
@@ -112,8 +104,12 @@ export class InjectionRegister {
      * @param pMode - Mode of injection.
      */
     public static registerInjectable(pConstructor: InjectionConstructor, pMode: InjectMode): void {
-        InjectionRegister.mInjectableConstructor.add(pConstructor, pConstructor);
-        InjectionRegister.mInjectMode.add(pConstructor, pMode);
+        // Find root constructor of decorated constructor to habe registered constructor allways available top down.
+        const lBaseConstructor: InjectionConstructor = DecorationHistory.getRootOf(pConstructor);
+
+        // Map constructor.
+        InjectionRegister.mInjectableConstructor.add(lBaseConstructor, pConstructor);
+        InjectionRegister.mInjectMode.add(lBaseConstructor, pMode);
     }
 
     /**
@@ -123,25 +119,15 @@ export class InjectionRegister {
      * @param pReplacementConstructor - Replacement constructor that gets injected instead of original constructor.
      */
     public static replaceInjectable(pOriginalConstructor: InjectionConstructor, pReplacementConstructor: InjectionConstructor): void {
-        // Find original registered original.
-        const lOriginalHistory: Array<InjectionConstructor> = DecorationHistory.getBackwardHistoryOf(pOriginalConstructor);
-        const lRegisteredOriginal: InjectionConstructor = lOriginalHistory.find((pConstructorHistory: InjectionConstructor) => {
-            return InjectionRegister.mInjectableConstructor.has(pConstructorHistory);
-        });
-
-        // Exit if original is not registered.
-        if (!lRegisteredOriginal) {
+        // Find original registered original. Only root can be registerd.
+        const lRegisteredOriginal: InjectionConstructor = DecorationHistory.getRootOf(pOriginalConstructor);
+        if (!InjectionRegister.mInjectableConstructor.has(lRegisteredOriginal)) {
             throw new Exception('Original constructor is not registered.', InjectionRegister);
         }
 
-        // Find replacement registered original.
-        const lReplacementHistory: Array<InjectionConstructor> = DecorationHistory.getBackwardHistoryOf(pReplacementConstructor);
-        const lRegisteredReplacement: InjectionConstructor = lReplacementHistory.find((pConstructorHistory: InjectionConstructor) => {
-            return InjectionRegister.mInjectableConstructor.has(pConstructorHistory);
-        });
-
-        // Exit if original is not registered.
-        if (!lRegisteredReplacement) {
+        // Find replacement registered original. Only root can be registered.
+        const lRegisteredReplacement: InjectionConstructor = DecorationHistory.getRootOf(pReplacementConstructor);
+        if (!InjectionRegister.mInjectableConstructor.has(lRegisteredReplacement)) {
             throw new Exception('Replacement constructor is not registered.', InjectionRegister);
         }
 

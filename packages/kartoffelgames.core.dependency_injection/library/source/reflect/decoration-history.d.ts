@@ -8,9 +8,9 @@ export declare class DecorationHistory {
      */
     static addHistory(pFromConstructor: InjectionConstructor, pToConstructor: InjectionConstructor): void;
     /**
-     * The a history starting from the specified constructor and ending on the original undecorated constructor.
-     * @param pConstructor - Constructor where the search should begin.
+     * Get the root constructor of decoration history.
+     * @param pConstructor - Constructor with decorations.
      */
-    static getBackwardHistoryOf(pConstructor: InjectionConstructor): Array<InjectionConstructor>;
+    static getRootOf(pConstructor: InjectionConstructor): InjectionConstructor;
 }
 //# sourceMappingURL=decoration-history.d.ts.map

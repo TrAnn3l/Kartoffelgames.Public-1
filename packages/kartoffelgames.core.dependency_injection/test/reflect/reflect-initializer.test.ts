@@ -1,6 +1,5 @@
 import { expect } from 'chai';
-import { Metadata } from '../../source';
-import { PropertyMetadata } from '../../source/metadata/property-metadata';
+import { Metadata } from '../../source/metadata/metadata';
 import { ReflectInitializer } from '../../source/reflect/reflect-initializer';
 import { InjectionConstructor } from '../../source/type';
 
@@ -10,7 +9,6 @@ import { InjectionConstructor } from '../../source/type';
  */
 const gPlaceholderDecorator = (...pArgs: Array<any>): any => {
     // Nothing.
-
 };
 
 describe('ReflectInitializer', () => {

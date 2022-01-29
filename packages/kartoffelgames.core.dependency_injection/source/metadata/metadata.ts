@@ -14,17 +14,14 @@ export class Metadata {
      * Get metadata of constructor.
      */
     public static get(pConstructor: InjectionConstructor): ConstructorMetadata {
-        // Find registered constructor that has the metadata information.
-        const lHistory: Array<InjectionConstructor> = DecorationHistory.getBackwardHistoryOf(pConstructor);
-        const lRegisteredConstructor: InjectionConstructor = lHistory.find((pConstructorHistory: InjectionConstructor) => {
-            return Metadata.mConstructorMetadata.has(pConstructorHistory);
-        });
+        // Use root constructor to register metadata information.
+        const lRegisteredConstructor: InjectionConstructor = DecorationHistory.getRootOf(pConstructor);
 
         // Create new or get metadata.
         let lMetadata: ConstructorMetadata;
-        if (!lRegisteredConstructor) {
+        if (!this.mConstructorMetadata.has(lRegisteredConstructor)) {
             lMetadata = new ConstructorMetadata();
-            Metadata.mConstructorMetadata.add(pConstructor, lMetadata);
+            Metadata.mConstructorMetadata.add(lRegisteredConstructor, lMetadata);
         } else {
             lMetadata = Metadata.mConstructorMetadata.get(lRegisteredConstructor);
         }
