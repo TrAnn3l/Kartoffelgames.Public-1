@@ -17,6 +17,10 @@
             "path": "./packages/kartoffelgames.web.change_detection"
         },
         {
+            "name": "Kartoffelgames.Web.Potato_Web_Builder",
+            "path": "./packages/kartoffelgames.web.potato_web_builder"
+        },
+        {
             "name": "_Enviroment",
             "path": "."
         }

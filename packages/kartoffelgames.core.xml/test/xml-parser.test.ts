@@ -12,7 +12,7 @@ describe('XmlParser', () => {
         describe('-- Node parsing', () => {
             it('-- Single XmlElement', () => {
                 // Setup. Specify values.
-                const lTagName: string = 'singlenode';
+                const lTagName: string = 'SingleNode';
 
                 // Setup. Parse XML String.
                 const lXmlString: string = `<${lTagName}></${lTagName}>`;

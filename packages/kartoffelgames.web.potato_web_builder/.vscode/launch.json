@@ -1,0 +1,25 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Mocha Test",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "test:debug"
+            ],
+            "cwd": "${workspaceRoot}",
+            "skipFiles": [
+                "${workspaceFolder}/../../node_modules/**/*.js",
+                "<node_internals>/**/*.js"
+            ],
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "webpack://@kartoffelgames/web.potato-web-builder/*": "${workspaceRoot}/*"
+            },
+            "protocol": "inspector"
+        }
+    ]
+}
