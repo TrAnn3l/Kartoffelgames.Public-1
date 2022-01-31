@@ -15,8 +15,8 @@ const web_change_detection_1 = require("@kartoffelgames/web.change-detection");
 const component_scope_executor_1 = require("../../execution/component-scope-executor");
 const static_attribute_module_1 = require("../../../decorator/static-attribute-module");
 const core_xml_1 = require("@kartoffelgames/core.xml");
-const component_values_1 = require("../../../component_manager/component-values");
-const component_handler_1 = require("../../../component_manager/component-handler");
+const component_values_1 = require("../../../component/component-values");
+const component_manager_1 = require("../../../component/component-manager");
 const attribute_module_access_type_1 = require("../../../enum/attribute-module-access-type");
 let TwoWayBindingAttributeModule = class TwoWayBindingAttributeModule {
     /**
@@ -92,7 +92,7 @@ TwoWayBindingAttributeModule = __decorate([
         forbiddenInManipulatorScopes: false,
         manipulatesAttributes: false
     }),
-    __metadata("design:paramtypes", [Element, component_values_1.ComponentValues, core_xml_1.XmlAttribute, component_handler_1.ComponentHandler])
+    __metadata("design:paramtypes", [Element, component_values_1.ComponentValues, core_xml_1.XmlAttribute, component_manager_1.ComponentManager])
 ], TwoWayBindingAttributeModule);
 exports.TwoWayBindingAttributeModule = TwoWayBindingAttributeModule;
 //# sourceMappingURL=two-way-binding-attribute-module.js.map

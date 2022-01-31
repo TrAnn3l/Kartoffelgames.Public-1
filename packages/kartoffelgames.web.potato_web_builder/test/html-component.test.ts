@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { Injector } from '@kartoffelgames/core.dependency-injection';
+import { Injector, Metadata } from '@kartoffelgames/core.dependency-injection';
 import { ComponentEventEmitter } from '../source/user_class_manager/component-event-emitter';
 import { PwbComponentElement } from '../source/interface/html-component';
 import { IPwbAfterInit, IPwbAfterUpdate, IPwbOnAttributeChange, IPwbOnDeconstruct, IPwbOnInit, IPwbOnUpdate } from '../source/interface/user-interface';
@@ -11,15 +11,16 @@ import { ModuleManipulatorResult } from '../source/module/base/module-manipulato
 import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { TemplateParser } from '../source/parser/template-parser';
 import { XmlAttribute, XmlDocument, XmlElement } from '@kartoffelgames/core.xml';
-import { ComponentValues } from '../source/component_manager/component-values';
+import { ComponentValues } from '../source/component/component-values';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { Export, HtmlComponent, HtmlComponentEvent, IdChild, IPwbManipulatorAttributeOnProcess, ManipulatorAttributeModule, PwbComponent } from '../Source/Index';
 import { AttributeModuleAccessType } from '../source/enum/attribute-module-access-type';
 import '../Source/Index';
 import { WebsiteConfiguration } from './test_files/configuration/website-configuration';
 import { ColorConfiguration } from './test_files/configuration/color-configuration';
-import { LoopError } from '../source/component_manager/component-handler';
-import { UpdateMode } from '../source/enum/update-mode';
+import { LoopError } from '../source/component/component-manager';
+import { UpdateScope } from '../source/enum/update-scope';
+import { GlobalKey } from '../source/global-key';
 
 const gRandomSelector = (): string => {
     let lResult = '';
@@ -92,7 +93,7 @@ describe('HtmlComponent', () => {
             public testMethod() { return; }
         }
 
-        const lCustomElement: PwbComponentElement = (<UserClassConstructor><any>TestCustomElement).createComponent();
+        const lCustomElement: PwbComponentElement = <PwbComponentElement>new (window.customElements.get(Metadata.get(TestCustomElement).getMetadata(GlobalKey.METADATA_SELECTOR)))();
 
         assert.ok(lCustomElement instanceof Element);
 
@@ -252,7 +253,7 @@ describe('HtmlComponent', () => {
         }
 
         const lComponent: PwbComponentElement = lApp.addContent(MyComponent);
-        const lUserClassObject: MyComponent = <any>lComponent.componentHandler.rootValues.userClassObject;
+        const lUserClassObject: MyComponent = <any>lComponent.component.rootValues.userClassObject;
 
         assert.equal(lComponent.shadowRoot.childNodes.length, 8);
 
@@ -260,7 +261,7 @@ describe('HtmlComponent', () => {
         lUserClassObject.list.splice(2, 1);
 
         // Wait for updates.
-        await lComponent.componentHandler.waitForUpdate();
+        await lComponent.component.waitForUpdate();
 
         assert.equal(lComponent.shadowRoot.childNodes.length, 6);
 
@@ -268,14 +269,14 @@ describe('HtmlComponent', () => {
         lUserClassObject.list.shift();
 
         // Wait for updates.
-        await lComponent.componentHandler.waitForUpdate();
+        await lComponent.component.waitForUpdate();
 
         assert.equal(lComponent.shadowRoot.childNodes.length, 4);
 
         lUserClassObject.list.push(10);
 
         // Wait for updates.
-        await lComponent.componentHandler.waitForUpdate();
+        await lComponent.component.waitForUpdate();
         assert.equal(lComponent.shadowRoot.childNodes.length, 6);
 
         const lNewChild = lComponent.shadowRoot.childNodes[5];
@@ -339,7 +340,7 @@ describe('HtmlComponent', () => {
         const lFirstManipulatorElement = <HTMLElement>lComponent.shadowRoot.childNodes[3];
 
         // Wait for updates of inner object.
-        await (<PwbComponentElement>lFirstManipulatorElement).componentHandler.waitForUpdate();
+        await (<PwbComponentElement>lFirstManipulatorElement).component.waitForUpdate();
 
         assert.ok(lFirstManipulatorElement instanceof HTMLElement);
         assert.ok(lFirstManipulatorElement.shadowRoot.childNodes[1] instanceof HTMLDivElement);
@@ -352,7 +353,7 @@ describe('HtmlComponent', () => {
         lButton.click();
 
         // Wait for outer component update.
-        await lComponent.componentHandler.waitForUpdate();
+        await lComponent.component.waitForUpdate();
 
         assert.equal(lComponent.shadowRoot.childNodes.length, 13);
 
@@ -360,7 +361,7 @@ describe('HtmlComponent', () => {
         const lNewManipulatorElement = <HTMLElement>lComponent.shadowRoot.childNodes[9];
 
         // Wait for updates of inner object.
-        await (<PwbComponentElement>lNewManipulatorElement).componentHandler.waitForUpdate();
+        await (<PwbComponentElement>lNewManipulatorElement).component.waitForUpdate();
 
         assert.ok(lNewManipulatorElement instanceof HTMLElement);
         assert.ok(lNewManipulatorElement.shadowRoot.childNodes[1] instanceof HTMLDivElement);
@@ -369,17 +370,17 @@ describe('HtmlComponent', () => {
         assert.equal((<HTMLInputElement>lNewManipulatorElement.shadowRoot.childNodes[2]).value, 'Starting input value');
 
         // Update by value
-        (<any>lComponent.componentHandler.userClassObject).inputValue = 'NewValue';
+        (<any>lComponent.component.userClassObject).inputValue = 'NewValue';
 
         // Wait for outer component update.
-        await lComponent.componentHandler.waitForUpdate();
+        await lComponent.component.waitForUpdate();
 
         // Wait for updates of inner object.
-        await (<PwbComponentElement>lNewManipulatorElement).componentHandler.waitForUpdate();
+        await (<PwbComponentElement>lNewManipulatorElement).component.waitForUpdate();
 
         // Wait for outer component update.
-        await lComponent.componentHandler.waitForUpdate();
-        await (<PwbComponentElement>lNewManipulatorElement).componentHandler.waitForUpdate();
+        await lComponent.component.waitForUpdate();
+        await (<PwbComponentElement>lNewManipulatorElement).component.waitForUpdate();
 
         assert.ok(lNewManipulatorElement instanceof HTMLElement);
         assert.ok(lNewManipulatorElement.shadowRoot.childNodes[1] instanceof HTMLDivElement);
@@ -407,17 +408,17 @@ describe('HtmlComponent', () => {
         }
 
         const lComponent: PwbComponentElement = lApp.addContent(MyComponent);
-        const lUserClassObject: MyComponent = <any>lComponent.componentHandler.rootValues.userClassObject;
+        const lUserClassObject: MyComponent = <any>lComponent.component.rootValues.userClassObject;
         lUserClassObject.text = 'cba';
         lUserClassObject.text2 = '2cba';
 
         // Wait for update
-        await lComponent.componentHandler.waitForUpdate();
+        await lComponent.component.waitForUpdate();
         assert.equal((<Element>lComponent.shadowRoot.childNodes[1]).getAttribute('class'), '2cba');
         assert.equal(lComponent.shadowRoot.childNodes[1].childNodes[0].textContent, 'cba');
 
         (<HTMLElement>lComponent.shadowRoot.childNodes[2]).click();
-        await lComponent.componentHandler.waitForUpdate();
+        await lComponent.component.waitForUpdate();
         assert.equal(lComponent.shadowRoot.childNodes[1].childNodes[0].textContent, 'NewAbc');
     });
 
@@ -455,7 +456,7 @@ describe('HtmlComponent', () => {
         }
 
         const lComponent: PwbComponentElement = lApp.addContent(MyComponent);
-        const lUserClassObject: MyComponent = <any>lComponent.componentHandler.rootValues.userClassObject;
+        const lUserClassObject: MyComponent = <any>lComponent.component.rootValues.userClassObject;
 
         assert.ok(lComponent.shadowRoot.childNodes[0] instanceof Comment);
         assert.ok(lComponent.shadowRoot.childNodes[1] instanceof HTMLDivElement);
@@ -473,14 +474,14 @@ describe('HtmlComponent', () => {
         lInputElement.dispatchEvent(lInputEvent);
 
         // Wait for update
-        await lComponent.componentHandler.waitForUpdate();
+        await lComponent.component.waitForUpdate();
         assert.equal(lComponent.shadowRoot.childNodes[1].childNodes[0].textContent, 'MyNewValue');
         assert.equal((<HTMLInputElement>lComponent.shadowRoot.childNodes[2]).value, 'MyNewValue');
 
         // Change value by clanging user class object.
         lUserClassObject.myText = 'MyNewerValue';
 
-        await lComponent.componentHandler.waitForUpdate();
+        await lComponent.component.waitForUpdate();
         assert.equal(lComponent.shadowRoot.childNodes[1].childNodes[0].textContent, 'MyNewerValue');
         assert.equal((<HTMLInputElement>lComponent.shadowRoot.childNodes[2]).value, 'MyNewerValue');
     });
@@ -809,9 +810,9 @@ describe('HtmlComponent', () => {
         lCustomElement.setAttribute('placeholder', 'test123');
 
         // Wait for update
-        await lCustomElement.componentHandler.waitForUpdate();
+        await lCustomElement.component.waitForUpdate();
 
-        assert.equal((<any>lCustomElement.componentHandler.userClassObject)['placeholder'], 'test123');
+        assert.equal((<any>lCustomElement.component.userClassObject)['placeholder'], 'test123');
         assert.equal(lCustomElement.getAttribute('placeholder'), 'test123');
         assert.ok(lCustomElement.shadowRoot.childNodes[1] instanceof Text);
         assert.equal((<Text>lCustomElement.shadowRoot.childNodes[1]).nodeValue, 'test123');
@@ -888,7 +889,7 @@ describe('HtmlComponent', () => {
 
             @Export close = (): void => {
                 this.mElement.remove();
-                this.mElement.componentHandler.deconstruct();
+                this.mElement.component.deconstruct();
             };
 
             public getBody(): string {
@@ -925,13 +926,13 @@ describe('HtmlComponent', () => {
         // Create dialog component.
         const lDialogData = new Dictionary<string, any>();
         //lDialogData.add('placeholder', 'MyPlaceholder');
-        const lDialogComponent: PwbComponentElement & PwbDialogComponent = <any>(<UserClassConstructor><any>PwbDialogComponent).createComponent();
+        const lDialogComponent: PwbComponentElement & PwbDialogComponent = <any>new (window.customElements.get(Metadata.get(PwbDialogComponent).getMetadata(GlobalKey.METADATA_SELECTOR)))();
         lDialogComponent.dialogComponentName = lSelectorName;
         lDialogComponent.dialogData = lDialogData;
 
         // Wait for current updates.
-        await lDialogComponent.componentHandler.waitForUpdate();
-        await lDialogComponent.componentHandler.waitForUpdate();
+        await lDialogComponent.component.waitForUpdate();
+        await lDialogComponent.component.waitForUpdate();
     });
 
     it('Correct Zone in constructor', (pDone: Mocha.Done) => {
@@ -1201,10 +1202,10 @@ describe('HtmlComponent', () => {
         }
 
         const lCustomElement: PwbComponentElement & TestCustomElement = <any>lApp.addContent(TestCustomElement);
-        (<TestCustomElement><any>lCustomElement.componentHandler.userClassObject).selectPage(1);
-        await lCustomElement.componentHandler.waitForUpdate();
-        (<TestCustomElement><any>lCustomElement.componentHandler.userClassObject).selectPage(6);
-        await lCustomElement.componentHandler.waitForUpdate();
+        (<TestCustomElement><any>lCustomElement.component.userClassObject).selectPage(1);
+        await lCustomElement.component.waitForUpdate();
+        (<TestCustomElement><any>lCustomElement.component.userClassObject).selectPage(6);
+        await lCustomElement.component.waitForUpdate();
 
         assert.ok(lCustomElement instanceof Element);
 
@@ -1291,9 +1292,9 @@ describe('HtmlComponent', () => {
         assert.equal(lFirstChild.shadowRoot.childNodes.length, 2);
         assert.equal(lSecondChild.shadowRoot.childNodes.length, 2);
 
-        (<TestChildControl><any>lFirstChild.componentHandler.userClassObject).callFunction();
-        await lFirstChild.componentHandler.waitForUpdate();
-        await lSecondChild.componentHandler.waitForUpdate();
+        (<TestChildControl><any>lFirstChild.component.userClassObject).callFunction();
+        await lFirstChild.component.waitForUpdate();
+        await lSecondChild.component.waitForUpdate();
 
         assert.equal(lFirstChild.shadowRoot.childNodes.length, 4);
         assert.equal(lSecondChild.shadowRoot.childNodes.length, 4);
@@ -1335,13 +1336,13 @@ describe('HtmlComponent', () => {
         const lCustomElement: PwbComponentElement = lApp.addContent(TestParentControl);
         assert.equal(lCustomElement.shadowRoot.childNodes.length, 8);
 
-        const lThirdElement: TestChildControl = <any>(<PwbComponentElement>lCustomElement.shadowRoot.childNodes[7]).componentHandler.userClassObject;
+        const lThirdElement: TestChildControl = <any>(<PwbComponentElement>lCustomElement.shadowRoot.childNodes[7]).component.userClassObject;
         assert.equal((<Array<any>>(<any>lThirdElement.superEvent).mListener).length, 2);
         assert.equal(lThirdElement.value, 3);
 
-        (<TestParentControl><any>lCustomElement.componentHandler.userClassObject).list = [1, 2];
-        (<TestParentControl><any>lCustomElement.componentHandler.userClassObject).value = 12;
-        await lCustomElement.componentHandler.waitForUpdate();
+        (<TestParentControl><any>lCustomElement.component.userClassObject).list = [1, 2];
+        (<TestParentControl><any>lCustomElement.component.userClassObject).value = 12;
+        await lCustomElement.component.waitForUpdate();
         assert.equal(lCustomElement.shadowRoot.childNodes.length, 6);
         assert.equal((<Array<any>>(<any>lThirdElement.superEvent).mListener).length, 1);
         assert.equal(lThirdElement.value, 3);
@@ -1526,15 +1527,15 @@ describe('HtmlComponent', () => {
         const lCustomElement: PwbComponentElement = lApp.addContent(TestCustomElement);
         document.body.appendChild(lCustomElement);
 
-        await lCustomElement.componentHandler.waitForUpdate();
+        await lCustomElement.component.waitForUpdate();
 
         // change export
         (<any>lCustomElement).value = 12;
 
-        await lCustomElement.componentHandler.waitForUpdate();
+        await lCustomElement.component.waitForUpdate();
 
         // deconstruct
-        lCustomElement.componentHandler.deconstruct();
+        lCustomElement.component.deconstruct();
 
         assert.ok(lAfterPwbInitializeCalled);
         assert.ok(lAfterPwbUpdateCalled);
@@ -1591,20 +1592,20 @@ describe('HtmlComponent', () => {
         lCustomElement.myFunction();
     });
 
-    it('UpdateMode: Manual', async () => { 
+    it('UpdateMode: Manual', async () => {
         const lApp = new PwbApp('MyApp');
 
         @HtmlComponent({
             selector: gRandomSelector(),
             style: 'div12 {}',
             template: '{{this.value}}',
-            updateMode: UpdateMode.Manual
+            updateScope: UpdateScope.Manual
         })
-        class TestCustomElement implements IPwbAfterInit{
+        class TestCustomElement implements IPwbAfterInit {
             public value: string = 'aaa';
             private readonly mComponent: PwbComponent;
 
-            public constructor(pComponent: PwbComponent){
+            public constructor(pComponent: PwbComponent) {
                 this.mComponent = pComponent;
             }
 
@@ -1621,7 +1622,7 @@ describe('HtmlComponent', () => {
         document.body.appendChild(lCustomElement);
 
         // Wait for updates.
-        await lCustomElement.componentHandler.waitForUpdate();
+        await lCustomElement.component.waitForUpdate();
 
         assert.ok(lCustomElement.shadowRoot.firstChild instanceof HTMLStyleElement);
         assert.ok(lCustomElement.shadowRoot.childNodes[1] instanceof Comment);
@@ -1630,7 +1631,7 @@ describe('HtmlComponent', () => {
 
         // Update component and wait.
         lCustomElement.update();
-        await lCustomElement.componentHandler.waitForUpdate();
+        await lCustomElement.component.waitForUpdate();
 
         assert.ok(lCustomElement.shadowRoot.firstChild instanceof HTMLStyleElement);
         assert.ok(lCustomElement.shadowRoot.childNodes[1] instanceof Comment);

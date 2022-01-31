@@ -29,6 +29,9 @@
         "**/Library/*",
         "Library"
     ],
+    "include": [
+        "./**/*.ts",
+    ],
     "files": [
         "declaration/module-declaration.d.ts"
     ]

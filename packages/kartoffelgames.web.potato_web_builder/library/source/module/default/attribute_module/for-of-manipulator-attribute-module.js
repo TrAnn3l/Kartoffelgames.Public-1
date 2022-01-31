@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ForOfManipulatorAttributeModule = void 0;
 const core_data_1 = require("@kartoffelgames/core.data");
 const web_change_detection_1 = require("@kartoffelgames/web.change-detection");
-const component_values_1 = require("../../../component_manager/component-values");
+const component_values_1 = require("../../../component/component-values");
 const module_manipulator_result_1 = require("../../base/module-manipulator-result");
 const component_scope_executor_1 = require("../../execution/component-scope-executor");
 const core_xml_1 = require("@kartoffelgames/core.xml");

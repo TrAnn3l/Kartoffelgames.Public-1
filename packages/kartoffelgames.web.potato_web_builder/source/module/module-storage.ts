@@ -1,8 +1,8 @@
 import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { Injection, InjectionConstructor, Injector } from '@kartoffelgames/core.dependency-injection';
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
-import { ComponentHandler } from '../component_manager/component-handler';
-import { ComponentValues } from '../component_manager/component-values';
+import { ComponentManager } from '../component/component-manager';
+import { ComponentValues } from '../component/component-values';
 import { AttributeModuleAccessType } from '../enum/attribute-module-access-type';
 import { ModuleType } from '../enum/module-type';
 import { IPwbExpressionModule, PwbExpressionModuleConstructor } from '../interface/expression-module';
@@ -47,11 +47,11 @@ export class ModuleStorage {
      * @param pComponentHandler - Component handler.
      * @returns build expression module.
      */
-    public static getExpressionModule(pExpressionModule: PwbExpressionModuleConstructor, pTargetNode: HtmlContent | Text, pAttributeName: string | null, pValue: string, pValueHandler: ComponentValues, pComponentHandler: ComponentHandler): IPwbExpressionModule {
+    public static getExpressionModule(pExpressionModule: PwbExpressionModuleConstructor, pTargetNode: HtmlContent | Text, pAttributeName: string | null, pValue: string, pValueHandler: ComponentValues, pComponentHandler: ComponentManager): IPwbExpressionModule {
         // Local injections for object creation.
         const lLocalInjections: Dictionary<InjectionConstructor, any> = new Dictionary<InjectionConstructor, any>();
         lLocalInjections.add(ComponentValues, pValueHandler);
-        lLocalInjections.add(ComponentHandler, pComponentHandler);
+        lLocalInjections.add(ComponentManager, pComponentHandler);
 
         // Create object.
         const lModule: IPwbExpressionModule = Injection.createObject(pExpressionModule, lLocalInjections);
@@ -68,7 +68,7 @@ export class ModuleStorage {
      * @param pValues - Values handler of current manipulator scope.
      * @param pComponentHandler - Component handler.
      */
-    public static getManipulatorModule(pTargetTemplate: XmlElement, pValues: ComponentValues, pComponentHandler: ComponentHandler): IPwbManipulatorAttributeModule | undefined {
+    public static getManipulatorModule(pTargetTemplate: XmlElement, pValues: ComponentValues, pComponentHandler: ComponentManager): IPwbManipulatorAttributeModule | undefined {
         // Get module constructor.
         const lModuleConstructor: PwbManipulatorAttributeModuleConstructor = this.getManipulatorModuleConstructor(pTargetTemplate);
 
@@ -98,7 +98,7 @@ export class ModuleStorage {
             const lLocalInjections: Dictionary<InjectionConstructor, any> = new Dictionary<InjectionConstructor, any>();
             lLocalInjections.add(XmlElement, pTargetTemplate);
             lLocalInjections.add(ComponentValues, pValues);
-            lLocalInjections.add(ComponentHandler, pComponentHandler);
+            lLocalInjections.add(ComponentManager, pComponentHandler);
             lLocalInjections.add(XmlAttribute, lFoundAttribute);
 
             // Create object.
@@ -115,7 +115,7 @@ export class ModuleStorage {
      * @param pComponentHandler - Component handler.
      * @param pAccessFilter - [OPTIONAL] Filter for access type.
      */
-    public static getStaticModule(pTargetElement: HtmlContent, pTargetTemplate: XmlElement, pValues: ComponentValues, pAttribute: XmlAttribute, pComponentHandler: ComponentHandler, pAccessFilter?: AttributeModuleAccessType): IPwbStaticAttributeModule | undefined {
+    public static getStaticModule(pTargetElement: HtmlContent, pTargetTemplate: XmlElement, pValues: ComponentValues, pAttribute: XmlAttribute, pComponentHandler: ComponentManager, pAccessFilter?: AttributeModuleAccessType): IPwbStaticAttributeModule | undefined {
         // Find modules that matches attribute.
         const lFindFn = (pModuleConstructor: PwbStaticAttributeModuleConstructor) => {
             // Check attribute and check if attribute matches module selector.
@@ -148,7 +148,7 @@ export class ModuleStorage {
             const lLocalInjections: Dictionary<InjectionConstructor, any> = new Dictionary<InjectionConstructor, any>();
             lLocalInjections.add(XmlElement, pTargetTemplate);
             lLocalInjections.add(ComponentValues, pValues);
-            lLocalInjections.add(ComponentHandler, pComponentHandler);
+            lLocalInjections.add(ComponentManager, pComponentHandler);
             lLocalInjections.add(Element, pTargetElement);
             lLocalInjections.add(XmlAttribute, pAttribute);
 

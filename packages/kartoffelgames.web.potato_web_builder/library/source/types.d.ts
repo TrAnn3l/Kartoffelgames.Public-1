@@ -1,4 +1,4 @@
-import { BaseBuilder } from './component_manager/builder/base-builder';
+import { BaseBuilder } from './component/builder/base-builder';
 import { PwbComponentElement } from './interface/html-component';
 export declare type BaseContent = BaseBuilder | Node | PwbComponentElement;
 export declare type HtmlContent = Element | PwbComponentElement;

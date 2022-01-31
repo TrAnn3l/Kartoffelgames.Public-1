@@ -11,8 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.IdChildAttributeModule = void 0;
 const core_xml_1 = require("@kartoffelgames/core.xml");
-const component_handler_1 = require("../../../component_manager/component-handler");
-const component_values_1 = require("../../../component_manager/component-values");
+const component_manager_1 = require("../../../component/component-manager");
+const component_values_1 = require("../../../component/component-values");
 const static_attribute_module_1 = require("../../../decorator/static-attribute-module");
 const attribute_module_access_type_1 = require("../../../enum/attribute-module-access-type");
 /**
@@ -47,7 +47,7 @@ IdChildAttributeModule = __decorate([
         manipulatesAttributes: false,
         attributeSelector: /^#[[\w$]+$/
     }),
-    __metadata("design:paramtypes", [Element, component_values_1.ComponentValues, core_xml_1.XmlAttribute, component_handler_1.ComponentHandler])
+    __metadata("design:paramtypes", [Element, component_values_1.ComponentValues, core_xml_1.XmlAttribute, component_manager_1.ComponentManager])
 ], IdChildAttributeModule);
 exports.IdChildAttributeModule = IdChildAttributeModule;
 //# sourceMappingURL=id-child-attribute-module.js.map

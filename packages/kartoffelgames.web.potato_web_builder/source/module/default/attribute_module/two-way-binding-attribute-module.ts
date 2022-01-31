@@ -5,8 +5,8 @@ import { StaticAttributeModule } from '../../../decorator/static-attribute-modul
 import { IPwbStaticAttributeOnProcess, IPwbStaticAttributeOnUpdate } from '../../../interface/static-attribute-module';
 import { XmlAttribute } from '@kartoffelgames/core.xml';
 import { HtmlContent } from '../../../types';
-import { ComponentValues } from '../../../component_manager/component-values';
-import { ComponentHandler } from '../../../component_manager/component-handler';
+import { ComponentValues } from '../../../component/component-values';
+import { ComponentManager } from '../../../component/component-manager';
 import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
 
 @StaticAttributeModule({
@@ -17,7 +17,7 @@ import { AttributeModuleAccessType } from '../../../enum/attribute-module-access
 })
 export class TwoWayBindingAttributeModule implements IPwbStaticAttributeOnProcess, IPwbStaticAttributeOnUpdate {
     private readonly mAttribute: XmlAttribute;
-    private readonly mComponentHandler: ComponentHandler;
+    private readonly mComponentHandler: ComponentManager;
     private readonly mTargetElement: HtmlContent;
     private mTargetViewCompareHandler: CompareHandler<any>;
     private mTargetViewProperty: string;
@@ -31,7 +31,7 @@ export class TwoWayBindingAttributeModule implements IPwbStaticAttributeOnProces
      * @param pValueHandler - Values of component.
      * @param pAttribute - Attribute of module.
      */
-    public constructor(pTargetElement: Element, pValueHandler: ComponentValues, pAttribute: XmlAttribute, pComponentHandler: ComponentHandler) {
+    public constructor(pTargetElement: Element, pValueHandler: ComponentValues, pAttribute: XmlAttribute, pComponentHandler: ComponentManager) {
         this.mTargetElement = pTargetElement;
         this.mValueHandler = pValueHandler;
         this.mAttribute = pAttribute;

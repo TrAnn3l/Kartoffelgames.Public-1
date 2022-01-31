@@ -1,6 +1,6 @@
 import { Dictionary, List } from '@kartoffelgames/core.data';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
-import { ComponentValues } from '../../component_manager/component-values';
+import { ComponentValues } from '../../component/component-values';
 
 /**
  * Executes string in set component values scope.

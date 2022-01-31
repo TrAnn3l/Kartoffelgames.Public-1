@@ -1,5 +1,5 @@
 import { XmlAttribute } from '@kartoffelgames/core.xml';
-import { ComponentValues } from '../../../component_manager/component-values';
+import { ComponentValues } from '../../../component/component-values';
 import { IPwbStaticAttributeOnCleanup, IPwbStaticAttributeOnProcess } from '../../../interface/static-attribute-module';
 export declare class EventAttributeModule implements IPwbStaticAttributeOnProcess, IPwbStaticAttributeOnCleanup {
     private readonly mAttribute;

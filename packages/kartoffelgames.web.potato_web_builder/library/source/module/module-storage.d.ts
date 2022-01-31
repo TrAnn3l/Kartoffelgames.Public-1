@@ -1,6 +1,6 @@
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
-import { ComponentHandler } from '../component_manager/component-handler';
-import { ComponentValues } from '../component_manager/component-values';
+import { ComponentManager } from '../component/component-manager';
+import { ComponentValues } from '../component/component-values';
 import { AttributeModuleAccessType } from '../enum/attribute-module-access-type';
 import { IPwbExpressionModule, PwbExpressionModuleConstructor } from '../interface/expression-module';
 import { IPwbManipulatorAttributeModule, PwbManipulatorAttributeModuleConstructor } from '../interface/manipulator-attribute-module';
@@ -29,14 +29,14 @@ export declare class ModuleStorage {
      * @param pComponentHandler - Component handler.
      * @returns build expression module.
      */
-    static getExpressionModule(pExpressionModule: PwbExpressionModuleConstructor, pTargetNode: HtmlContent | Text, pAttributeName: string | null, pValue: string, pValueHandler: ComponentValues, pComponentHandler: ComponentHandler): IPwbExpressionModule;
+    static getExpressionModule(pExpressionModule: PwbExpressionModuleConstructor, pTargetNode: HtmlContent | Text, pAttributeName: string | null, pValue: string, pValueHandler: ComponentValues, pComponentHandler: ComponentManager): IPwbExpressionModule;
     /**
      * Get manipulator module from template element.
      * @param pTargetTemplate - Template the module is working with.
      * @param pValues - Values handler of current manipulator scope.
      * @param pComponentHandler - Component handler.
      */
-    static getManipulatorModule(pTargetTemplate: XmlElement, pValues: ComponentValues, pComponentHandler: ComponentHandler): IPwbManipulatorAttributeModule | undefined;
+    static getManipulatorModule(pTargetTemplate: XmlElement, pValues: ComponentValues, pComponentHandler: ComponentManager): IPwbManipulatorAttributeModule | undefined;
     /**
      * Get static module from template element.
      * @param pTargetElement - Html element the module should work with.
@@ -46,7 +46,7 @@ export declare class ModuleStorage {
      * @param pComponentHandler - Component handler.
      * @param pAccessFilter - [OPTIONAL] Filter for access type.
      */
-    static getStaticModule(pTargetElement: HtmlContent, pTargetTemplate: XmlElement, pValues: ComponentValues, pAttribute: XmlAttribute, pComponentHandler: ComponentHandler, pAccessFilter?: AttributeModuleAccessType): IPwbStaticAttributeModule | undefined;
+    static getStaticModule(pTargetElement: HtmlContent, pTargetTemplate: XmlElement, pValues: ComponentValues, pAttribute: XmlAttribute, pComponentHandler: ComponentManager, pAccessFilter?: AttributeModuleAccessType): IPwbStaticAttributeModule | undefined;
     /**
      * Get manipulator module constructor from template element.
      * @param pTemplate - Template element.

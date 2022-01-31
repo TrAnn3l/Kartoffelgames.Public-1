@@ -1,4 +1,4 @@
-import { ComponentValues } from '../../../component_manager/component-values';
+import { ComponentValues } from '../../../component/component-values';
 import { ModuleManipulatorResult } from '../../base/module-manipulator-result';
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { IPwbManipulatorAttributeOnProcess, IPwbManipulatorAttributeOnUpdate } from '../../../interface/manipulator-attribute-module';

@@ -14,7 +14,7 @@ Object.defineProperty(exports, "Dictionary", { enumerable: true, get: function (
 Object.defineProperty(exports, "List", { enumerable: true, get: function () { return core_data_1.List; } });
 var attribute_module_access_type_1 = require("./enum/attribute-module-access-type");
 Object.defineProperty(exports, "AttributeModuleAccessType", { enumerable: true, get: function () { return attribute_module_access_type_1.AttributeModuleAccessType; } });
-var component_values_1 = require("./component_manager/component-values");
+var component_values_1 = require("./component/component-values");
 Object.defineProperty(exports, "ComponentValues", { enumerable: true, get: function () { return component_values_1.ComponentValues; } });
 var module_manipulator_result_1 = require("./module/base/module-manipulator-result");
 Object.defineProperty(exports, "ModuleManipulatorResult", { enumerable: true, get: function () { return module_manipulator_result_1.ModuleManipulatorResult; } });

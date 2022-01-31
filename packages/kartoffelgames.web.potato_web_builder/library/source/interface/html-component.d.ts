@@ -1,6 +1,6 @@
-import { ComponentHandler } from '../component_manager/component-handler';
+import { ComponentManager } from '../component/component-manager';
 export interface PwbComponentElement extends HTMLElement {
-    readonly componentHandler: ComponentHandler;
+    readonly component: ComponentManager;
 }
 export declare type PwbComponentConstructor = {
     new (): PwbComponentElement;

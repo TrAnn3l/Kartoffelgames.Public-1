@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { ComponentValues } from '../source/component_manager/component-values';
+import { ComponentValues } from '../source/component/component-values';
 import { ComponentScopeExecutor } from '../source/module/execution/component-scope-executor';
 
 describe('ComponentScopeExecutor', () => {

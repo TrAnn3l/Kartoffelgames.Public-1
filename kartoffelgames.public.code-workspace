@@ -42,7 +42,7 @@
         "typescript.format.semicolons": "insert",
         "typescript.referencesCodeLens.showOnAllFunctions": true,
         "eslint.options": {
-            "configFile": "./Enviroment/Configuration/eslint.config.js"
+            "overrideConfigFile": "../../Enviroment/Configuration/eslint.config.js"
         },
         "typescript.tsdk": "node_modules\\typescript\\lib"
     }

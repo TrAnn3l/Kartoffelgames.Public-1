@@ -1,6 +1,6 @@
 import { XmlAttribute } from '@kartoffelgames/core.xml';
-import { ComponentHandler } from '../../../component_manager/component-handler';
-import { ComponentValues } from '../../../component_manager/component-values';
+import { ComponentManager } from '../../../component/component-manager';
+import { ComponentValues } from '../../../component/component-values';
 import { StaticAttributeModule } from '../../../decorator/static-attribute-module';
 import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
 import { IPwbStaticAttributeOnProcess } from '../../../interface/static-attribute-module';
@@ -17,7 +17,7 @@ import { HtmlContent } from '../../../types';
 })
 export class IdChildAttributeModule implements IPwbStaticAttributeOnProcess {
     private readonly mAttribute: XmlAttribute;
-    private readonly mComponentHandler: ComponentHandler
+    private readonly mComponentHandler: ComponentManager
     private readonly mTargetElement: HtmlContent;
     private readonly mValueHandler: ComponentValues; 
 
@@ -27,7 +27,7 @@ export class IdChildAttributeModule implements IPwbStaticAttributeOnProcess {
      * @param pValueHandler - Values of component.
      * @param pAttribute - Attribute of module.
      */
-    public constructor(pTargetElement: Element, pValueHandler: ComponentValues, pAttribute: XmlAttribute, pComponentHandler: ComponentHandler) {
+    public constructor(pTargetElement: Element, pValueHandler: ComponentValues, pAttribute: XmlAttribute, pComponentHandler: ComponentManager) {
         this.mTargetElement = pTargetElement;
         this.mValueHandler = pValueHandler;
         this.mAttribute = pAttribute;

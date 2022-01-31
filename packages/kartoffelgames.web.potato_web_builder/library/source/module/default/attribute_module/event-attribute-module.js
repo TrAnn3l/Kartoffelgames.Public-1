@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventAttributeModule = void 0;
 const core_data_1 = require("@kartoffelgames/core.data");
 const core_xml_1 = require("@kartoffelgames/core.xml");
-const component_values_1 = require("../../../component_manager/component-values");
+const component_values_1 = require("../../../component/component-values");
 const static_attribute_module_1 = require("../../../decorator/static-attribute-module");
 const attribute_module_access_type_1 = require("../../../enum/attribute-module-access-type");
 const component_event_emitter_1 = require("../../../user_class_manager/component-event-emitter");
@@ -48,8 +48,8 @@ let EventAttributeModule = class EventAttributeModule {
         const lSelf = this;
         this.mEventName = this.mAttribute.name.substr(1, this.mAttribute.name.length - 2);
         // Get user class event from PwbComponent.
-        if ('componentHandler' in this.mTargetElement) {
-            this.mEmitter = this.mTargetElement.componentHandler.rootValues.getUserClassEvent(this.mEventName);
+        if ('component' in this.mTargetElement) {
+            this.mEmitter = this.mTargetElement.component.rootValues.getUserClassEvent(this.mEventName);
         }
         // Define listener.
         this.mListener = (pEvent) => {

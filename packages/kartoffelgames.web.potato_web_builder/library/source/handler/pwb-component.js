@@ -29,13 +29,13 @@ class PwbComponent {
     update() {
         // Dispatch change event for other components.
         this.mComponentHandler.changeDetection.dispatchChangeEvent({
-            source: this.mComponentElement.componentHandler.userClassObject,
+            source: this.mComponentElement.component.userClassObject,
             property: Symbol('manual update'),
             stacktrace: Error().stack
         });
         // Call update component just in case of manual updating.
         this.mComponentHandler.updateComponent({
-            source: this.mComponentElement.componentHandler.userClassObject,
+            source: this.mComponentElement.component.userClassObject,
             property: Symbol('manual update'),
             stacktrace: Error().stack
         });

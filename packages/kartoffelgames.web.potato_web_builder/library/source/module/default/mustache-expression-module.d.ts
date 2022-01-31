@@ -1,4 +1,4 @@
-import { ComponentValues } from '../../component_manager/component-values';
+import { ComponentValues } from '../../component/component-values';
 import { IPwbExpressionOnProcess } from '../../interface/expression-module';
 /**
  * Wannabe Mustache expression executor.

@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.IfManipulatorAttributeModule = void 0;
 const core_xml_1 = require("@kartoffelgames/core.xml");
 const web_change_detection_1 = require("@kartoffelgames/web.change-detection");
-const component_values_1 = require("../../../component_manager/component-values");
+const component_values_1 = require("../../../component/component-values");
 const manipulator_attribute_module_1 = require("../../../decorator/manipulator-attribute-module");
 const attribute_module_access_type_1 = require("../../../enum/attribute-module-access-type");
 const module_manipulator_result_1 = require("../../base/module-manipulator-result");

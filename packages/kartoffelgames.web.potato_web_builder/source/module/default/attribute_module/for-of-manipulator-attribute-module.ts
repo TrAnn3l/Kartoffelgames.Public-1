@@ -1,6 +1,6 @@
 import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
-import { ComponentValues } from '../../../component_manager/component-values';
+import { ComponentValues } from '../../../component/component-values';
 import { ModuleManipulatorResult } from '../../base/module-manipulator-result';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';

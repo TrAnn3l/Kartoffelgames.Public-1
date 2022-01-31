@@ -1,5 +1,5 @@
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
-import { ComponentValues } from '../../../component_manager/component-values';
+import { ComponentValues } from '../../../component/component-values';
 import { IPwbManipulatorAttributeOnProcess } from '../../../interface/manipulator-attribute-module';
 import { ModuleManipulatorResult } from '../../base/module-manipulator-result';
 export declare class SlotAttributeModule implements IPwbManipulatorAttributeOnProcess {

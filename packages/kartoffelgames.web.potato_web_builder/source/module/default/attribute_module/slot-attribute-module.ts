@@ -1,5 +1,5 @@
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
-import { ComponentValues } from '../../../component_manager/component-values';
+import { ComponentValues } from '../../../component/component-values';
 import { ManipulatorAttributeModule } from '../../../decorator/manipulator-attribute-module';
 import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
 import { IPwbManipulatorAttributeOnProcess } from '../../../interface/manipulator-attribute-module';

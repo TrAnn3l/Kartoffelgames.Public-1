@@ -3,7 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PwbApp = void 0;
 const web_change_detection_1 = require("@kartoffelgames/web.change-detection");
 const core_data_1 = require("@kartoffelgames/core.data");
-const element_creator_1 = require("./component_manager/content/element-creator");
+const element_creator_1 = require("./component/content/element-creator");
+const core_dependency_injection_1 = require("@kartoffelgames/core.dependency-injection");
+const global_key_1 = require("./global-key");
 class PwbApp {
     /**
      * Constructor.
@@ -123,10 +125,14 @@ class PwbApp {
     createComponent(pComponentConstructor) {
         // Call creation inside change detection zone.
         return this.changeDetection.execute(() => {
-            let lContent;
+            // Get selector of user
+            const lSelector = core_dependency_injection_1.Metadata.get(pComponentConstructor).getMetadata(global_key_1.GlobalKey.METADATA_SELECTOR);
             // Check if constructor is a component constructor.
-            if ('createComponent' in pComponentConstructor) {
-                lContent = pComponentConstructor.createComponent();
+            let lContent;
+            if (lSelector) {
+                // Get custom element and create.
+                const lCustomElement = window.customElements.get(lSelector);
+                lContent = new lCustomElement();
             }
             else {
                 throw new core_data_1.Exception('Content is not a HTMLComponent.', this);

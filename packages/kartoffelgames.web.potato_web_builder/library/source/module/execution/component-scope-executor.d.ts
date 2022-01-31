@@ -1,5 +1,5 @@
 import { Dictionary } from '@kartoffelgames/core.data';
-import { ComponentValues } from '../../component_manager/component-values';
+import { ComponentValues } from '../../component/component-values';
 /**
  * Executes string in set component values scope.
  */

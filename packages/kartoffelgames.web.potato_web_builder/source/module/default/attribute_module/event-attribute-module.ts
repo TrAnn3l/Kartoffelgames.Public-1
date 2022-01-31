@@ -1,6 +1,6 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { XmlAttribute } from '@kartoffelgames/core.xml';
-import { ComponentValues } from '../../../component_manager/component-values';
+import { ComponentValues } from '../../../component/component-values';
 import { StaticAttributeModule } from '../../../decorator/static-attribute-module';
 import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
 import { IPwbStaticAttributeOnCleanup, IPwbStaticAttributeOnProcess } from '../../../interface/static-attribute-module';
@@ -55,8 +55,8 @@ export class EventAttributeModule implements IPwbStaticAttributeOnProcess, IPwbS
         this.mEventName = this.mAttribute.name.substr(1, this.mAttribute.name.length - 2);
 
         // Get user class event from PwbComponent.
-        if ('componentHandler' in this.mTargetElement) {
-            this.mEmitter = this.mTargetElement.componentHandler.rootValues.getUserClassEvent(this.mEventName);
+        if ('component' in this.mTargetElement) {
+            this.mEmitter = this.mTargetElement.component.rootValues.getUserClassEvent(this.mEventName);
         }
 
         // Define listener.

@@ -1,6 +1,6 @@
-import { ComponentModules } from '../component_manager/component-modules';
-import { ComponentHandler } from '../component_manager/component-handler';
-import { Injector } from '@kartoffelgames/core.dependency-injection';
+import { ComponentModules } from '../component/component-modules';
+import { ComponentManager } from '../component/component-manager';
+import { Injector, Metadata } from '@kartoffelgames/core.dependency-injection';
 import { PwbComponentConstructor, PwbComponentElement } from '../interface/html-component';
 import { UserClassConstructor } from '../interface/user-class';
 import { XmlDocument } from '@kartoffelgames/core.xml';
@@ -8,43 +8,30 @@ import { TemplateParser } from '../parser/template-parser';
 import { PwbExpressionModuleConstructor } from '../interface/expression-module';
 import { PwbManipulatorAttributeModuleConstructor } from '../interface/manipulator-attribute-module';
 import { PwbStaticAttributeModuleConstructor } from '../interface/static-attribute-module';
-import { UpdateMode } from '../enum/update-mode';
+import { UpdateScope } from '../enum/update-scope';
+import { GlobalKey } from '../global-key';
 
 /**
  * AtScript. PWB Component.
  * @param pParameter - Parameter defaults on creation.
  */
 export function HtmlComponent(pParameter: HtmlComponentParameter): any {
-    // XMl parser with custom attribute names.
-    const lParser: TemplateParser = new TemplateParser();
-    const lParsedTemplate: XmlDocument = pParameter.template ? lParser.parse(pParameter.template) : new XmlDocument(''); // Ignore default-namespace.
-
-    // Update mode
-    const lUpdateMode: UpdateMode = pParameter.updateMode ?? UpdateMode.Global;
-
     // Needs constructor without argument.
     return (pUserClassConstructor: UserClassConstructor) => {
-        // Attribute module mapping.
-        const lAttributeModules: ComponentModules = new ComponentModules(pParameter.expressionmodule);
-
-        // Extend base user class with needed component methods.
-        pUserClassConstructor.createComponent = () => {
-            // Create 
-            return new lPwbComponentConstructor();
-        };
-        pUserClassConstructor.componentSelector = pParameter.selector;
-
-        // Set user class to be injectable
+        // Set user class to be injectable.
         Injector.Injectable(pUserClassConstructor);
+
+        // Set element metadata.
+        Metadata.get(pUserClassConstructor).setMetadata(GlobalKey.METADATA_SELECTOR, pParameter.selector);
 
         // Create custom html element of parent type.
         const lPwbComponentConstructor: PwbComponentConstructor = class extends HTMLElement implements PwbComponentElement {
-            private mComponentHandler: ComponentHandler;
+            private mComponentHandler: ComponentManager;
 
             /**
              * Get data for accessing component handler.
              */
-            public get componentHandler(): ComponentHandler {
+            public get component(): ComponentManager {
                 return this.mComponentHandler;
             }
 
@@ -54,22 +41,21 @@ export function HtmlComponent(pParameter: HtmlComponentParameter): any {
              */
             public constructor() {
                 super();
-                this.initializeComponent();
-            }
 
-            /**
-             * Initialize component.
-             * Add all content to component body and start automatic updates. 
-             */
-            private initializeComponent(): void {
                 // Create component handler.
-                const lComponentHandler = new ComponentHandler(pUserClassConstructor, lParsedTemplate.body, lAttributeModules, this, lUpdateMode);
+                const lComponentHandler = new ComponentManager(
+                    pUserClassConstructor,
+                    pParameter.template,
+                    pParameter.expressionmodule,
+                    this,
+                    pParameter.updateScope
+                );
 
                 // Append extended data to this comonent and user class object.
                 this.mComponentHandler = lComponentHandler;
 
                 // Append style if specified. Styles are scoped on components shadow root.
-                if (typeof pParameter.style !== 'undefined') {
+                if (pParameter.style) {
                     lComponentHandler.addStyle(pParameter.style);
                 }
 
@@ -91,7 +77,9 @@ type HtmlComponentParameter = {
     style?: string,
     selector: string;
     template?: string;
+    // Placeholder for listing modules that should be imported.
     modules?: Array<PwbManipulatorAttributeModuleConstructor | PwbStaticAttributeModuleConstructor | any>;
+    // Placeholder for listing components that should be imported.
     components?: Array<PwbComponentConstructor | any>;
-    updateMode?: UpdateMode;
+    updateScope?: UpdateScope;
 };

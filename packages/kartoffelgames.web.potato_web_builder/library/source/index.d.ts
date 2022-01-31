@@ -10,7 +10,7 @@ export { IPwbExpressionOnProcess, PwbExpressionModuleConstructor } from './inter
 export { IPwbManipulatorAttributeOnProcess, IPwbManipulatorAttributeOnUpdate, PwbManipulatorAttributeModuleConstructor } from './interface/manipulator-attribute-module';
 export { IPwbStaticAttributeOnProcess, IPwbStaticAttributeOnUpdate, IPwbStaticAttributeOnCleanup, PwbStaticAttributeModuleConstructor } from './interface/static-attribute-module';
 export { AttributeModuleAccessType } from './enum/attribute-module-access-type';
-export { ComponentValues } from './component_manager/component-values';
+export { ComponentValues } from './component/component-values';
 export { ModuleManipulatorResult } from './module/base/module-manipulator-result';
 export { TemplateParser } from './parser/template-parser';
 export { TextNode, XmlElement } from '@kartoffelgames/core.xml';

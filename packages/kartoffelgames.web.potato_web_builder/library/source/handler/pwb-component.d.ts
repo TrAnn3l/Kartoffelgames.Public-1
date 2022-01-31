@@ -1,4 +1,4 @@
-import { ComponentHandler } from '../component_manager/component-handler';
+import { ComponentManager } from '../component/component-manager';
 export declare class PwbComponent {
     private readonly mComponentElement;
     private readonly mComponentHandler;
@@ -10,7 +10,7 @@ export declare class PwbComponent {
      * Constructor.
      * @param pComponentHandler - Component handler.
      */
-    constructor(pComponentHandler: ComponentHandler, pElement: HTMLElement);
+    constructor(pComponentHandler: ComponentManager, pElement: HTMLElement);
     /**
      * Send an error to the global error handler.
      * @param pError - Error.

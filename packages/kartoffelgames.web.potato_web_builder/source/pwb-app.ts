@@ -2,7 +2,9 @@ import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { Exception } from '@kartoffelgames/core.data';
 import { PwbComponentConstructor, PwbComponentElement } from './interface/html-component';
 import { UserClassConstructor } from './interface/user-class';
-import { ElementCreator } from './component_manager/content/element-creator';
+import { ElementCreator } from './component/content/element-creator';
+import { Metadata } from '@kartoffelgames/core.dependency-injection';
+import { GlobalKey } from './global-key';
 
 export class PwbApp {
     public static readonly PUBLIC_APP_KEY: string = '_PWB_APP';
@@ -154,11 +156,15 @@ export class PwbApp {
     private createComponent(pComponentConstructor: UserClassConstructor): PwbComponentElement {
         // Call creation inside change detection zone.
         return this.changeDetection.execute(() => {
-            let lContent: PwbComponentElement;
+            // Get selector of user
+            const lSelector: string = Metadata.get(pComponentConstructor).getMetadata(GlobalKey.METADATA_SELECTOR);
 
             // Check if constructor is a component constructor.
-            if ('createComponent' in pComponentConstructor) {
-                lContent = pComponentConstructor.createComponent();
+            let lContent: PwbComponentElement;
+            if (lSelector) {
+                // Get custom element and create.
+                const lCustomElement: any = window.customElements.get(lSelector);
+                lContent = new lCustomElement();
             } else {
                 throw new Exception('Content is not a HTMLComponent.', this);
             }
@@ -236,4 +242,4 @@ type PwbAppConfig = {
      * Styles get append to head.
      */
     globalStyle?: string;
-}
+};

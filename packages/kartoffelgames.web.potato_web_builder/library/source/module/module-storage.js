@@ -4,8 +4,8 @@ exports.ModuleStorage = void 0;
 const core_data_1 = require("@kartoffelgames/core.data");
 const core_dependency_injection_1 = require("@kartoffelgames/core.dependency-injection");
 const core_xml_1 = require("@kartoffelgames/core.xml");
-const component_handler_1 = require("../component_manager/component-handler");
-const component_values_1 = require("../component_manager/component-values");
+const component_manager_1 = require("../component/component-manager");
+const component_values_1 = require("../component/component-values");
 const module_type_1 = require("../enum/module-type");
 class ModuleStorage {
     /**
@@ -44,7 +44,7 @@ class ModuleStorage {
         // Local injections for object creation.
         const lLocalInjections = new core_data_1.Dictionary();
         lLocalInjections.add(component_values_1.ComponentValues, pValueHandler);
-        lLocalInjections.add(component_handler_1.ComponentHandler, pComponentHandler);
+        lLocalInjections.add(component_manager_1.ComponentManager, pComponentHandler);
         // Create object.
         const lModule = core_dependency_injection_1.Injection.createObject(pExpressionModule, lLocalInjections);
         lModule.key = pAttributeName;
@@ -84,7 +84,7 @@ class ModuleStorage {
             const lLocalInjections = new core_data_1.Dictionary();
             lLocalInjections.add(core_xml_1.XmlElement, pTargetTemplate);
             lLocalInjections.add(component_values_1.ComponentValues, pValues);
-            lLocalInjections.add(component_handler_1.ComponentHandler, pComponentHandler);
+            lLocalInjections.add(component_manager_1.ComponentManager, pComponentHandler);
             lLocalInjections.add(core_xml_1.XmlAttribute, lFoundAttribute);
             // Create object.
             return core_dependency_injection_1.Injection.createObject(lModuleConstructor, lLocalInjections);
@@ -129,7 +129,7 @@ class ModuleStorage {
             const lLocalInjections = new core_data_1.Dictionary();
             lLocalInjections.add(core_xml_1.XmlElement, pTargetTemplate);
             lLocalInjections.add(component_values_1.ComponentValues, pValues);
-            lLocalInjections.add(component_handler_1.ComponentHandler, pComponentHandler);
+            lLocalInjections.add(component_manager_1.ComponentManager, pComponentHandler);
             lLocalInjections.add(Element, pTargetElement);
             lLocalInjections.add(core_xml_1.XmlAttribute, pAttribute);
             // Create module.

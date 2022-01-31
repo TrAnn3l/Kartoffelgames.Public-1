@@ -1,9 +1,9 @@
-import { ComponentHandler } from '../component_manager/component-handler';
+import { ComponentManager } from '../component/component-manager';
 import { PwbComponentElement } from '../interface/html-component';
 
 export class PwbComponent {
     private readonly mComponentElement: HTMLElement;
-    private readonly mComponentHandler: ComponentHandler;
+    private readonly mComponentHandler: ComponentManager;
 
     /**
      * Get raw html element of component.
@@ -16,7 +16,7 @@ export class PwbComponent {
      * Constructor.
      * @param pComponentHandler - Component handler.
      */
-    public constructor(pComponentHandler: ComponentHandler, pElement: HTMLElement) {
+    public constructor(pComponentHandler: ComponentManager, pElement: HTMLElement) {
         this.mComponentHandler = pComponentHandler;
         this.mComponentElement = pElement;
     }
@@ -35,13 +35,13 @@ export class PwbComponent {
     public update(): void {
         // Dispatch change event for other components.
         this.mComponentHandler.changeDetection.dispatchChangeEvent({
-            source: (<PwbComponentElement>this.mComponentElement).componentHandler.userClassObject,
+            source: (<PwbComponentElement>this.mComponentElement).component.userClassObject,
             property: Symbol('manual update'),
             stacktrace: Error().stack
         });
         // Call update component just in case of manual updating.
         this.mComponentHandler.updateComponent({
-            source: (<PwbComponentElement>this.mComponentElement).componentHandler.userClassObject,
+            source: (<PwbComponentElement>this.mComponentElement).component.userClassObject,
             property: Symbol('manual update'),
             stacktrace: Error().stack
         });

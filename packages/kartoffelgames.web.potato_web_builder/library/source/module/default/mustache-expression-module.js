@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MustacheExpressionModule = void 0;
 const component_scope_executor_1 = require("../execution/component-scope-executor");
-const component_values_1 = require("../../component_manager/component-values");
+const component_values_1 = require("../../component/component-values");
 const expression_module_1 = require("../../decorator/expression-module");
 /**
  * Wannabe Mustache expression executor.

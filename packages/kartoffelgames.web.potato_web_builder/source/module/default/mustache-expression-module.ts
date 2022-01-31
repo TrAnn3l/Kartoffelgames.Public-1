@@ -1,5 +1,5 @@
 import { ComponentScopeExecutor } from '../execution/component-scope-executor';
-import { ComponentValues } from '../../component_manager/component-values';
+import { ComponentValues } from '../../component/component-values';
 import { ExpressionModule } from '../../decorator/expression-module';
 import { IPwbExpressionOnProcess } from '../../interface/expression-module';
 

@@ -1,6 +1,6 @@
 import { Exception, List } from '@kartoffelgames/core.data';
 import { BaseXmlNode } from '@kartoffelgames/core.xml';
-import { ComponentValues } from '../../component_manager/component-values';
+import { ComponentValues } from '../../component/component-values';
 
 /**
  * Results for html manipulator attribute module.

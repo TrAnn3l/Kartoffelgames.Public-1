@@ -1,6 +1,6 @@
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
-import { ComponentValues } from '../../../component_manager/component-values';
+import { ComponentValues } from '../../../component/component-values';
 import { ManipulatorAttributeModule } from '../../../decorator/manipulator-attribute-module';
 import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
 import { IPwbManipulatorAttributeOnProcess, IPwbManipulatorAttributeOnUpdate } from '../../../interface/manipulator-attribute-module';
