@@ -6,52 +6,38 @@ import { ComponentValues } from './component-values';
 import { StaticUserClassData } from '../user_class_manager/static-user-class-data';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { BaseXmlNode, XmlDocument } from '@kartoffelgames/core.xml';
-import { Injection, InjectionConstructor, Injector } from '@kartoffelgames/core.dependency-injection';
+import { Injection, InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
 import { PwbApp } from '../pwb-app';
 import { ElementCreator } from './content/element-creator';
 import { PwbComponent } from '../handler/pwb-component';
-import { ChangeDetectionReason } from '@kartoffelgames/web.change-detection';
 import { UpdateScope } from '../enum/update-scope';
 import { TemplateParser } from '../parser/template-parser';
 import { PwbExpressionModuleConstructor } from '..';
 import { UpdateHandler } from './handler/update-handler';
+import { UserObjectHandler } from './handler/user-object-handler';
 
 /**
  * Base component handler. Handles initialisation and update of components.
  */
 export class ComponentManager {
-    private static readonly mTemplateStore: Dictionary<UserClassConstructor, XmlDocument> = new Dictionary<UserClassConstructor, XmlDocument>();
     private static readonly mModuleStore: Dictionary<UserClassConstructor, ComponentModules> = new Dictionary<UserClassConstructor, ComponentModules>();
+    private static readonly mTemplateStore: Dictionary<UserClassConstructor, XmlDocument> = new Dictionary<UserClassConstructor, XmlDocument>(); 
     private static readonly mXmlParser: TemplateParser = new TemplateParser();
 
     private readonly mComponent: Element;
     private readonly mShadowRoot: ShadowRoot;
-    private mCurrentUpdateChain: Array<ChangeDetectionReason>;
     private mFirstAttachment: boolean;
-    private mInsideUpdateCycle: boolean;
     private mIsAttached: boolean;
     private mMutationObserver: MutationObserver;
-    private mNextUpdateCycle: number;
     private readonly mRootBuilder: StaticBuilder;
-    private readonly mUpdateListener: (pReason: ChangeDetectionReason) => void;
-    private readonly mUpdateWaiter: List<() => void>;
     private readonly mUserClassObject: UserClassObject;
-    private mTemplate: XmlDocument;
-    private mUserClassConstructor: UserClassConstructor;
-    private mModules: ComponentModules;
     private mUpdateHandler: UpdateHandler;
-
-    /**
-     * Content anchor for later appending build and initilised elements on this place.
-     */
-    public get anchor(): Comment {
-        return this.mRootBuilder.anchor;
-    }
+    private mUserObjectHandler: UserObjectHandler;
 
     /**
      * Component content.
      */
-    public get content(): ShadowRoot {
+    public get shadowRoot(): ShadowRoot {
         return this.mShadowRoot;
     }
 
@@ -70,17 +56,10 @@ export class ComponentManager {
     }
 
     /**
-     * If component is attached to an document.
+     * Update handler.
      */
-    public get isAttached(): boolean {
-        return this.mIsAttached;
-    }
-
-    /**
-     * Get if component is initialized.
-     */
-    private get initialized(): boolean {
-        return this.mRootBuilder.initialized;
+    public get updateHandler(): UpdateHandler{
+        return this.mUpdateHandler;
     }
 
     /**
@@ -91,48 +70,21 @@ export class ComponentManager {
      * @param pAttributeModules - Attribute modules of component.
      */
     public constructor(pUserClassConstructor: UserClassConstructor, pTemplate: string, pExpressionModule: PwbExpressionModuleConstructor, pHtmlComponent: HTMLElement, pUpdateScope: UpdateScope) {
-        this.mUserClassConstructor = pUserClassConstructor;
-
         // Load or create ComponentModules. Cache created.
-        let lComponentModules = ComponentManager.mModuleStore.get(this.mUserClassConstructor);
+        let lComponentModules = ComponentManager.mModuleStore.get(pUserClassConstructor);
         if (!lComponentModules) {
             lComponentModules = new ComponentModules(pExpressionModule);
-            ComponentManager.mModuleStore.set(this.mUserClassConstructor, lComponentModules);
+            ComponentManager.mModuleStore.set(pUserClassConstructor, lComponentModules);
         }
-        this.mModules = lComponentModules;
+        const lModules: ComponentModules = lComponentModules;
 
         // Load or create template. Cache created.
-        let lTemplateDocument: XmlDocument = ComponentManager.mTemplateStore.get(this.mUserClassConstructor);
+        let lTemplateDocument: XmlDocument = ComponentManager.mTemplateStore.get(pUserClassConstructor);
         if (!lTemplateDocument) {
             lTemplateDocument = ComponentManager.mXmlParser.parse(pTemplate);
-            ComponentManager.mTemplateStore.set(this.mUserClassConstructor, lTemplateDocument);
+            ComponentManager.mTemplateStore.set(pUserClassConstructor, lTemplateDocument);
         }
-        this.mTemplate = lTemplateDocument;
-
-        // Create update handler.
-        const lUpdateScope: UpdateScope = pUpdateScope ?? UpdateScope.Global;
-        this.mUpdateHandler = new UpdateHandler(lUpdateScope);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // Create update listener as arrow function.
-        // Add empty update function if update mode is manual.
-        if (pUpdateScope === UpdateScope.Manual) {
-            this.mUpdateListener = (_pReason: ChangeDetectionReason) => { return; };
-        } else {
-            this.mUpdateListener = (pReason: ChangeDetectionReason) => { this.updateComponent(pReason); };
-        }
+        const lTemplate: XmlDocument = lTemplateDocument;
 
         // Create local injections for the user class object.
         const lLocalInjections: Dictionary<InjectionConstructor, any> = new Dictionary<InjectionConstructor, any>();
@@ -152,6 +104,14 @@ export class ComponentManager {
         });
         this.mUserClassObject = lUserClassObject;
 
+        // Create user object handler.
+        this.mUserObjectHandler = new UserObjectHandler(this.mUserClassObject);
+
+        // Create update handler.
+        const lUpdateScope: UpdateScope = pUpdateScope ?? UpdateScope.Global;
+        this.mUpdateHandler = new UpdateHandler(this.mUserObjectHandler, lUpdateScope);
+        this.mUpdateHandler.addUpdateListener(() => { return this.mRootBuilder.updateBuild(); });
+
         // Create component values handler with watched user class object.
         const lComponentValues: ComponentValues = new ComponentValues(this.mUserClassObject);
 
@@ -159,10 +119,10 @@ export class ComponentManager {
         this.mComponent = pHtmlComponent;
 
         // Create component builder.
-        this.mRootBuilder = new StaticBuilder(this.mTemplate.body, this.mModules, lComponentValues, this, false);
+        this.mRootBuilder = new StaticBuilder(lTemplate.body, lModules, lComponentValues, this, false);
+        this.shadowRoot.appendChild(this.mRootBuilder.anchor);
 
         // Initialize lists and default values.
-        this.mUpdateWaiter = new List<() => void>();
         this.mFirstAttachment = true;
 
         // Create content shadow root.
@@ -176,17 +136,17 @@ export class ComponentManager {
     public addStyle(pStyle: string): void {
         const lStyleElement: Element = ElementCreator.createElement('style');
         lStyleElement.innerHTML = pStyle;
-        this.content.prepend(lStyleElement);
+        this.shadowRoot.prepend(lStyleElement);
     }
 
     /**
      * Deconstruct element.
      */
     public deconstruct(): void {
-        this.callOnPwbDeconstruct();
+        this.mUserObjectHandler.callOnPwbDeconstruct();
 
         // Remove change listener from app.
-        this.changeDetection.removeChangeListener(this.mUpdateListener);
+        this.mUpdateHandler.deconstruct();
 
         // Remove mutation observer.s
         this.mMutationObserver.disconnect();
@@ -259,7 +219,7 @@ export class ComponentManager {
 
                     // Call callback method inside none silent zone.
                     this.changeDetection.execute(() => {
-                        this.callAfterPwbInitialize();
+                        this.mUserObjectHandler.callAfterPwbInitialize();
                     });
                 }
 
@@ -284,13 +244,6 @@ export class ComponentManager {
 
         // Call everything inside component zone.
         this.changeDetection.execute(() => {
-            // Do not initialize twice.
-            if (this.initialized) {
-                throw new Exception('Component handler is already initialized.', this);
-            }
-
-            // Add contentAnchor to element.
-            this.content.appendChild(this.anchor);
 
             // Export properties.
             this.exportPropertiesToHtmlElement();
@@ -299,10 +252,10 @@ export class ComponentManager {
             this.patchHtmlAttributes();
 
             // Add change detection listener
-            this.changeDetection.addChangeListener(this.mUpdateListener);
+            this.mUpdateHandler.enabled = true;
 
             // Before initialisation.
-            this.callOnPwbInitialize();
+            this.mUserObjectHandler.callOnPwbInitialize();
 
             try {
                 // Start initialize build.
@@ -321,195 +274,6 @@ export class ComponentManager {
     public sendError(pError: any): void {
         // Send error to zone.
         this.changeDetection.dispatchErrorEvent(pError);
-    }
-
-    /**
-     * Update component parts that used the property.
-     */
-    public updateComponent(pReason: ChangeDetectionReason): void {
-        // Dont update if component is not initialized or attached to document.
-        if (!this.initialized && !this.isAttached) {
-            return;
-        }
-
-        if (!this.mInsideUpdateCycle) {
-            // Set component into update circle.
-            this.mInsideUpdateCycle = true;
-
-            // Create and expand update reason list
-            if (!this.mCurrentUpdateChain) {
-                this.mCurrentUpdateChain = new Array<ChangeDetectionReason>();
-            }
-            this.mCurrentUpdateChain.push(pReason);
-
-            const lUpdateFunction = () => {
-                // Call user class on update function.
-                this.callOnPwbUpdate();
-
-                // Set component to not updating so new changes doesn't get ignnored.
-                this.mInsideUpdateCycle = false;
-                const lLastLength: number = this.mCurrentUpdateChain.length;
-
-                // Update component and get if any update was made.
-                const lHasUpdated: boolean = this.mRootBuilder.updateBuild();
-
-                // Clear update chain list if no other update in this cycle was triggered.
-                if (lLastLength === this.mCurrentUpdateChain.length) {
-                    this.mCurrentUpdateChain = null;
-                } else if (this.mCurrentUpdateChain.length > 10) {
-                    // Throw if too many updates are chained. 
-                    throw new LoopError('Update loop detected', this.mCurrentUpdateChain);
-                }
-
-                // Release all update waiter
-                for (const lUpdateWaiter of this.mUpdateWaiter) {
-                    lUpdateWaiter();
-                }
-
-                this.mUpdateWaiter.clear();
-
-                // Call user class on update function if any update was made.
-                if (lHasUpdated) {
-                    this.callAfterPwbUpdate();
-                }
-            };
-
-            // Update on next frame. 
-            // Do not call change detection on requestAnimationFrame.
-            this.changeDetection.silentExecution(() => {
-                this.mNextUpdateCycle = window.requestAnimationFrame(() => {
-                    try {
-                        // Call update not in silent zone.
-                        this.changeDetection.execute(lUpdateFunction);
-                    } catch (pException) {
-                        // Cancel update next update cycle.
-                        window.cancelAnimationFrame(this.mNextUpdateCycle);
-
-                        throw pException;
-                    }
-                });
-            });
-        }
-    }
-
-    /**
-     * Wait for the component update.
-     * Returns Promise<false> if there is currently no update cycle.
-     */
-    public async waitForUpdate(): Promise<boolean> {
-        if (this.mInsideUpdateCycle) {
-            // Add new callback to waiter line.
-            return new Promise<boolean>((pResolve: (pValue: boolean) => void) => {
-                this.mUpdateWaiter.push(() => {
-                    // Is resolved when all data were updated.
-                    pResolve(true);
-                });
-            });
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Call onPwbInitialize of user class object.
-     */
-    private callAfterPwbInitialize(): void {
-        // Call user class object onPwbInitialize.
-        const lUserClassObject: UserClassObject = this.rootValues.userClassObject;
-        if (typeof lUserClassObject.afterPwbInitialize === 'function') {
-            try {
-                lUserClassObject.afterPwbInitialize();
-            } catch (pError) {
-                this.sendError(pError);
-                throw pError;
-            }
-        }
-
-        this.callAfterPwbUpdate();
-    }
-
-    /**
-     * Call onPwbInitialize of user class object.
-     */
-    private callAfterPwbUpdate(): void {
-        // Call user class object onPwbInitialize.
-        const lUserClassObject: UserClassObject = this.rootValues.userClassObject;
-        if (typeof lUserClassObject.afterPwbUpdate === 'function') {
-            try {
-                lUserClassObject.afterPwbUpdate();
-            } catch (pError) {
-                this.sendError(pError);
-                throw pError;
-            }
-        }
-    }
-
-    /**
-     * Call onPwbInitialize of user class object.
-     * @param pAttributeName - Name of updated attribute.
-     */
-    private callOnPwbAttributeChange(pAttributeName: string): void {
-        // Call user class object onPwbAttributeChange.
-        const lUserClassObject: UserClassObject = this.rootValues.userClassObject;
-        if (typeof lUserClassObject.onPwbAttributeChange === 'function') {
-            try {
-                lUserClassObject.onPwbAttributeChange(pAttributeName);
-            } catch (pError) {
-                this.sendError(pError);
-                throw pError;
-            }
-        }
-    }
-
-    /**
-     * Call onPwbDeconstruct of user class object.
-     */
-    private callOnPwbDeconstruct(): void {
-        // Call user class object onPwbDeconstruct.
-        const lUserClassObject: UserClassObject = this.rootValues.userClassObject;
-        if (typeof lUserClassObject.onPwbDeconstruct === 'function') {
-            try {
-                lUserClassObject.onPwbDeconstruct();
-            } catch (pError) {
-                this.sendError(pError);
-                throw pError;
-            }
-        }
-    }
-
-    /**
-     * Call onPwbInitialize of user class object.
-     */
-    private callOnPwbInitialize(): void {
-        // Call user class object onPwbInitialize.
-        const lUserClassObject: UserClassObject = this.rootValues.userClassObject;
-        if (typeof lUserClassObject.onPwbInitialize === 'function') {
-            try {
-                lUserClassObject.onPwbInitialize();
-            } catch (pError) {
-                this.sendError(pError);
-                throw pError;
-            }
-        }
-
-        this.callOnPwbUpdate();
-    }
-
-    /**
-     * Call onPwbInitialize of user class object.
-     */
-    private callOnPwbUpdate(): void {
-        // Call user class object onPwbInitialize.
-        const lUserClassObject: UserClassObject = this.rootValues.userClassObject;
-        if (typeof lUserClassObject.onPwbUpdate === 'function') {
-            try {
-                // Call in silent mode.
-                lUserClassObject.onPwbUpdate();
-            } catch (pError) {
-                this.sendError(pError);
-                throw pError;
-            }
-        }
     }
 
     /**
@@ -541,7 +305,7 @@ export class ComponentManager {
             lDescriptor.set = function (pValue: any) {
                 (<any>lSelf.userClassObject)[lExportProperty] = pValue;
                 // Call OnAttributeChange.
-                lSelf.callOnPwbAttributeChange(lExportProperty);
+                lSelf.mUserObjectHandler.callOnPwbAttributeChange(lExportProperty);
             };
             lDescriptor.get = function () {
                 let lValue: any = (<any>lSelf.userClassObject)[lExportProperty];
@@ -594,21 +358,5 @@ export class ComponentManager {
 
             return lOriginalGetAttribute.call(lSelf.mComponent, pQualifiedName);
         };
-    }
-}
-
-export class LoopError {
-    public readonly chain: Array<ChangeDetectionReason>;
-    public readonly message: string;
-
-    /**
-     * Constructor.
-     * Create loop error.
-     * @param pMessage - Error Message.
-     * @param pChain - Current update chain.
-     */
-    public constructor(pMessage: string, pChain: Array<ChangeDetectionReason>) {
-        this.message = pMessage;
-        this.chain = pChain;
     }
 }

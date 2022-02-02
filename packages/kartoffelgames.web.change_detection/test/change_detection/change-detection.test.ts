@@ -320,7 +320,7 @@ describe('ChangeDetection', () => {
         const lTrackedObject: object = lChangeDetection.registerObject(lOriginalObject);
 
         // Process.
-        const lUntrackedObject: object = lChangeDetection.getUntrackedObject(lTrackedObject);
+        const lUntrackedObject: object = ChangeDetection.getUntrackedObject(lTrackedObject);
 
         // Evaluation.
         expect(lOriginalObject).to.not.equal(lTrackedObject);

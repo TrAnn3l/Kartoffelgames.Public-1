@@ -1,1 +1,0 @@
-{"version":3,"file":"html-component.d.ts","sourceRoot":"","sources":["../../../source/interface/html-component.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,gBAAgB,EAAE,MAAM,gCAAgC,CAAC;AAElE,MAAM,WAAW,mBAAoB,SAAQ,WAAW;IACpD,QAAQ,CAAC,SAAS,EAAE,gBAAgB,CAAC;CACxC;AAED,oBAAY,uBAAuB,GAAG;IAClC,QAAO,mBAAmB,CAAC;CAC9B,CAAC"}

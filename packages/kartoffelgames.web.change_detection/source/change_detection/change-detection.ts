@@ -31,6 +31,15 @@ export class ChangeDetection {
         return lCurrent ?? null;
     }
 
+    /**
+     * Get original object from InteractionDetectionProxy-Proxy.
+     * @param pObject - Possible ChangeDetectionProxy object.
+     * @returns original object.
+     */
+    public static getUntrackedObject<T extends object>(pObject: T): T {
+        return InteractionDetectionProxy.getOriginal(pObject);
+    }
+
     private readonly mChangeListenerList: List<ChangeListener>;
     private readonly mErrorListenerList: List<ErrorListener>;
     private readonly mExecutionZone: ExecutionZone;
@@ -164,15 +173,6 @@ export class ChangeDetection {
      */
     public execute<T>(pFunction: (...pArgs: Array<any>) => T, ...pArgs: Array<any>): T {
         return this.mExecutionZone.executeInZoneSilent(pFunction, ...pArgs);
-    }
-
-    /**
-     * Get original object from InteractionDetectionProxy-Proxy.
-     * @param pObject - Possible ChangeDetectionProxy object.
-     * @returns original object.
-     */
-    public getUntrackedObject<T extends object>(pObject: T): T {
-        return InteractionDetectionProxy.getOriginal(pObject);
     }
 
     /**

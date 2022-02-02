@@ -58,6 +58,14 @@ class ChangeDetection {
         return lCurrent ?? null;
     }
     /**
+     * Get original object from InteractionDetectionProxy-Proxy.
+     * @param pObject - Possible ChangeDetectionProxy object.
+     * @returns original object.
+     */
+    static getUntrackedObject(pObject) {
+        return interaction_detection_proxy_1.InteractionDetectionProxy.getOriginal(pObject);
+    }
+    /**
      * If change detection is silent.
      */
     get isSilent() {
@@ -136,14 +144,6 @@ class ChangeDetection {
      */
     execute(pFunction, ...pArgs) {
         return this.mExecutionZone.executeInZoneSilent(pFunction, ...pArgs);
-    }
-    /**
-     * Get original object from InteractionDetectionProxy-Proxy.
-     * @param pObject - Possible ChangeDetectionProxy object.
-     * @returns original object.
-     */
-    getUntrackedObject(pObject) {
-        return interaction_detection_proxy_1.InteractionDetectionProxy.getOriginal(pObject);
     }
     /**
      * Access data that has been add in this zone.

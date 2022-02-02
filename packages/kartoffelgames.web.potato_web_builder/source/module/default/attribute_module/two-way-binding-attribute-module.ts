@@ -51,7 +51,7 @@ export class TwoWayBindingAttributeModule implements IPwbStaticAttributeOnProces
         const lThisValue: any = ComponentScopeExecutor.executeSilent(this.mThisValueExpression, this.mValueHandler);
 
         // Register all events.
-        this.mComponentHandler.changeDetection.registerObject(this.mTargetElement);
+        this.mComponentHandler.updateHandler.registerObject(this.mTargetElement);
 
         // Only update if not undefined
         if (typeof lThisValue !== 'undefined') {

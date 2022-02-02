@@ -17,9 +17,9 @@ import { HtmlContent } from '../../../types';
 })
 export class IdChildAttributeModule implements IPwbStaticAttributeOnProcess {
     private readonly mAttribute: XmlAttribute;
-    private readonly mComponentManager: ComponentManager
+    private readonly mComponentManager: ComponentManager;
     private readonly mTargetElement: HtmlContent;
-    private readonly mValueHandler: ComponentValues; 
+    private readonly mValueHandler: ComponentValues;
 
     /**
      * Constructor.
@@ -38,7 +38,7 @@ export class IdChildAttributeModule implements IPwbStaticAttributeOnProcess {
      * Process module and add current html to id childs.
      */
     public onProcess(): void {
-        const lRegistedElement: HtmlContent = this.mComponentManager.changeDetection.registerObject(this.mTargetElement);
+        const lRegistedElement: HtmlContent = this.mComponentManager.updateHandler.registerObject(this.mTargetElement);
 
         // Add current html element to temporary root values. Delete starting #.
         this.mValueHandler.setTemporaryValue(this.mAttribute.qualifiedName.substr(1), lRegistedElement, true);

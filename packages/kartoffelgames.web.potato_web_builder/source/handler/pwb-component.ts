@@ -40,7 +40,7 @@ export class PwbComponent {
             stacktrace: Error().stack
         });
         // Call update component just in case of manual updating.
-        this.mComponentHandler.updateComponent({
+        this.mComponentHandler.updateHandler.triggerUpdate({
             source: (<PwbComponentElement>this.mComponentElement).component.userClassObject,
             property: Symbol('manual update'),
             stacktrace: Error().stack

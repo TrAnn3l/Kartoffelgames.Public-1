@@ -13,6 +13,12 @@ export declare class ChangeDetection {
      * Ignores all silent zones and returns next none silent zone.
      */
     static get currentNoneSilent(): ChangeDetection;
+    /**
+     * Get original object from InteractionDetectionProxy-Proxy.
+     * @param pObject - Possible ChangeDetectionProxy object.
+     * @returns original object.
+     */
+    static getUntrackedObject<T extends object>(pObject: T): T;
     private readonly mChangeListenerList;
     private readonly mErrorListenerList;
     private readonly mExecutionZone;
@@ -75,12 +81,6 @@ export declare class ChangeDetection {
      * @param pArgs - function execution arguments.
      */
     execute<T>(pFunction: (...pArgs: Array<any>) => T, ...pArgs: Array<any>): T;
-    /**
-     * Get original object from InteractionDetectionProxy-Proxy.
-     * @param pObject - Possible ChangeDetectionProxy object.
-     * @returns original object.
-     */
-    getUntrackedObject<T extends object>(pObject: T): T;
     /**
      * Access data that has been add in this zone.
      * Can access data of parent zones.
