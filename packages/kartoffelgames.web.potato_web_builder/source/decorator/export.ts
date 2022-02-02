@@ -1,6 +1,7 @@
 import { Exception } from '@kartoffelgames/core.data';
+import { Metadata } from '@kartoffelgames/core.dependency-injection';
+import { MetadataKey } from '../global-key';
 import { UserClassConstructor } from '../interface/user-class';
-import { StaticUserClassData } from '../user_class_manager/static-user-class-data';
 
 /**
  * AtScript.
@@ -13,9 +14,13 @@ export function Export(pTarget: object, pPropertyKey: string): void {
 
     // Check if real decorator on static property.
     if (typeof pTarget === 'function') {
-        throw new Exception('Event target is not for an instanced property.', Export);
+        throw new Exception('Event target is not for a static property.', Export);
     }
 
-    // Set event to property mapping.
-    StaticUserClassData.get(lUserClassConstructor).exportProperty.add(pPropertyKey, true);
+    // Get property list from constructor metadata.
+    const lExportedPropertyList: Array<string | symbol> = Metadata.get(lUserClassConstructor).getMetadata(MetadataKey.METADATA_EXPORTED_PROPERTIES) ?? new Array<string | symbol>();
+    lExportedPropertyList.push(pPropertyKey);
+
+    // Set metadata.
+    Metadata.get(lUserClassConstructor).setMetadata(MetadataKey.METADATA_EXPORTED_PROPERTIES, lExportedPropertyList);
 }

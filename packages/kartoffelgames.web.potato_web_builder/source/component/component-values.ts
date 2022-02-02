@@ -22,7 +22,6 @@ export class ComponentValues {
     }
 
     private readonly mTemporaryValues: Dictionary<string, any>;
-    private readonly mValidSlotNameList: Array<string>;
     private readonly mValueObject: UserClassObject | ComponentValues;
     
     /**
@@ -53,18 +52,6 @@ export class ComponentValues {
     }
 
     /**
-     * Get all valid slot names.
-     */
-    public get validSlotNameList(): Array<string> {
-        // Get key list from parent if parent can have temporary values.
-        if (!ComponentValues.isUserClassObject(this.mValueObject)) {
-            return this.mValueObject.validSlotNameList;
-        } else {
-            return this.mValidSlotNameList;
-        }
-    }
-
-    /**
      * Constructor.
      * Initialize data lists.
      * @param pValueObject - Parent value object.
@@ -73,9 +60,6 @@ export class ComponentValues {
     public constructor(pValueObject: UserClassObject | ComponentValues) {
         this.mValueObject = pValueObject;
         this.mTemporaryValues = new Dictionary<string, any>();
-
-        // Only needed in root component values.
-        this.mValidSlotNameList = (ComponentValues.isUserClassObject(this.mValueObject)) ? new Array<string>() : null;
     }
 
     /**
@@ -139,7 +123,7 @@ export class ComponentValues {
         let lUserClassConstructor: UserClassConstructor = <UserClassConstructor>this.userClassObject.constructor;
 
         // Get original constructor
-        lUserClassConstructor = ChangeDetection.current.getUntrackedObject(lUserClassConstructor);
+        lUserClassConstructor = ChangeDetection.getUntrackedObject(lUserClassConstructor);
 
         // Check if event exists.
         const lEventProperty: string = StaticUserClassData.get(lUserClassConstructor).eventInformation.get(pEventName);

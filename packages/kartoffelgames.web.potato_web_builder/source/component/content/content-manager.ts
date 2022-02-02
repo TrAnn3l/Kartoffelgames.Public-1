@@ -394,7 +394,7 @@ export class ContentManager {
      */
     private parseNodeToSloted(pParentElement: PwbComponentElement, pNode: Node, pTemplate: BaseXmlNode): Node {
         let lNode: BaseContent = pNode;
-        const lSlotName: string = pParentElement.component.getElementsSlotname(pTemplate);
+        const lSlotName: string = pParentElement.component.elementHandler.getElementsSlotname(pTemplate);
 
         // Wrap text nodes into span element.
         if (pTemplate instanceof TextNode) {

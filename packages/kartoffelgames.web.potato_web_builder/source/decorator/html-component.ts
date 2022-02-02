@@ -1,15 +1,12 @@
-import { ComponentModules } from '../component/component-modules';
 import { ComponentManager } from '../component/component-manager';
 import { Injector, Metadata } from '@kartoffelgames/core.dependency-injection';
 import { PwbComponentConstructor, PwbComponentElement } from '../interface/html-component';
 import { UserClassConstructor } from '../interface/user-class';
-import { XmlDocument } from '@kartoffelgames/core.xml';
-import { TemplateParser } from '../parser/template-parser';
 import { PwbExpressionModuleConstructor } from '../interface/expression-module';
 import { PwbManipulatorAttributeModuleConstructor } from '../interface/manipulator-attribute-module';
 import { PwbStaticAttributeModuleConstructor } from '../interface/static-attribute-module';
 import { UpdateScope } from '../enum/update-scope';
-import { GlobalKey } from '../global-key';
+import { MetadataKey } from '../global-key';
 
 /**
  * AtScript. PWB Component.
@@ -22,11 +19,11 @@ export function HtmlComponent(pParameter: HtmlComponentParameter): any {
         Injector.Injectable(pUserClassConstructor);
 
         // Set element metadata.
-        Metadata.get(pUserClassConstructor).setMetadata(GlobalKey.METADATA_SELECTOR, pParameter.selector);
+        Metadata.get(pUserClassConstructor).setMetadata(MetadataKey.METADATA_SELECTOR, pParameter.selector);
 
         // Create custom html element of parent type.
         const lPwbComponentConstructor: PwbComponentConstructor = class extends HTMLElement implements PwbComponentElement {
-            private mComponentHandler: ComponentManager;
+            private readonly mComponentHandler: ComponentManager;
 
             /**
              * Get data for accessing component handler.

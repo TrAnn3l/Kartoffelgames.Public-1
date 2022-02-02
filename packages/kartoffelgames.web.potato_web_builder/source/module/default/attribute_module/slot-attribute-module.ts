@@ -1,4 +1,5 @@
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
+import { ComponentManager } from '../../../component/component-manager';
 import { ComponentValues } from '../../../component/component-values';
 import { ManipulatorAttributeModule } from '../../../decorator/manipulator-attribute-module';
 import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
@@ -13,6 +14,7 @@ import { ModuleManipulatorResult } from '../../base/module-manipulator-result';
 })
 export class SlotAttributeModule implements IPwbManipulatorAttributeOnProcess {
     private readonly mAttribute: XmlAttribute;
+    private readonly mComponentManager: ComponentManager;
     private readonly mTargetTemplate: XmlElement;
     private readonly mValueHandler: ComponentValues;
 
@@ -22,10 +24,11 @@ export class SlotAttributeModule implements IPwbManipulatorAttributeOnProcess {
      * @param pValueHandler - Values of component.
      * @param pAttribute - Attribute of module.
      */
-    public constructor(pTargetTemplate: XmlElement, pValueHandler: ComponentValues, pAttribute: XmlAttribute) {
+    public constructor(pComponentManager: ComponentManager, pTargetTemplate: XmlElement, pValueHandler: ComponentValues, pAttribute: XmlAttribute) {
         this.mTargetTemplate = pTargetTemplate;
         this.mValueHandler = pValueHandler;
         this.mAttribute = pAttribute;
+        this.mComponentManager = pComponentManager;
     }
 
     /**
@@ -36,7 +39,7 @@ export class SlotAttributeModule implements IPwbManipulatorAttributeOnProcess {
         const lSlotName: string = this.mAttribute.name.substr(1);
 
         // Add slot name to valid slot names.
-        this.mValueHandler.validSlotNameList.push(lSlotName);
+        this.mComponentManager.elementHandler.addValidSlot(lSlotName);
 
         // Clone currrent template element.
         const lClone: XmlElement = <XmlElement>this.mTargetTemplate.clone();

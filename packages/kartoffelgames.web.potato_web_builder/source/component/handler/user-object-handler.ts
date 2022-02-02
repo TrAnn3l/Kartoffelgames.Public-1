@@ -1,14 +1,45 @@
-import { UserClassObject } from '../../interface/user-class';
+import { Dictionary } from '@kartoffelgames/core.data';
+import { Injection, InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
+import { UserClassConstructor, UserClassObject } from '../../interface/user-class';
+import { UpdateHandler } from './update-handler';
 
 export class UserObjectHandler {
     private readonly mUserObject: UserClassObject;
 
     /**
-     * Constrcutor.
-     * @param pUserObject - User class instance.
+     * User class.
      */
-    public constructor(pUserObject: UserClassObject) {
-        this.mUserObject = pUserObject;
+    public get userClass(): UserClassConstructor {
+        return <UserClassConstructor>this.mUserObject.constructor;
+    }
+
+    /**
+     * User class instance.
+     */
+    public get userObject(): UserClassObject {
+        return this.mUserObject;
+    }
+
+    /**
+     * Constrcutor.
+     * @param pUserClass - User object constructor.
+     */
+    public constructor(pUserClass: UserClassConstructor, pUpdateHandler: UpdateHandler, pInjectionList: Array<object>) {
+        // Create injection mapping. Ignores none objects.
+        const lLocalInjections: Dictionary<InjectionConstructor, any> = new Dictionary<InjectionConstructor, any>();
+        for (const lInjectionObject of pInjectionList) {
+            if (typeof lInjectionObject === 'object' && lInjectionObject !== null) {
+                lLocalInjections.add(<InjectionConstructor>lInjectionObject.constructor, lInjectionObject);
+            }
+        }
+
+        // Create user object inside update zone.
+        // Constructor needs to be called inside zone.
+        let lUntrackedUserObject: UserClassObject;
+        pUpdateHandler.execute(() => {
+            lUntrackedUserObject = Injection.createObject(pUserClass, lLocalInjections);
+        });
+        this.mUserObject = pUpdateHandler.registerObject(lUntrackedUserObject);
     }
 
     /**
@@ -29,8 +60,8 @@ export class UserObjectHandler {
      * Call onPwbInitialize of user class object.
      * @param pAttributeName - Name of updated attribute.
      */
-    public callOnPwbAttributeChange(pAttributeName: string): void {
-        this.callUserCallback('onPwbAttributeChange');
+    public callOnPwbAttributeChange(pAttributeName: string | symbol): void {
+        this.callUserCallback('onPwbAttributeChange', pAttributeName);
     }
 
     /**
@@ -58,10 +89,10 @@ export class UserObjectHandler {
      * Callback by name.
      * @param pCallbackKey - Callback name.
      */
-    private callUserCallback(pCallbackKey: UserObjectCallbacks) {
+    private callUserCallback(pCallbackKey: UserObjectCallbacks, ...pArguments: Array<any>) {
         // Callback when it exits
         if (pCallbackKey in this.mUserObject) {
-            (<() => void>this.mUserObject[pCallbackKey])();
+            (<(...pArguments: Array<any>) => void>this.mUserObject[pCallbackKey])(...pArguments);
         }
     }
 

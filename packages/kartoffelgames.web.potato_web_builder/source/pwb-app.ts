@@ -4,7 +4,7 @@ import { PwbComponentConstructor, PwbComponentElement } from './interface/html-c
 import { UserClassConstructor } from './interface/user-class';
 import { ElementCreator } from './component/content/element-creator';
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
-import { GlobalKey } from './global-key';
+import { MetadataKey } from './global-key';
 
 export class PwbApp {
     public static readonly PUBLIC_APP_KEY: string = '_PWB_APP';
@@ -157,7 +157,7 @@ export class PwbApp {
         // Call creation inside change detection zone.
         return this.changeDetection.execute(() => {
             // Get selector of user
-            const lSelector: string = Metadata.get(pComponentConstructor).getMetadata(GlobalKey.METADATA_SELECTOR);
+            const lSelector: string = Metadata.get(pComponentConstructor).getMetadata(MetadataKey.METADATA_SELECTOR);
 
             // Check if constructor is a component constructor.
             let lContent: PwbComponentElement;

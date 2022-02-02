@@ -92,6 +92,17 @@ export class UpdateHandler {
     }
 
     /**
+     * Shedule forced manual update.
+     * @param pReason - Update reason.
+     */
+    public forceUpdate(pReason: ChangeDetectionReason): void {
+        this.sheduleUpdate(pReason);
+
+        // Request update to dispatch change events on other components.
+        this.requestUpdate(pReason);
+    }
+
+    /**
      * Register object and pass on update events.
      * @param pObject - Object.
      */
@@ -100,11 +111,11 @@ export class UpdateHandler {
     }
 
     /**
-     * Shedule manual update.
-     * @param pReason - Update reason.
+     * Request update.
+     * @param pReason 
      */
-    public triggerUpdate(pReason: ChangeDetectionReason): void {
-        this.sheduleUpdate(pReason);
+    public requestUpdate(pReason: ChangeDetectionReason): void {
+        this.mChangeDetection.dispatchChangeEvent(pReason);
     }
 
     /**

@@ -9,7 +9,7 @@ export function IdChild(pIdChildName: string): any {
     return (pTarget: object, pPropertyKey: string) => {
         // Check if real decorator on static property.
         if (typeof pTarget === 'function') {
-            throw new Exception('Event target is not for an instanced property.', IdChild);
+            throw new Exception('Event target is not for a static property.', IdChild);
         }
 
         // Define getter accessor that returns id child.
