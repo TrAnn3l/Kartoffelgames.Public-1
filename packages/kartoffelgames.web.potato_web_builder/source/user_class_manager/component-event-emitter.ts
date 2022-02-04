@@ -32,7 +32,7 @@ export class ComponentEventEmitter<T> {
      */
     public dispatchEvent(pEventArgs: T): void {
         // Call all listener.
-        for (const lListener of this.mListener){
+        for (const lListener of this.mListener) {
             lListener.call(null, pEventArgs);
         }
     }

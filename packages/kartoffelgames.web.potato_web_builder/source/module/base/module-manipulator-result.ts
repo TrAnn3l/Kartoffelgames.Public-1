@@ -1,6 +1,6 @@
 import { Exception, List } from '@kartoffelgames/core.data';
 import { BaseXmlNode } from '@kartoffelgames/core.xml';
-import { ComponentValues } from '../../component/component-values';
+import { LayerValues } from '../../component/values/layer-values';
 
 /**
  * Results for html manipulator attribute module.
@@ -29,7 +29,7 @@ export class ModuleManipulatorResult {
      * @param pTemplateElement - New template element. Can't use same template for multiple elements.
      * @param pValues - New Value handler of element with current value handler as parent.
      */
-    public addElement(pTemplateElement: BaseXmlNode, pValues: ComponentValues): void {
+    public addElement(pTemplateElement: BaseXmlNode, pValues: LayerValues): void {
         // Check if value or temple is used in another element.
         const lDoubledIndex: number = this.mElementList.findIndex(pElement => {
             return pElement.template === pTemplateElement || pElement.componentValues === pValues;
@@ -49,5 +49,5 @@ export class ModuleManipulatorResult {
  */
 export type ManipulatorElement = {
     template: BaseXmlNode;
-    componentValues: ComponentValues;
+    componentValues: LayerValues;
 };

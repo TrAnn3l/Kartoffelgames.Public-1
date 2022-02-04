@@ -1,6 +1,6 @@
 import { Injector } from '@kartoffelgames/core.dependency-injection';
 import { ModuleType } from '../enum/module-type';
-import { ExpressionModuleSetting, IPwbExpressionModule, PwbExpressionModuleConstructor } from '../interface/expression-module';
+import { ExpressionModuleSetting, IPwbExpressionModule, PwbExpressionModuleConstructor } from '../interface/module/expression-module';
 import { ModuleStorage } from '../module/module-storage';
 import { HtmlContent } from '../types';
 

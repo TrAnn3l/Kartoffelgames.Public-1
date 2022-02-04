@@ -1,7 +1,7 @@
 import { ComponentScopeExecutor } from '../execution/component-scope-executor';
-import { ComponentValues } from '../../component/component-values';
+import { LayerValues } from '../../component/values/layer-values';
 import { ExpressionModule } from '../../decorator/expression-module';
-import { IPwbExpressionOnProcess } from '../../interface/expression-module';
+import { IPwbExpressionOnProcess } from '../../interface/module/expression-module';
 
 /**
  * Wannabe Mustache expression executor.
@@ -11,13 +11,13 @@ import { IPwbExpressionOnProcess } from '../../interface/expression-module';
     expressionSelector: /{{.*?}}/
 })
 export class MustacheExpressionModule implements IPwbExpressionOnProcess {
-    private readonly mValueHandler: ComponentValues;
+    private readonly mValueHandler: LayerValues;
 
     /**
      * Constructor.
      * @param pValueHandler - Values of component.
      */
-    public constructor(pValueHandler: ComponentValues) {
+    public constructor(pValueHandler: LayerValues) {
         this.mValueHandler = pValueHandler;
     }
 

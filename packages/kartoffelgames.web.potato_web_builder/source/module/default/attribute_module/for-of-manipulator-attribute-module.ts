@@ -1,11 +1,11 @@
 import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
-import { ComponentValues } from '../../../component/component-values';
+import { LayerValues } from '../../../component/values/layer-values';
 import { ModuleManipulatorResult } from '../../base/module-manipulator-result';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { ManipulatorAttributeModule } from '../../../decorator/manipulator-attribute-module';
-import { IPwbManipulatorAttributeOnProcess, IPwbManipulatorAttributeOnUpdate } from '../../../interface/manipulator-attribute-module';
+import { IPwbManipulatorAttributeOnProcess, IPwbManipulatorAttributeOnUpdate } from '../../../interface/module/manipulator-attribute-module';
 import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
 
 /**
@@ -24,7 +24,7 @@ export class ForOfManipulatorAttributeModule implements IPwbManipulatorAttribute
     private mListExpression: string;
     private readonly mTargetTemplate: XmlElement;
     private mValueCompare: CompareHandler<any>;
-    private readonly mValueHandler: ComponentValues;
+    private readonly mValueHandler: LayerValues;
 
     /**
      * Constructor.
@@ -32,7 +32,7 @@ export class ForOfManipulatorAttributeModule implements IPwbManipulatorAttribute
      * @param pValueHandler - Values of component.
      * @param pAttribute - Attribute of module.
      */
-    public constructor(pTargetTemplate: XmlElement, pValueHandler: ComponentValues, pAttribute: XmlAttribute) {
+    public constructor(pTargetTemplate: XmlElement, pValueHandler: LayerValues, pAttribute: XmlAttribute) {
         this.mTargetTemplate = pTargetTemplate;
         this.mValueHandler = pValueHandler;
         this.mAttribute = pAttribute;
@@ -66,8 +66,8 @@ export class ForOfManipulatorAttributeModule implements IPwbManipulatorAttribute
                 // Add template for element function.
                 const lAddTempateForElement = (pObjectValue: any, pObjectKey: number | string) => {
                     const lClonedTemplate: XmlElement = <XmlElement>this.mTargetTemplate.clone();
-                    const lComponentValues: ComponentValues = new ComponentValues(this.mValueHandler);
-                    lComponentValues.setTemporaryValue(lAttributeInformation[1], pObjectValue);
+                    const lComponentValues: LayerValues = new LayerValues(this.mValueHandler);
+                    lComponentValues.setLayerValue(lAttributeInformation[1], pObjectValue);
 
                     // If custom index is used.
                     if (lAttributeInformation[4]) {
@@ -79,7 +79,7 @@ export class ForOfManipulatorAttributeModule implements IPwbManipulatorAttribute
                         const lIndexExpressionResult: any = ComponentScopeExecutor.executeSilent(lAttributeInformation[5], lComponentValues, lExternalValues);
 
                         // Set custom index name as temporary value.
-                        lComponentValues.setTemporaryValue(lAttributeInformation[4], lIndexExpressionResult);
+                        lComponentValues.setLayerValue(lAttributeInformation[4], lIndexExpressionResult);
                     }
 
                     // Add element.

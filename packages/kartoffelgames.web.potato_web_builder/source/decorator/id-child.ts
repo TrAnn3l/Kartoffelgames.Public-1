@@ -1,5 +1,6 @@
 import { Exception } from '@kartoffelgames/core.data';
-import { UserClassObject } from '../interface/user-class';
+import { ComponentConnection } from '../component/component-connection';
+import { UserObject } from '../interface/user-class';
 
 /**
  * AtScript. Id child 
@@ -14,8 +15,8 @@ export function IdChild(pIdChildName: string): any {
 
         // Define getter accessor that returns id child.
         Object.defineProperty(pTarget, pPropertyKey, {
-            get(this: UserClassObject) {
-                const lIdChild: any = this.componentHandler.rootValues.getTemporaryValue(pIdChildName);
+            get(this: UserObject) {
+                const lIdChild: any = ComponentConnection.componentManagerOf(this).rootValues.getValue(pIdChildName);
 
                 if (lIdChild instanceof Element) {
                     return lIdChild;

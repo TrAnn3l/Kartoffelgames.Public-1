@@ -1,6 +1,7 @@
 import { Dictionary, List } from '@kartoffelgames/core.data';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
-import { ComponentValues } from '../../component/component-values';
+import { LayerValues } from '../../component/values/layer-values';
+import { UserObject } from '../../interface/user-class';
 
 /**
  * Executes string in set component values scope.
@@ -12,11 +13,11 @@ export class ComponentScopeExecutor {
      * @param pValues - Current component values.
      * @param pExtenedData - Extended data that are only exist for this execution.
      */
-    public static execute(pExpression: string, pValues: ComponentValues, pExtenedData?: Dictionary<string, any>): any {
+    public static execute(pExpression: string, pValues: LayerValues, pExtenedData?: Dictionary<string, any>): any {
         const lReferencedValues: Array<string> = ComponentScopeExecutor.extractReferences(pExpression);
         const lExtendedData: Dictionary<string, any> = pExtenedData ?? new Dictionary<string, any>();
 
-        const lContext: object = pValues.userClassObject;
+        const lContext: UserObject = pValues.componentManager.userObjectHandler.userObject;
         const lEvaluatedFunction: () => any = ComponentScopeExecutor.createEvaluationFunktion(pExpression, lReferencedValues, pValues, lExtendedData);
 
         return lEvaluatedFunction.call(lContext);
@@ -29,7 +30,7 @@ export class ComponentScopeExecutor {
      * @param pValues - Current component values.
      * @param pExtenedData - Extended data that are only exist for this execution.
      */
-    public static executeSilent(pExpression: string, pValues: ComponentValues, pExtenedData?: Dictionary<string, any>): any {
+    public static executeSilent(pExpression: string, pValues: LayerValues, pExtenedData?: Dictionary<string, any>): any {
         const lCurrentChangeDetection: ChangeDetection = ChangeDetection.currentNoneSilent ?? ChangeDetection.current;
 
         return lCurrentChangeDetection.silentExecution(() => {
@@ -45,7 +46,7 @@ export class ComponentScopeExecutor {
      * @param _pExtenedValue - Extended data that are only exist for this execution.
      * @returns 
      */
-    private static createEvaluationFunktion(_pExpression: string, _pReferenceNameList: Array<string>, _pReferencedValues: ComponentValues, _pExtenedValue: Dictionary<string, any>): () => any {
+    private static createEvaluationFunktion(_pExpression: string, _pReferenceNameList: Array<string>, _pReferencedValues: LayerValues, _pExtenedValue: Dictionary<string, any>): () => any {
         let lString: string;
 
         // Starting function

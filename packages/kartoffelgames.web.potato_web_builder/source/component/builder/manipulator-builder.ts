@@ -2,11 +2,11 @@ import { ManipulatorElement, ModuleManipulatorResult } from '../../module/base/m
 import { BaseBuilder } from './base-builder';
 import { StaticBuilder } from './static-builder';
 import { List } from '@kartoffelgames/core.data';
-import { ComponentValues } from '../component-values';
+import { LayerValues } from '../values/layer-values';
 import { ComponentModules } from '../component-modules';
 import { ComponentManager } from '../component-manager';
 import { XmlElement } from '@kartoffelgames/core.xml';
-import { IPwbManipulatorAttributeModule } from '../../interface/manipulator-attribute-module';
+import { IPwbManipulatorAttributeModule } from '../../interface/module/manipulator-attribute-module';
 import { ChangeState, DifferenceSearch, HistoryItem } from '@kartoffelgames/web.change-detection';
 
 /**
@@ -20,9 +20,9 @@ export class ManipulatorBuilder extends BaseBuilder {
      * @param pAttributeModules - All attributes of component.
      * @param pParentComponentValues - Parents component values.
      */
-    public constructor(pTemplate: XmlElement, pAttributeModules: ComponentModules, pParentComponentValues: ComponentValues, pComponentHandler: ComponentManager) {
+    public constructor(pTemplate: XmlElement, pAttributeModules: ComponentModules, pParentComponentValues: LayerValues, pComponentHandler: ComponentManager) {
         // Build component data container.
-        const lComponentValues: ComponentValues = new ComponentValues(pParentComponentValues);
+        const lComponentValues: LayerValues = new LayerValues(pParentComponentValues);
 
         super(List.newListWith(pTemplate), pAttributeModules, lComponentValues, pComponentHandler, true);
     }

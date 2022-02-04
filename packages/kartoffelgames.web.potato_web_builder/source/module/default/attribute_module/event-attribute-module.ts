@@ -1,9 +1,11 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { XmlAttribute } from '@kartoffelgames/core.xml';
-import { ComponentValues } from '../../../component/component-values';
+import { ComponentConnection } from '../../../component/component-connection';
+import { ComponentManager } from '../../../component/component-manager';
+import { LayerValues } from '../../../component/values/layer-values';
 import { StaticAttributeModule } from '../../../decorator/static-attribute-module';
 import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
-import { IPwbStaticAttributeOnCleanup, IPwbStaticAttributeOnProcess } from '../../../interface/static-attribute-module';
+import { IPwbStaticAttributeOnCleanup, IPwbStaticAttributeOnProcess } from '../../../interface/module/static-attribute-module';
 import { HtmlContent } from '../../../types';
 import { ComponentEventEmitter } from '../../../user_class_manager/component-event-emitter';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
@@ -20,7 +22,7 @@ export class EventAttributeModule implements IPwbStaticAttributeOnProcess, IPwbS
     private mEventName: string;
     private mListener: (this: null, pEvent: any) => void;
     private readonly mTargetElement: HtmlContent;
-    private readonly mValueHandler: ComponentValues;
+    private readonly mValueHandler: LayerValues;
 
     /**
      * Constructor.
@@ -28,7 +30,7 @@ export class EventAttributeModule implements IPwbStaticAttributeOnProcess, IPwbS
      * @param pValueHandler - Values of component.
      * @param pAttribute - Attribute of module.
      */
-    public constructor(pTargetElement: Element, pValueHandler: ComponentValues, pAttribute: XmlAttribute) {
+    public constructor(pTargetElement: Element, pValueHandler: LayerValues, pAttribute: XmlAttribute) {
         this.mTargetElement = pTargetElement;
         this.mValueHandler = pValueHandler;
         this.mAttribute = pAttribute;
@@ -54,9 +56,10 @@ export class EventAttributeModule implements IPwbStaticAttributeOnProcess, IPwbS
 
         this.mEventName = this.mAttribute.name.substr(1, this.mAttribute.name.length - 2);
 
-        // Get user class event from PwbComponent.
-        if ('component' in this.mTargetElement) {
-            this.mEmitter = this.mTargetElement.component.rootValues.getUserClassEvent(this.mEventName);
+        // Try to get user class event from target element component manager..
+        const lTargetComponentManager: ComponentManager = ComponentConnection.componentManagerOf(this.mTargetElement);
+        if (lTargetComponentManager) {
+            this.mEmitter = lTargetComponentManager.userEventHandler.getEventEmitter(this.mEventName);
         }
 
         // Define listener.
@@ -70,7 +73,7 @@ export class EventAttributeModule implements IPwbStaticAttributeOnProcess, IPwbS
         };
 
         // Add native element or user class event listener.
-        if (typeof this.mEmitter !== 'undefined' && this.mEmitter instanceof ComponentEventEmitter) {
+        if (this.mEmitter && this.mEmitter instanceof ComponentEventEmitter) {
             this.mEmitter.addListener(this.mListener);
         } else {
             this.mTargetElement.addEventListener(this.mEventName, this.mListener);

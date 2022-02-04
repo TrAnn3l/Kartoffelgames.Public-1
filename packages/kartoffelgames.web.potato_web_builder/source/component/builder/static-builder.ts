@@ -3,12 +3,12 @@ import { BaseBuilder } from './base-builder';
 import { ManipulatorBuilder } from './manipulator-builder';
 import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { BaseXmlNode, TextNode, XmlElement } from '@kartoffelgames/core.xml';
-import { ComponentValues } from '../component-values';
+import { LayerValues } from '../values/layer-values';
 import { ComponentModules } from '../component-modules';
 import { ComponentManager } from '../component-manager';
 import { ElementCreator } from '../content/element-creator';
-import { IPwbStaticAttributeModule, PwbStaticAttributeModuleConstructor } from '../../interface/static-attribute-module';
-import { IPwbExpressionModule } from '../../interface/expression-module';
+import { IPwbStaticAttributeModule, PwbStaticAttributeModuleConstructor } from '../../interface/module/static-attribute-module';
+import { IPwbExpressionModule } from '../../interface/module/expression-module';
 import { AttributeModuleAccessType } from '../../enum/attribute-module-access-type';
 
 export class StaticBuilder extends BaseBuilder {
@@ -19,8 +19,8 @@ export class StaticBuilder extends BaseBuilder {
      * @param pParentComponentValues - Parents component values.
      * @param pManipulatorScope - If builder is inside an manipulator scope.
      */
-    public constructor(pTemplates: Array<BaseXmlNode>, pAttributeModules: ComponentModules, pParentComponentValues: ComponentValues, pComponentHandler: ComponentManager, pManipulatorScope: boolean) {
-        super(pTemplates, pAttributeModules, new ComponentValues(pParentComponentValues), pComponentHandler, pManipulatorScope);
+    public constructor(pTemplates: Array<BaseXmlNode>, pAttributeModules: ComponentModules, pParentComponentValues: LayerValues, pComponentHandler: ComponentManager, pManipulatorScope: boolean) {
+        super(pTemplates, pAttributeModules, new LayerValues(pParentComponentValues), pComponentHandler, pManipulatorScope);
     }
 
     /**

@@ -1,10 +1,9 @@
 import { ComponentManager } from '../component/component-manager';
-import { Injector, Metadata } from '@kartoffelgames/core.dependency-injection';
-import { PwbComponentConstructor, PwbComponentElement } from '../interface/html-component';
-import { UserClassConstructor } from '../interface/user-class';
-import { PwbExpressionModuleConstructor } from '../interface/expression-module';
-import { PwbManipulatorAttributeModuleConstructor } from '../interface/manipulator-attribute-module';
-import { PwbStaticAttributeModuleConstructor } from '../interface/static-attribute-module';
+import { InjectionConstructor, Injector, Metadata } from '@kartoffelgames/core.dependency-injection';
+import { UserClass } from '../interface/user-class';
+import { PwbExpressionModuleConstructor } from '../interface/module/expression-module';
+import { PwbManipulatorAttributeModuleConstructor } from '../interface/module/manipulator-attribute-module';
+import { PwbStaticAttributeModuleConstructor } from '../interface/module/static-attribute-module';
 import { UpdateScope } from '../enum/update-scope';
 import { MetadataKey } from '../global-key';
 
@@ -14,7 +13,7 @@ import { MetadataKey } from '../global-key';
  */
 export function HtmlComponent(pParameter: HtmlComponentParameter): any {
     // Needs constructor without argument.
-    return (pUserClassConstructor: UserClassConstructor) => {
+    return (pUserClassConstructor: UserClass) => {
         // Set user class to be injectable.
         Injector.Injectable(pUserClassConstructor);
 
@@ -22,15 +21,8 @@ export function HtmlComponent(pParameter: HtmlComponentParameter): any {
         Metadata.get(pUserClassConstructor).setMetadata(MetadataKey.METADATA_SELECTOR, pParameter.selector);
 
         // Create custom html element of parent type.
-        const lPwbComponentConstructor: PwbComponentConstructor = class extends HTMLElement implements PwbComponentElement {
-            private readonly mComponentHandler: ComponentManager;
-
-            /**
-             * Get data for accessing component handler.
-             */
-            public get component(): ComponentManager {
-                return this.mComponentHandler;
-            }
+        const lPwbComponentConstructor = class extends HTMLElement {
+            private readonly mComponentManager: ComponentManager;
 
             /**
              * Constructor.
@@ -40,7 +32,7 @@ export function HtmlComponent(pParameter: HtmlComponentParameter): any {
                 super();
 
                 // Create component handler.
-                const lComponentHandler = new ComponentManager(
+                this.mComponentManager = new ComponentManager(
                     pUserClassConstructor,
                     pParameter.template,
                     pParameter.expressionmodule,
@@ -48,16 +40,26 @@ export function HtmlComponent(pParameter: HtmlComponentParameter): any {
                     pParameter.updateScope
                 );
 
-                // Append extended data to this comonent and user class object.
-                this.mComponentHandler = lComponentHandler;
-
                 // Append style if specified. Styles are scoped on components shadow root.
                 if (pParameter.style) {
-                    lComponentHandler.addStyle(pParameter.style);
+                    this.mComponentManager.addStyle(pParameter.style);
                 }
+            }
 
-                // Initialize component handler
-                lComponentHandler.initialize();
+            /**
+             * Lifecycle callback.
+             * Callback when element get attached to dom.
+             */
+            public connectedCallback(): void {
+                this.mComponentManager.connected();
+            }
+
+            /**
+             * Lifecycle callback.
+             * Callback when element get detached from dom.
+             */
+            public disconnectedCallback(): void {
+                this.mComponentManager.disconnected();
             }
         };
 
@@ -77,6 +79,6 @@ type HtmlComponentParameter = {
     // Placeholder for listing modules that should be imported.
     modules?: Array<PwbManipulatorAttributeModuleConstructor | PwbStaticAttributeModuleConstructor | any>;
     // Placeholder for listing components that should be imported.
-    components?: Array<PwbComponentConstructor | any>;
+    components?: Array<InjectionConstructor>;
     updateScope?: UpdateScope;
 };

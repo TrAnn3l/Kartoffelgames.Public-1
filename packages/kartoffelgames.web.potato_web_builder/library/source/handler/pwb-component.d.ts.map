@@ -1,0 +1,1 @@
+{"version":3,"file":"pwb-component.d.ts","sourceRoot":"","sources":["../../../source/handler/pwb-component.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,gBAAgB,EAAE,MAAM,gCAAgC,CAAC;AAElE,qBAAa,YAAY;IACrB,OAAO,CAAC,QAAQ,CAAC,iBAAiB,CAAmB;IAErD;;OAEG;IACH,IAAW,gBAAgB,IAAI,WAAW,CAEzC;IAED;;;OAGG;gBACgB,iBAAiB,EAAE,gBAAgB;IAItD;;OAEG;IACI,MAAM,IAAI,IAAI;CAQxB"}

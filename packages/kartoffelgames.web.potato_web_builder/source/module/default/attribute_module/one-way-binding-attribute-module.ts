@@ -1,9 +1,9 @@
 import { XmlAttribute } from '@kartoffelgames/core.xml';
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
-import { ComponentValues } from '../../../component/component-values';
+import { LayerValues } from '../../../component/values/layer-values';
 import { StaticAttributeModule } from '../../../decorator/static-attribute-module';
 import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
-import { IPwbStaticAttributeOnProcess, IPwbStaticAttributeOnUpdate } from '../../../interface/static-attribute-module';
+import { IPwbStaticAttributeOnProcess, IPwbStaticAttributeOnUpdate } from '../../../interface/module/static-attribute-module';
 import { HtmlContent } from '../../../types';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
 
@@ -23,7 +23,7 @@ export class OneWayBindingAttributeModule implements IPwbStaticAttributeOnProces
     private readonly mTargetElement: HtmlContent;
     private mTargetProperty: string;
     private mValueCompare: CompareHandler<any>;
-    private readonly mValueHandler: ComponentValues;
+    private readonly mValueHandler: LayerValues;
 
     /**
      * Constructor.
@@ -31,7 +31,7 @@ export class OneWayBindingAttributeModule implements IPwbStaticAttributeOnProces
      * @param pValueHandler - Values of component.
      * @param pAttribute - Attribute of module.
      */
-    public constructor(pTargetElement: Element, pValueHandler: ComponentValues, pAttribute: XmlAttribute) {
+    public constructor(pTargetElement: Element, pValueHandler: LayerValues, pAttribute: XmlAttribute) {
         this.mTargetElement = pTargetElement;
         this.mValueHandler = pValueHandler;
         this.mAttribute = pAttribute;

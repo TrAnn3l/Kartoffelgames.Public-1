@@ -1,21 +1,21 @@
-import { UserClassConstructor } from '../../../source/interface/user-class';
+import { UserClass } from '../../../source/interface/user-class';
 
 export class MenuConfiguration {
-    private readonly mAdditionalContent: Array<any | UserClassConstructor>;
-    private readonly mLogo: string | UserClassConstructor;
+    private readonly mAdditionalContent: Array<any | UserClass>;
+    private readonly mLogo: string | UserClass;
     private readonly mNavigationList: Array<MenuNavigation>;
 
     /**
      * Get additional content list.
      */
-    public get additionalContentList(): Array<any | UserClassConstructor> {
+    public get additionalContentList(): Array<any | UserClass> {
         return this.mAdditionalContent;
     }
 
     /**
      * Get page ogo.
      */
-    public get logo(): string | UserClassConstructor {
+    public get logo(): string | UserClass {
         return this.mLogo;
     }
 
@@ -30,9 +30,9 @@ export class MenuConfiguration {
      * Constructor.
      * @param pLogo - Site logo.
      */
-    public constructor(pLogo: string | UserClassConstructor) {
+    public constructor(pLogo: string | UserClass) {
         this.mNavigationList = new Array<MenuNavigation>();
-        this.mAdditionalContent = new Array<any | UserClassConstructor>();
+        this.mAdditionalContent = new Array<any | UserClass>();
         this.mLogo = pLogo;
     }
 
@@ -40,7 +40,7 @@ export class MenuConfiguration {
      * Add additional content.
      * @param pElementConstructor - Element constructor.
      */
-    public addAdditional(pElementConstructor: any | UserClassConstructor): void {
+    public addAdditional(pElementConstructor: any | UserClass): void {
         this.mAdditionalContent.push(pElementConstructor);
     }
 
@@ -50,7 +50,7 @@ export class MenuConfiguration {
      * @param pIcon - Icon of navigation icon.
      * @param pPath - Path.
      */
-    public addNavigation(pText: string, pIcon: any | UserClassConstructor, pPath: string): void {
+    public addNavigation(pText: string, pIcon: any | UserClass, pPath: string): void {
         this.mNavigationList.push({
             path: pPath,
             icon: pIcon,
@@ -61,6 +61,6 @@ export class MenuConfiguration {
 
 type MenuNavigation = {
     path: string,
-    icon: any | UserClassConstructor,
+    icon: any | UserClass,
     text: string;
 };

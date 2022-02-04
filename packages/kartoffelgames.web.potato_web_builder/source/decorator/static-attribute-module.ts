@@ -1,8 +1,8 @@
 import { Injector } from '@kartoffelgames/core.dependency-injection';
 import { AttributeModuleAccessType } from '../enum/attribute-module-access-type';
 import { ModuleType } from '../enum/module-type';
-import { AttributeModuleSettings } from '../interface/attribute-module';
-import { IPwbStaticAttributeModule, PwbStaticAttributeModuleConstructor } from '../interface/static-attribute-module';
+import { AttributeModuleSettings } from '../interface/module/attribute-module';
+import { IPwbStaticAttributeModule, PwbStaticAttributeModuleConstructor } from '../interface/module/static-attribute-module';
 import { ModuleStorage } from '../module/module-storage';
 
 /**

@@ -1,8 +1,8 @@
 import { Injector } from '@kartoffelgames/core.dependency-injection';
 import { AttributeModuleAccessType } from '../enum/attribute-module-access-type';
 import { ModuleType } from '../enum/module-type';
-import { AttributeModuleSettings } from '../interface/attribute-module';
-import { IPwbManipulatorAttributeModule, PwbManipulatorAttributeModuleConstructor } from '../interface/manipulator-attribute-module';
+import { AttributeModuleSettings } from '../interface/module/attribute-module';
+import { IPwbManipulatorAttributeModule, PwbManipulatorAttributeModuleConstructor } from '../interface/module/manipulator-attribute-module';
 import { ModuleManipulatorResult } from '../module/base/module-manipulator-result';
 import { ModuleStorage } from '../module/module-storage';
 

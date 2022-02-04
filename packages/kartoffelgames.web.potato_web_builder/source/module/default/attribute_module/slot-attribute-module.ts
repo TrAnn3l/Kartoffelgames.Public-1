@@ -1,9 +1,9 @@
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { ComponentManager } from '../../../component/component-manager';
-import { ComponentValues } from '../../../component/component-values';
+import { LayerValues } from '../../../component/values/layer-values';
 import { ManipulatorAttributeModule } from '../../../decorator/manipulator-attribute-module';
 import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
-import { IPwbManipulatorAttributeOnProcess } from '../../../interface/manipulator-attribute-module';
+import { IPwbManipulatorAttributeOnProcess } from '../../../interface/module/manipulator-attribute-module';
 import { ModuleManipulatorResult } from '../../base/module-manipulator-result';
 
 @ManipulatorAttributeModule({
@@ -16,7 +16,7 @@ export class SlotAttributeModule implements IPwbManipulatorAttributeOnProcess {
     private readonly mAttribute: XmlAttribute;
     private readonly mComponentManager: ComponentManager;
     private readonly mTargetTemplate: XmlElement;
-    private readonly mValueHandler: ComponentValues;
+    private readonly mValueHandler: LayerValues;
 
     /**
      * Constructor.
@@ -24,7 +24,7 @@ export class SlotAttributeModule implements IPwbManipulatorAttributeOnProcess {
      * @param pValueHandler - Values of component.
      * @param pAttribute - Attribute of module.
      */
-    public constructor(pComponentManager: ComponentManager, pTargetTemplate: XmlElement, pValueHandler: ComponentValues, pAttribute: XmlAttribute) {
+    public constructor(pComponentManager: ComponentManager, pTargetTemplate: XmlElement, pValueHandler: LayerValues, pAttribute: XmlAttribute) {
         this.mTargetTemplate = pTargetTemplate;
         this.mValueHandler = pValueHandler;
         this.mAttribute = pAttribute;
@@ -54,7 +54,7 @@ export class SlotAttributeModule implements IPwbManipulatorAttributeOnProcess {
 
         // Create result.
         const lResult: ModuleManipulatorResult = new ModuleManipulatorResult();
-        lResult.addElement(lClone, new ComponentValues(this.mValueHandler));
+        lResult.addElement(lClone, new LayerValues(this.mValueHandler));
 
         return lResult;
     }

@@ -1,7 +1,7 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
 import { MetadataKey } from '../global-key';
-import { UserClassConstructor } from '../interface/user-class';
+import { UserClass } from '../interface/user-class';
 
 /**
  * AtScript.
@@ -10,7 +10,7 @@ import { UserClassConstructor } from '../interface/user-class';
 export function Export(pTarget: object, pPropertyKey: string): void {
     // Usually Class Prototype. Globaly.
     const lPrototype: object = pTarget;
-    const lUserClassConstructor: UserClassConstructor = <any>lPrototype.constructor;
+    const lUserClassConstructor: UserClass = <any>lPrototype.constructor;
 
     // Check if real decorator on static property.
     if (typeof pTarget === 'function') {

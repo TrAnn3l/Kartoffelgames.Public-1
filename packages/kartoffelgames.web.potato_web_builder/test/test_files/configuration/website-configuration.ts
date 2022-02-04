@@ -1,4 +1,4 @@
-import { UserClassConstructor } from '../../../source/interface/user-class';
+import { UserClass } from '../../../source/interface/user-class';
 import { ColorConfiguration } from './color-configuration';
 import { HeadConfiguration } from './head-configuration';
 import { MenuConfiguration } from './menu-configuration';
@@ -28,7 +28,7 @@ export class WebsiteConfiguration {
      * @param pNavigation - Page navigation.
      * @param pColors - Colors of page.
      */
-    public constructor( pLogo: string | UserClassConstructor, pColors: ColorConfiguration) {
+    public constructor( pLogo: string | UserClass, pColors: ColorConfiguration) {
         this.mColors = pColors;
         
         this.mContent = {

@@ -1,15 +1,15 @@
 import { BaseXmlNode, TextNode, XmlElement } from '@kartoffelgames/core.xml';
 import { ModuleType } from '../../enum/module-type';
-import { IPwbAttributeModule } from '../../interface/attribute-module';
-import { IPwbExpressionModule } from '../../interface/expression-module';
-import { PwbComponentElement } from '../../interface/html-component';
-import { IPwbManipulatorAttributeModule } from '../../interface/manipulator-attribute-module';
-import { IPwbStaticAttributeModule } from '../../interface/static-attribute-module';
+import { IPwbAttributeModuleConstructor } from '../../interface/module/attribute-module';
+import { IPwbExpressionModule } from '../../interface/module/expression-module';
+import { IPwbManipulatorAttributeModule } from '../../interface/module/manipulator-attribute-module';
+import { IPwbStaticAttributeModule } from '../../interface/module/static-attribute-module';
 import { BaseContent, HtmlContent } from '../../types';
 import { BaseBuilder } from '../builder/base-builder';
 import { ComponentModules } from '../component-modules';
 import { ComponentContent } from './component-content';
 import { ElementCreator } from './element-creator';
+import { ComponentConnection } from '../component-connection';
 
 export class ContentManager {
     private readonly mAttributeModules: ComponentModules;
@@ -247,7 +247,7 @@ export class ContentManager {
     public linkModule(pElement: HtmlContent, pModule: IPwbStaticAttributeModule): void;
     public linkModule(pElement: HtmlContent | Text, pModule: IPwbExpressionModule): void;
     public linkModule(pElement: HtmlContent | Text, pModule: IPwbStaticAttributeModule | IPwbExpressionModule): void {
-        const lModuleConstructor: IPwbAttributeModule = <IPwbAttributeModule><any>pModule.constructor;
+        const lModuleConstructor: IPwbAttributeModuleConstructor = <IPwbAttributeModuleConstructor><any>pModule.constructor;
 
         if (lModuleConstructor.moduleType === ModuleType.Static) {
             this.mComponentContent.linkStaticModule(<HtmlContent>pElement, <IPwbStaticAttributeModule>pModule);
@@ -331,8 +331,8 @@ export class ContentManager {
         }
 
         // If element is custom element deconstruct it.
-        if ('component' in pElement) {
-            pElement.component.deconstruct();
+        if (ComponentConnection.componentManagerOf(pElement)) {
+            ComponentConnection.componentManagerOf(pElement).deconstruct();
         }
 
         // Remove actual element.
@@ -392,9 +392,9 @@ export class ContentManager {
      * @param pTemplate - Template of node.
      * @returns parsed element that has the slot attribute.
      */
-    private parseNodeToSloted(pParentElement: PwbComponentElement, pNode: Node, pTemplate: BaseXmlNode): Node {
+    private parseNodeToSloted(pParentElement: Element, pNode: Node, pTemplate: BaseXmlNode): Node {
         let lNode: BaseContent = pNode;
-        const lSlotName: string = pParentElement.component.elementHandler.getElementsSlotname(pTemplate);
+        const lSlotName: string = ComponentConnection.componentManagerOf(pParentElement).elementHandler.getElementsSlotname(pTemplate);
 
         // Wrap text nodes into span element.
         if (pTemplate instanceof TextNode) {

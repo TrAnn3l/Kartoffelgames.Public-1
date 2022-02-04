@@ -1,4 +1,4 @@
-import { ComponentValues } from '../component-values';
+import { LayerValues } from '../values/layer-values';
 import { ContentManager } from '../content/content-manager';
 import { ComponentModules } from '../component-modules';
 import { ComponentManager } from '../component-manager';
@@ -9,7 +9,7 @@ import { BaseXmlNode } from '@kartoffelgames/core.xml';
  */
 export abstract class BaseBuilder {
     private readonly mComponentHandler: ComponentManager;
-    private readonly mComponentValues: ComponentValues;
+    private readonly mComponentValues: LayerValues;
     private readonly mContentManager: ContentManager;
     private mIgnoreCurrentUpdateCycle: boolean;
     private readonly mInManipulatorScope: boolean;
@@ -38,7 +38,7 @@ export abstract class BaseBuilder {
     /**
      * Get component values of builder.
      */
-    public get values(): ComponentValues {
+    public get values(): LayerValues {
         return this.mComponentValues;
     }
 
@@ -77,7 +77,7 @@ export abstract class BaseBuilder {
      * @param pComponentValues - New component values.
      * @param pManipulatorScope - If builder is inside an manipulator scope.
      */
-    public constructor(pTemplate: Array<BaseXmlNode>, pAttributeModules: ComponentModules, pComponentValues: ComponentValues, pComponentHandler: ComponentManager, pManipulatorScope: boolean) {
+    public constructor(pTemplate: Array<BaseXmlNode>, pAttributeModules: ComponentModules, pComponentValues: LayerValues, pComponentHandler: ComponentManager, pManipulatorScope: boolean) {
         this.mContentManager = new ContentManager(pTemplate, pAttributeModules);
         this.mComponentValues = pComponentValues;
         this.mInManipulatorScope = pManipulatorScope;

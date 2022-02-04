@@ -3,12 +3,12 @@ import { MustacheExpressionModule } from '../module/default/mustache-expression-
 import { ComponentManager } from './component-manager';
 import { XmlElement } from '@kartoffelgames/core.xml';
 import { ModuleStorage } from '../module/module-storage';
-import { IPwbExpressionModule, PwbExpressionModuleConstructor } from '../interface/expression-module';
+import { IPwbExpressionModule, PwbExpressionModuleConstructor } from '../interface/module/expression-module';
 import { HtmlContent } from '../types';
-import { ComponentValues } from './component-values';
-import { IPwbManipulatorAttributeModule } from '../interface/manipulator-attribute-module';
+import { LayerValues } from './values/layer-values';
+import { IPwbManipulatorAttributeModule } from '../interface/module/manipulator-attribute-module';
 import { AttributeModuleAccessType } from '../enum/attribute-module-access-type';
-import { IPwbStaticAttributeModule } from '../interface/static-attribute-module';
+import { IPwbStaticAttributeModule } from '../interface/module/static-attribute-module';
 
 // Import default modules
 import '../module/default/attribute_module/event-attribute-module';
@@ -50,7 +50,7 @@ export class ComponentModules {
      * @param pComponentHandler - Component handler.
      * @returns build expression module.
      */
-    public getExpressionModule(pTargetNode: HtmlContent | Text, pAttributeName: string | null, pValue: string, pValueHandler: ComponentValues, pComponentHandler: ComponentManager): IPwbExpressionModule {
+    public getExpressionModule(pTargetNode: HtmlContent | Text, pAttributeName: string | null, pValue: string, pValueHandler: LayerValues, pComponentHandler: ComponentManager): IPwbExpressionModule {
         return ModuleStorage.getExpressionModule(this.mExpressionModule, pTargetNode, pAttributeName, pValue, pValueHandler, pComponentHandler);
     }
 
@@ -60,7 +60,7 @@ export class ComponentModules {
      * @param pValues - Values handler of current manipulator scope.
      * @param pComponentHandler - Component handler.
      */
-    public getManipulatorModule(pTargetTemplate: XmlElement, pValues: ComponentValues, pComponentHandler: ComponentManager): IPwbManipulatorAttributeModule | undefined {
+    public getManipulatorModule(pTargetTemplate: XmlElement, pValues: LayerValues, pComponentHandler: ComponentManager): IPwbManipulatorAttributeModule | undefined {
         return ModuleStorage.getManipulatorModule(pTargetTemplate, pValues, pComponentHandler);
     }
 
@@ -73,7 +73,7 @@ export class ComponentModules {
      * @param pComponentHandler - Component handler.
      * @param pAccessFilter - [OPTIONAL] Filter for access type.
      */
-    public getStaticModule(pTargetElement: HtmlContent, pTargetTemplate: XmlElement, pValues: ComponentValues, pAttribute: XmlAttribute, pComponentHandler: ComponentManager, pAccessFilter?: AttributeModuleAccessType): IPwbStaticAttributeModule | undefined {
+    public getStaticModule(pTargetElement: HtmlContent, pTargetTemplate: XmlElement, pValues: LayerValues, pAttribute: XmlAttribute, pComponentHandler: ComponentManager, pAccessFilter?: AttributeModuleAccessType): IPwbStaticAttributeModule | undefined {
         return ModuleStorage.getStaticModule(pTargetElement, pTargetTemplate, pValues, pAttribute, pComponentHandler, pAccessFilter);
     }
 }

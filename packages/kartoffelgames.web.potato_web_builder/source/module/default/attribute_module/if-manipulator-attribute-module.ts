@@ -1,9 +1,9 @@
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
-import { ComponentValues } from '../../../component/component-values';
+import { LayerValues } from '../../../component/values/layer-values';
 import { ManipulatorAttributeModule } from '../../../decorator/manipulator-attribute-module';
 import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
-import { IPwbManipulatorAttributeOnProcess, IPwbManipulatorAttributeOnUpdate } from '../../../interface/manipulator-attribute-module';
+import { IPwbManipulatorAttributeOnProcess, IPwbManipulatorAttributeOnUpdate } from '../../../interface/module/manipulator-attribute-module';
 import { ModuleManipulatorResult } from '../../base/module-manipulator-result';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
 
@@ -22,7 +22,7 @@ export class IfManipulatorAttributeModule implements IPwbManipulatorAttributeOnP
     private mBooleanExpression: string;
     private readonly mTargetTemplate: XmlElement;
     private mValueCompare: CompareHandler<any>;
-    private readonly mValueHandler: ComponentValues;
+    private readonly mValueHandler: LayerValues;
 
     /**
      * Constructor.
@@ -30,7 +30,7 @@ export class IfManipulatorAttributeModule implements IPwbManipulatorAttributeOnP
      * @param pValueHandler - Values of component.
      * @param pAttribute - Attribute of module.
      */
-    public constructor(pTargetTemplate: XmlElement, pValueHandler: ComponentValues, pAttribute: XmlAttribute) {
+    public constructor(pTargetTemplate: XmlElement, pValueHandler: LayerValues, pAttribute: XmlAttribute) {
         this.mTargetTemplate = pTargetTemplate;
         this.mValueHandler = pValueHandler;
         this.mAttribute = pAttribute;
@@ -50,7 +50,7 @@ export class IfManipulatorAttributeModule implements IPwbManipulatorAttributeOnP
         // If in any way the execution result is true, add template to result.
         const lModuleResult: ModuleManipulatorResult = new ModuleManipulatorResult();
         if (lExecutionResult) {
-            lModuleResult.addElement(this.mTargetTemplate.clone(), new ComponentValues(this.mValueHandler));
+            lModuleResult.addElement(this.mTargetTemplate.clone(), new LayerValues(this.mValueHandler));
         }
 
         return lModuleResult;

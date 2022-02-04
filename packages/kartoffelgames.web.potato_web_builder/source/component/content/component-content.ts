@@ -3,9 +3,9 @@ import { BaseBuilder } from '../builder/base-builder';
 import { Dictionary, Exception, List } from '@kartoffelgames/core.data';
 import { TextNode } from '@kartoffelgames/core.xml';
 import { BaseXmlNode, XmlElement } from '@kartoffelgames/core.xml';
-import { IPwbExpressionModule } from '../../interface/expression-module';
-import { IPwbManipulatorAttributeModule } from '../../interface/manipulator-attribute-module';
-import { IPwbStaticAttributeModule } from '../../interface/static-attribute-module';
+import { IPwbExpressionModule } from '../../interface/module/expression-module';
+import { IPwbManipulatorAttributeModule } from '../../interface/module/manipulator-attribute-module';
+import { IPwbStaticAttributeModule } from '../../interface/module/static-attribute-module';
 
 /**
  * Component content handler.

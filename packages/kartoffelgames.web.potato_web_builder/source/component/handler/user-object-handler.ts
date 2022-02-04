@@ -1,22 +1,30 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { Injection, InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
-import { UserClassConstructor, UserClassObject } from '../../interface/user-class';
+import { ChangeDetection } from '@kartoffelgames/web.change-detection';
+import { UserClass, UserObject } from '../../interface/user-class';
 import { UpdateHandler } from './update-handler';
 
 export class UserObjectHandler {
-    private readonly mUserObject: UserClassObject;
+    private readonly mUserObject: UserObject;
+
+    /**
+     * Untracked user class instance.
+     */
+    public get untrackedUserObject(): UserObject {
+        return ChangeDetection.getUntrackedObject(this.mUserObject);
+    }
 
     /**
      * User class.
      */
-    public get userClass(): UserClassConstructor {
-        return <UserClassConstructor>this.mUserObject.constructor;
+    public get userClass(): UserClass {
+        return <UserClass>this.mUserObject.constructor;
     }
 
     /**
      * User class instance.
      */
-    public get userObject(): UserClassObject {
+    public get userObject(): UserObject {
         return this.mUserObject;
     }
 
@@ -24,7 +32,7 @@ export class UserObjectHandler {
      * Constrcutor.
      * @param pUserClass - User object constructor.
      */
-    public constructor(pUserClass: UserClassConstructor, pUpdateHandler: UpdateHandler, pInjectionList: Array<object>) {
+    public constructor(pUserClass: UserClass, pUpdateHandler: UpdateHandler, pInjectionList: Array<object>) {
         // Create injection mapping. Ignores none objects.
         const lLocalInjections: Dictionary<InjectionConstructor, any> = new Dictionary<InjectionConstructor, any>();
         for (const lInjectionObject of pInjectionList) {
@@ -35,7 +43,7 @@ export class UserObjectHandler {
 
         // Create user object inside update zone.
         // Constructor needs to be called inside zone.
-        let lUntrackedUserObject: UserClassObject;
+        let lUntrackedUserObject: UserObject;
         pUpdateHandler.execute(() => {
             lUntrackedUserObject = Injection.createObject(pUserClass, lLocalInjections);
         });
@@ -98,4 +106,4 @@ export class UserObjectHandler {
 
 }
 
-type UserObjectCallbacks = keyof UserClassObject;
+type UserObjectCallbacks = keyof UserObject;

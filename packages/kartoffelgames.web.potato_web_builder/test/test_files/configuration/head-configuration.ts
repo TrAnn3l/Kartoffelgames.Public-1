@@ -1,21 +1,21 @@
-import { UserClassConstructor } from '../../../source/interface/user-class';
+import { UserClass } from '../../../source/interface/user-class';
 
 export class HeadConfiguration {
-    private readonly mAdditionalContent: Array<any | UserClassConstructor>;
-    private readonly mLogo: string | UserClassConstructor;
+    private readonly mAdditionalContent: Array<any | UserClass>;
+    private readonly mLogo: string | UserClass;
     private mSearchbarConfiguration: SearchbarConfiguration | null;
 
     /**
      * Get additional content list.
      */
-    public get additionalContentList(): Array<any | UserClassConstructor> {
+    public get additionalContentList(): Array<any | UserClass> {
         return this.mAdditionalContent;
     }
 
     /**
      * Get page ogo.
      */
-    public get logo(): string | UserClassConstructor {
+    public get logo(): string | UserClass {
         return this.mLogo;
     }
 
@@ -37,9 +37,9 @@ export class HeadConfiguration {
      * Constructor.
      * @param pLogo - Site logo.
      */
-    public constructor(pLogo: string | UserClassConstructor) {
+    public constructor(pLogo: string | UserClass) {
         this.mLogo = pLogo;
-        this.mAdditionalContent = new Array<any | UserClassConstructor>();
+        this.mAdditionalContent = new Array<any | UserClass>();
     }
 
 
@@ -47,7 +47,7 @@ export class HeadConfiguration {
      * Add additional content.
      * @param pElementConstructor - Element constructor.
      */
-    public addAdditional(pElementConstructor: any | UserClassConstructor): void {
+    public addAdditional(pElementConstructor: any | UserClass): void {
         this.mAdditionalContent.push(pElementConstructor);
     }
 }

@@ -1,16 +1,15 @@
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { Exception } from '@kartoffelgames/core.data';
-import { PwbComponentConstructor, PwbComponentElement } from './interface/html-component';
-import { UserClassConstructor } from './interface/user-class';
+import { UserClass } from './interface/user-class';
 import { ElementCreator } from './component/content/element-creator';
-import { Metadata } from '@kartoffelgames/core.dependency-injection';
+import { InjectionConstructor, Metadata } from '@kartoffelgames/core.dependency-injection';
 import { MetadataKey } from './global-key';
 
 export class PwbApp {
     public static readonly PUBLIC_APP_KEY: string = '_PWB_APP';
 
     private readonly mChangeDetection: ChangeDetection;
-    private readonly mContent: Array<PwbComponentElement>;
+    private readonly mContent: Array<HTMLElement>;
     private mCurrentAppRoot: HTMLDivElement;
     private mCurrentAppRootShadowRoot: ShadowRoot;
     private readonly mStyles: Array<HTMLStyleElement>;
@@ -36,7 +35,7 @@ export class PwbApp {
      * @param pConfig - App config.
      */
     public constructor(pAppName: string, pConfig?: PwbAppConfig) {
-        this.mContent = new Array<PwbComponentElement>();
+        this.mContent = new Array<HTMLElement>();
         this.mStyles = new Array<HTMLStyleElement>();
         this.mCurrentAppRootShadowRoot = null;
         this.mCurrentAppRoot = null;
@@ -56,9 +55,9 @@ export class PwbApp {
      * Appends content if any target was specified.
      * @param pComponentConstructor - Html component constructor.
      */
-    public addContent(pComponentConstructor: any): PwbComponentElement {
+    public addContent(pComponentConstructor: any): HTMLElement {
         // Create component and add to this app content.
-        const lComponent: PwbComponentElement = this.createComponent(pComponentConstructor);
+        const lComponent: HTMLElement = this.createComponent(pComponentConstructor);
         this.mContent.push(lComponent);
 
         // Append component if app has a current target.
@@ -153,14 +152,14 @@ export class PwbApp {
      * Create component element inside change detection.
      * @returns created component element.
      */
-    private createComponent(pComponentConstructor: UserClassConstructor): PwbComponentElement {
+    private createComponent(pComponentConstructor: UserClass): HTMLElement {
         // Call creation inside change detection zone.
         return this.changeDetection.execute(() => {
             // Get selector of user
             const lSelector: string = Metadata.get(pComponentConstructor).getMetadata(MetadataKey.METADATA_SELECTOR);
 
             // Check if constructor is a component constructor.
-            let lContent: PwbComponentElement;
+            let lContent: HTMLElement;
             if (lSelector) {
                 // Get custom element and create.
                 const lCustomElement: any = window.customElements.get(lSelector);
@@ -202,7 +201,7 @@ export class PwbApp {
         }
 
         // Convert content config to content array.
-        const lContentList: Array<PwbComponentConstructor> = new Array<PwbComponentConstructor>();
+        const lContentList: Array<InjectionConstructor> = new Array<InjectionConstructor>();
         if (pConfig.content) {
             if (Array.isArray(pConfig.content)) {
                 lContentList.push(...pConfig.content);
