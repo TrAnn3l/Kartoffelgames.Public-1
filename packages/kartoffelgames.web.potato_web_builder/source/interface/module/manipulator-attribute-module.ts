@@ -13,6 +13,8 @@ export interface IPwbManipulatorAttributeModule extends IPwbManipulatorAttribute
      * @returns if the complete component should be updated.
      */
     update(): boolean;
+
+    deconstruct(): void;
 }
 
 export interface PwbManipulatorAttributeModuleConstructor extends IPwbAttributeModuleConstructor {

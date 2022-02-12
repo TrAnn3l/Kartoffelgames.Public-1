@@ -18,6 +18,8 @@ export interface IPwbStaticAttributeModule extends IPwbStaticAttributeOnProcess,
      * @returns if any update was made.
      */
     update(): boolean;
+
+    deconstruct(): void;
 }
 
 export interface PwbStaticAttributeModuleConstructor extends IPwbAttributeModuleConstructor {

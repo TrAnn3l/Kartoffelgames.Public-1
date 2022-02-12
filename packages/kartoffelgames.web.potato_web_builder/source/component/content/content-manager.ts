@@ -1,414 +1,395 @@
-import { BaseXmlNode, TextNode, XmlElement } from '@kartoffelgames/core.xml';
-import { ModuleType } from '../../enum/module-type';
-import { IPwbAttributeModuleConstructor } from '../../interface/module/attribute-module';
+import { Dictionary, List } from '@kartoffelgames/core.data';
+import { BaseXmlNode, XmlElement } from '@kartoffelgames/core.xml';
 import { IPwbExpressionModule } from '../../interface/module/expression-module';
 import { IPwbManipulatorAttributeModule } from '../../interface/module/manipulator-attribute-module';
 import { IPwbStaticAttributeModule } from '../../interface/module/static-attribute-module';
-import { BaseContent, HtmlContent } from '../../types';
 import { BaseBuilder } from '../builder/base-builder';
-import { ComponentModules } from '../component-modules';
-import { ComponentContent } from './component-content';
-import { ElementCreator } from './element-creator';
 import { ComponentConnection } from '../component-connection';
+import { ComponentManager } from '../component-manager';
+import { ComponentModules } from '../../module/component-modules';
+import { ElementCreator } from './element-creator';
+
+// TODO: Access Builder parent element without Node.parentElement
+// TODO: Better base append-method.
 
 export class ContentManager {
-    private readonly mAttributeModules: ComponentModules;
-    private readonly mComponentContent: ComponentContent;
+    private readonly mChildBuilderList: List<BaseBuilder>;
+    private readonly mChildComponentList: List<Element>;
+    private readonly mRootChildList: List<Content>;
     private readonly mContentAnchor: Comment;
-    private mInitialized: boolean;
+    private readonly mModules: ComponentModules;
+    private readonly mLinkedModules: Dictionary<Node, Array<IPwbExpressionModule | IPwbStaticAttributeModule>>;
+    private mMultiplicatorModule: IPwbManipulatorAttributeModule;
+    private readonly mBoundaryDescription: BoundaryDescription;
 
     /**
-     * Get elements content anchor if element renders no nodes.
+     * Get content anchor.
+     * All content of this content manager gets append to this anchor.
      */
     public get anchor(): Comment {
         return this.mContentAnchor;
     }
 
     /**
-     * Get component attribute modules.
+     * Get all child builder.
      */
-    public get attributeModules(): ComponentModules {
-        return this.mAttributeModules;
+    public get childBuilderList(): Array<BaseBuilder> {
+        return this.mChildBuilderList;
     }
 
     /**
-     * If manager is initialized.
+     * Get all child builder.
      */
-    public get initialized(): boolean {
-        return this.mInitialized;
+    public get modules(): ComponentModules {
+        return this.mModules;
     }
 
     /**
-     * Get all linked expressions modules of all elements..
+     * Get multiplicator module of layer.
      */
-    public get linkedExpressionModules(): Array<IPwbExpressionModule> {
-        return this.mComponentContent.linkedExpressionModules;
+    public get multiplicatorModule(): IPwbManipulatorAttributeModule {
+        return this.mMultiplicatorModule;
     }
 
     /**
-     * Get all linked static modules of all elements..
+     * Set multiplicator module of layer.
      */
-    public get linkedStaticModules(): Array<IPwbStaticAttributeModule> {
-        return this.mComponentContent.linkedStaticModules;
+    public set multiplicatorModule(pModule: IPwbManipulatorAttributeModule) {
+        this.mMultiplicatorModule = pModule;
     }
 
     /**
-     * Get current used manipulator module.
+     * Get all linked module lists.
      */
-    public get manipulatorModule(): IPwbManipulatorAttributeModule {
-        return this.mComponentContent.manipulatorModule;
-    }
-
-    /**
-     * Set current used manipulator module.
-     */
-    public set manipulatorModule(pValue: IPwbManipulatorAttributeModule) {
-        this.mComponentContent.manipulatorModule = pValue;
-    }
-
-    /**
-     * Get contents template
-     */
-    public get template(): Array<BaseXmlNode> {
-        return this.mComponentContent.template;
-    }
-
-    /**
-     * Manages content of component.
-     * @param pTemplate - XML-Template.
-     * @param pAttributeModules - Attribute modules of component.
-     */
-    public constructor(pTemplate: Array<BaseXmlNode>, pAttributeModules: ComponentModules) {
-        this.mAttributeModules = pAttributeModules;
-        this.mComponentContent = new ComponentContent(pTemplate);
-        this.mInitialized = false;
-
-        // Generate comment with random hex value as string.
-        this.mContentAnchor = ElementCreator.createComment(Math.random().toString(16).substring(3).toUpperCase());
-    }
-
-    /**
-     * Add child to content.
-     * Appends child to parent.
-     * @param pParentElement - Parent element of child. If parent is the content scope root, use null.
-     * @param pChildElement - Child element.
-     * @param pChildTemplate - Template element of child element.
-     */
-    public appendContent(pParentElement: HtmlContent | null, pChildElement: BaseContent, pChildTemplate: BaseXmlNode): void {
-        // Register content.
-        this.mComponentContent.appendContent(pParentElement, pChildElement, pChildTemplate);
-
-        // Do not add the child to any element if the parent is the content scope root.
-        if (pParentElement === null && this.initialized) {
-            // Find last element in content scope and insert child after.
-            const lLastElement: Node = this.getLastElement();
-            this.insertAfter(lLastElement, pChildElement, pChildTemplate);
-        } else if (pParentElement !== null) {
-            let lContent: Node = (pChildElement instanceof BaseBuilder) ? pChildElement.anchor : pChildElement;
-
-            // Parse node to sloted node.
-            if ('componentHandler' in pParentElement) {
-                lContent = this.parseNodeToSloted(pParentElement, lContent, pChildTemplate);
-            }
-
-            pParentElement.appendChild(lContent);
+    public get linkedModuleList(): Array<IPwbExpressionModule | IPwbStaticAttributeModule> {
+        const lAllModuleList: Array<IPwbExpressionModule | IPwbStaticAttributeModule> = new Array<IPwbExpressionModule | IPwbStaticAttributeModule>();
+        for (const lNodeModuleList of this.mLinkedModules.values()) {
+            lAllModuleList.push(...lNodeModuleList);
         }
+        return lAllModuleList;
     }
 
     /**
-     * Add child after refered content.
-     * @param pReferenceContent - Refered content. Child gets append after this content.
-     * @param pChildElement - Child element.
-     * @param pChildTemplate - Template element of child element.
+     * Get root elements.
+     * Elements are returned in order.
      */
-    public appendContentAfter(pReferenceContent: BaseContent, pChildElement: BaseContent, pChildTemplate: BaseXmlNode): void {
-        // Register content.
-        this.mComponentContent.appendContentAfter(pReferenceContent, pChildElement, pChildTemplate);
-
-        let lContent: Node = (pChildElement instanceof BaseBuilder) ? pChildElement.anchor : pChildElement;
-
-        // Parse node to sloted node.
-        if (!(pReferenceContent instanceof BaseBuilder) && 'componentHandler' in pReferenceContent.parentNode) {
-            lContent = this.parseNodeToSloted((<any>pReferenceContent).parentNode, lContent, pChildTemplate);
-        }
-
-        this.insertAfter(pReferenceContent, lContent, pChildTemplate);
+    public get rootElementList(): Array<Content> {
+        return this.mRootChildList;
     }
 
     /**
-     * Clear all content of manager.
+     * Constructor.
      */
-    public clearContent(): void {
-        // Get root childs.
-        const lChildList: Array<BaseContent> = this.mComponentContent.getChildList(null);
-
-        // Cleanup all elements.
-        for (const lChild of lChildList) {
-            if (lChild instanceof Element) {
-                this.cleanElement(lChild);
-            } else if (lChild instanceof BaseBuilder) {
-                lChild.deleteBuild();
-            }
-            this.mComponentContent.removeContent(lChild);
-        }
-
-        // Remove last content anchor.
-        this.anchor.remove();
+    public constructor(pModules: ComponentModules, pAnchorPrefix: string = '') {
+        this.mModules = pModules;
+        this.mRootChildList = new List<Content>();
+        this.mChildBuilderList = new List<BaseBuilder>();
+        this.mChildComponentList = new List<Element>();
+        this.mLinkedModules = new Dictionary<Node, Array<IPwbExpressionModule | IPwbStaticAttributeModule>>();
+        this.mContentAnchor = ElementCreator.createComment(pAnchorPrefix + ' ' + Math.random().toString(16).substring(3).toUpperCase());
+        this.mBoundaryDescription = {
+            start: this.mContentAnchor,
+            end: this.mContentAnchor
+        };
     }
 
     /**
-     * Get childs of parent.
-     * Null for content root.
-     * @param pParent - Parent of childs.
+     * Append child element after target.
+     * @param pChild - Child node.
+     * @param pTarget - Target where child gets append after. 
      */
-    public getChildList(pParentElement: HtmlContent | null): Array<BaseContent> {
-        return this.mComponentContent.getChildList(pParentElement);
-    }
-
-    /**
-     * Get content that was build from specified template.
-     * @param pTemplate - Template node.
-     */
-    public getContentByTemplate(pTemplate: BaseXmlNode): BaseContent {
-        return this.mComponentContent.getContentByTemplate(pTemplate);
-    }
-
-    /**
-     * Get last element of content scope.
-     */
-    public getLastElement(): Node {
-        const lContentList: Array<BaseContent> = this.mComponentContent.contentList;
-
-        if (lContentList.length === 0) {
-            // Return anchor if builder has no content.
-            return this.anchor;
+    public after(pChild: Content, pTarget: Content): void {
+        let lParent: Element;
+        if (this.mRootChildList.includes(pTarget)) {
+            lParent = null;
         } else {
-            const lLastContent: BaseContent = lContentList[lContentList.length - 1];
-
-            // Try to get last child of builder.
-            if (lLastContent instanceof BaseBuilder) {
-                // Return last content of builder.
-                return lLastContent.contentManager.getLastElement();
+            if (pTarget instanceof BaseBuilder) {
+                lParent = pTarget.boundary.start.parentElement;
             } else {
-                return lLastContent;
-            }
-        }
-    }
-
-    /**
-     * Get template node that was used for building html node.
-     * @param pNode - Html element.
-     */
-    public getTemplateByContent(pNode: Text): TextNode;
-    public getTemplateByContent(pElement: HtmlContent | BaseBuilder): XmlElement;
-    public getTemplateByContent(pNode: BaseContent): BaseXmlNode;
-    public getTemplateByContent(pNode: BaseContent): BaseXmlNode {
-        return this.mComponentContent.getTemplateByContent(<any>pNode);
-    }
-
-    /**
-     * Initialize all uninitialized content. 
-     */
-    public initializeContent(): void {
-        // Do not initialize childs if already append.
-        if (!this.mInitialized) {
-            // Get all root childs of content scope.
-            const lRootChildList: Array<BaseContent> = this.mComponentContent.getChildList(null);
-            let lLastAppendChild: Node = this.anchor;
-
-            // Add elements after comment.
-            for (const lRootChild of lRootChildList) {
-                // Get contentAnchor as node if child is component handler.
-                const lRootChildNode: Node = (lRootChild instanceof BaseBuilder) ? lRootChild.anchor : lRootChild;
-
-                const lRootChildTemplate: BaseXmlNode = this.mComponentContent.getTemplateByContent(lRootChild);
-
-                this.insertAfter(lLastAppendChild, lRootChildNode, lRootChildTemplate);
-                lLastAppendChild = lRootChildNode;
+                lParent = pTarget.parentElement;
             }
 
-            this.mInitialized = true;
         }
 
-        // Initialize all build handler.
-        for (const lBuildHandler of this.mComponentContent.contentBuilder) {
-            // Only initialize uninitialized builder.
-            if (!lBuildHandler.initialized) {
-                lBuildHandler.initializeBuild();
-            }
-        }
-    }
+        this.insertContentAfter(pChild, lParent, pTarget);
+    };
 
     /**
-     * Add executed module to html element.
-     * @param pElement - Html node.
-     * @param pModule - html module.
+     * Append child element to parent.
+     * Appends to root if no parent is specified. 
+     * @param pChild - Child node.
+     * @param pParentElement - Parent element of child.
      */
-    public linkModule(pElement: HtmlContent, pModule: IPwbStaticAttributeModule): void;
-    public linkModule(pElement: HtmlContent | Text, pModule: IPwbExpressionModule): void;
-    public linkModule(pElement: HtmlContent | Text, pModule: IPwbStaticAttributeModule | IPwbExpressionModule): void {
-        const lModuleConstructor: IPwbAttributeModuleConstructor = <IPwbAttributeModuleConstructor><any>pModule.constructor;
-
-        if (lModuleConstructor.moduleType === ModuleType.Static) {
-            this.mComponentContent.linkStaticModule(<HtmlContent>pElement, <IPwbStaticAttributeModule>pModule);
-        } else if (lModuleConstructor.moduleType === ModuleType.Expression) {
-            this.mComponentContent.linkExpressionModule(pElement, <IPwbExpressionModule>pModule);
-        }
-    }
-
-    /**
-     * Add child at start of parent.
-     * Prepends child to parent.
-     * @param pParentElement - Parent element of child. If parent is the content scope root, use null.
-     * @param pChildElement - Child element.
-     * @param pChildTemplate - Template element of child element.
-     */
-    public prependContent(pParentElement: HtmlContent | null, pChildElement: BaseContent, pChildTemplate: BaseXmlNode): void {
-        // Register content.
-        this.mComponentContent.prependContent(pParentElement, pChildElement, pChildTemplate);
-
-        // Do not add the child to any element if the parent is the content scope root.
-        if (pParentElement === null && this.initialized) {
-            // Find last element in content scope and insert child after.
-            const lLastElement: Node = this.anchor;
-            this.insertAfter(lLastElement, pChildElement, pChildTemplate);
-        } else if (pParentElement !== null) {
-            // Prepend child.
-            let lContent: Node = (pChildElement instanceof BaseBuilder) ? pChildElement.anchor : pChildElement;
-
-            // Parse node to sloted node.
-            if ('componentHandler' in pParentElement) {
-                lContent = this.parseNodeToSloted(pParentElement, lContent, pChildTemplate);
-            }
-
-            pParentElement.prepend(lContent);
-        }
-    }
-
-    /**
-     * Remove child from content.
-     * @param pElement - Element
-     */
-    public removeContent(pElement: BaseContent): void {
-        this.mComponentContent.removeContent(pElement);
-
-        if (pElement instanceof BaseBuilder) {
-            pElement.deleteBuild();
+    public append(pChild: Content): void;
+    public append(pChild: Content, pParentElement: Element): void;
+    public append(pChild: Content, pParentElement: Element = null): void {
+        let lTarget: Content;
+        if (pParentElement) {
+            // Last Child element of parent.
+            lTarget = pParentElement.childNodes[pParentElement.childNodes.length - 1];
         } else {
-            pElement.parentElement.removeChild(pElement);
+            // Boundary end.
+            lTarget = this.mBoundaryDescription.end;
         }
-    }
+
+        this.insertContentAfter(pChild, pParentElement, lTarget);
+    };
 
     /**
-     * Update all builder.
+     * Prepend child element to parent.
+     * Prepends to root if no parent is specified. 
+     * @param pChild - Child node.
+     * @param pParentElement - Parent element of child.
      */
-    public updateChildBuilder(): boolean {
-        let lAnyChildWasUpdated: boolean = false;
-
-        // Call update on all build handler that are not updated by this.update(...).
-        for (const lBuildHandler of this.mComponentContent.contentBuilder) {
-            // Check if any updates where applied.
-            if (lBuildHandler.updateBuild()) {
-                lAnyChildWasUpdated = true;
-            }
-        }
-
-        return lAnyChildWasUpdated;
-    }
+    public prepend(pChild: Content): void;
+    public prepend(pChild: Content, pParentElement: Element): void;
+    public prepend(pChild: Content, pParentElement: Element = null): void {
+        this.insertContentAfter(pChild, pParentElement, null);
+    };
 
     /**
-     * Clean all modules and an child inside html element.
-     * @param pElement - Html element.
+     * Append child after target.
+     * @param pChild - Child node.
+     * @param pParentElement - Parent element of child.
+     * @param pTarget - Target where child gets append after. 
      */
-    private cleanElement(pElement: HtmlContent): void {
-        // Get all used modules of element.
-        const lMappedModuleList: Array<IPwbStaticAttributeModule> = this.mComponentContent.getLinkedStaticModules(pElement);
+    private insertContentAfter(pChild: Content, pParentElement: Element, pTarget: Content): void {
+        // Find real parent.
+        const lParent: Element = pParentElement ?? this.mContentAnchor.parentElement;
 
-        // Clean up all static modules.
-        for (const lAttributeModule of lMappedModuleList) {
-            lAttributeModule.cleanup();
-            this.mComponentContent.unlinkStaticModule(pElement, lAttributeModule);
-        }
-
-        // If element is custom element deconstruct it.
-        if (ComponentConnection.componentManagerOf(pElement)) {
-            ComponentConnection.componentManagerOf(pElement).deconstruct();
-        }
-
-        // Remove actual element.
-        pElement.remove();
-
-        // Get childs.
-        const lChildList: Array<BaseContent> = this.mComponentContent.getChildList(pElement);
-
-        // Cleanup all elements.
-        for (const lChild of lChildList) {
-            if (lChild instanceof Element) {
-                this.cleanElement(lChild);
-            } else if (lChild instanceof BaseBuilder) {
-                lChild.deleteBuild();
-            }
-        }
-    }
-
-    /**
-     * Append an node after another.
-     * @param pReferencedNode - The node that will be before the new node.
-     * @param pContent - Content that will be inserted after the referenced node.
-     * @param pTemplate - Template of node.
-     */
-    private insertAfter(pReferencedNode: BaseContent, pContent: BaseContent, pTemplate: BaseXmlNode): void {
-        let lContent: Node = (pContent instanceof BaseBuilder) ? pContent.anchor : pContent;
-
-        // If the refernced node is the last node. nextSibling will return null.
-        // If the referenced node is null, the insert before behaves like an normal appendChild.
-        if (pReferencedNode instanceof BaseBuilder) {
-            const lAnchor: Comment = pReferencedNode.anchor;
-            const lLastElement: Node = pReferencedNode.contentManager.getLastElement();
-
-            // Prevent errors on rapid updates.
-            // Elements that should be added are added to already deleted elements.
-            if (lAnchor.parentNode !== null) {
-                lAnchor.parentNode.insertBefore(lContent, lLastElement.nextSibling);
-            }
+        const lSlotableNode: Node = this.toSlotable(lParent, pChild);
+        if (!pTarget) {
+            // No target means prepend.
+            lParent.prepend(lSlotableNode);
         } else {
-            // Prevent errors on rapid updates.
-            // Elements that should be added are added to already deleted elements.
-            if (pReferencedNode.parentNode !== null) {
-                // Parse node to sloted node.
-                if ('componentHandler' in pReferencedNode.parentNode) {
-                    lContent = this.parseNodeToSloted((<any>pReferencedNode).parentNode, lContent, pTemplate);
+            let lTargetNode: Node;
+            if (pTarget instanceof BaseBuilder) {
+                lTargetNode = pTarget.boundary.end;
+            } else {
+                lTargetNode = pTarget;
+            }
+
+            // Insert before targets next sibling. If nextSibling is null, lSlotableNode is append to target nodes parent.
+            lParent.insertBefore(lSlotableNode, lTargetNode.nextSibling);
+        }
+
+        // Register element.
+        if(pChild instanceof Text && pChild !== lSlotableNode){
+            // Register span wrapped text.
+            this.registerContent(lSlotableNode, !pParentElement, pTarget);
+        } else {
+            this.registerContent(pChild, !pParentElement, pTarget);
+        }   
+    }
+
+    /**
+     * Remove and deconstruct content.
+     * @param pChild - Child element of layer.
+     */
+    public remove(pChild: Content): void {
+        if (pChild instanceof BaseBuilder) {
+            pChild.deconstruct();
+        } else {
+            // Check if element is a component. If so deconstruct.
+            const lComponentManager: ComponentManager = ComponentConnection.componentManagerOf(pChild);
+            lComponentManager?.deconstruct();
+
+            // Remove from parent.
+            pChild.parentElement?.removeChild(pChild);
+
+            // Unlink modules.
+            const lModuleList: Array<IPwbExpressionModule | IPwbStaticAttributeModule> = this.mLinkedModules.get(pChild);
+            if (lModuleList) {
+                // Deconstruct all linked modules.
+                for (const lModule of lModuleList) {
+                    lModule.deconstruct();
                 }
 
-                pReferencedNode.parentNode.insertBefore(lContent, pReferencedNode.nextSibling);
+                // Delete element from linked module.
+                this.mLinkedModules.delete(pChild);
             }
+        }
+
+        // Remove from storages.
+        this.unregisterContent(pChild);
+    }
+
+    /**
+     * Deconstructs all builder and elements.
+     */
+    public deconstruct() {
+        // Deconstruct builder.
+        for (const lBuilder of this.mChildBuilderList) {
+            lBuilder.deconstruct();
+        }
+
+        // Deconstruct components.
+        for (const lComponent of this.mChildComponentList) {
+            const lComponentManager: ComponentManager = ComponentConnection.componentManagerOf(lComponent);
+            lComponentManager.deconstruct();
+        }
+
+        // Deconstruct modules.
+        this.mMultiplicatorModule?.deconstruct();
+        for (const lModule of this.linkedModuleList) {
+            lModule.deconstruct();
+        }
+
+        // Remove all content. Only remove root elements. GC makes the rest.
+        this.anchor.remove();
+        for (const lRootChild of this.mRootChildList) {
+            // Only remove elements. Builder are already deconstructed.
+            if (!(lRootChild instanceof BaseBuilder)) {
+                this.remove(lRootChild);
+            }
+        }
+    }
+
+    /**
+     * Get content boundry. Start and end content.
+     */
+    public getBoundary(): Boundary {
+        // Top is always the anchor.
+        const lTop: Node = <Node>this.mBoundaryDescription.start;
+
+        // Get last element of builder if bottom element is a builder 
+        // or use node as bottom element.  
+        let lBottom: Node;
+        if (this.mBoundaryDescription.end instanceof BaseBuilder) {
+            lBottom = this.mBoundaryDescription.end.boundary.end;
+        } else {
+            lBottom = this.mBoundaryDescription.end;
+        }
+
+        return {
+            start: lTop,
+            end: lBottom
+        };
+    }
+
+    /**
+     * Link module to node.
+     * @param pModule - Module.
+     * @param pNode - Build node.
+     */
+    public linkModule(pModule: IPwbExpressionModule | IPwbStaticAttributeModule, pNode: Node): void {
+        // Get module list of node. Create if it not exists.
+        let lModuleList: Array<IPwbExpressionModule | IPwbStaticAttributeModule> = this.mLinkedModules.get(pNode);
+        if (!lModuleList) {
+            lModuleList = new Array<IPwbExpressionModule | IPwbStaticAttributeModule>();
+            this.mLinkedModules.set(pNode, lModuleList);
+        }
+
+        // Add module as linked module to node module list.
+        lModuleList.push(pModule);
+    }
+
+    /**
+     * Saves element into child storage or root storage.
+     * Extends boundary.
+     * @param pChild - Child element.
+     * @param pRoot - If child is an root element.
+     */
+    private registerContent(pChild: Content, pRoot: boolean): void;
+    private registerContent(pChild: Content, pRoot: boolean, pPreviousSibling: Content): void;
+    private registerContent(pChild: Content, pRoot: boolean, pPreviousSibling?: Content): void {
+        // Add to builder or component storage.
+        if (pChild instanceof BaseBuilder) {
+            this.mChildBuilderList.push(pChild);
+        } else if (ComponentConnection.componentManagerOf(pChild)) {
+            this.mChildComponentList.push(<Element>pChild);
+        }
+
+        // Add element in order if element is on root level.
+        if (pRoot) {
+            // Set index to -1 of no previous sibling exists.
+            const lSiblingIndex: number = this.mRootChildList.indexOf(pPreviousSibling);
+
+            // Extend boundary if child is new last element.
+            if ((lSiblingIndex + 1) === this.mRootChildList.length) {
+                this.mBoundaryDescription.end = pChild;
+            }
+
+            // Add root child after previous sibling.
+            this.mRootChildList.splice(lSiblingIndex + 1, 0, pChild);
+        }
+    }
+
+    /**
+     * Removes child from all storages and shrink boundary.
+     * @param pChild - Child element.
+     */
+    private unregisterContent(pChild: Content) {
+        // Remove from builder or component storage.
+        if (pChild instanceof BaseBuilder) {
+            this.mChildBuilderList.remove(pChild);
+        } else if (ComponentConnection.componentManagerOf(pChild)) {
+            this.mChildComponentList.remove(<Element>pChild);
+        }
+
+        // Remove from root childs and shrink boundary.
+        const lChildRootIndex: number = this.mRootChildList.indexOf(pChild);
+        if (lChildRootIndex > -1) {
+            // Check for boundary shrink.
+            if ((lChildRootIndex + 1) === this.mRootChildList.length) {
+                // Check if one root child remains otherwise use anchor as end boundary.
+                if (this.mRootChildList.length > 1) {
+                    this.mBoundaryDescription.end = this.mRootChildList[lChildRootIndex - 1];
+                } else {
+                    this.mBoundaryDescription.end = this.mContentAnchor;
+                }
+            }
+
+            this.mRootChildList.remove(pChild);
         }
     }
 
     /**
      * Parse an node so it contains the slot attribute with the correct slot name.
      * @param pParentElement - parent element.
-     * @param pNode - Node that should be added.
+     * @param pContent - Node that should be added.
      * @param pTemplate - Template of node.
      * @returns parsed element that has the slot attribute.
      */
-    private parseNodeToSloted(pParentElement: Element, pNode: Node, pTemplate: BaseXmlNode): Node {
-        let lNode: BaseContent = pNode;
-        const lSlotName: string = ComponentConnection.componentManagerOf(pParentElement).elementHandler.getElementsSlotname(pTemplate);
+    private toSlotable(pParentElement: Element, pContent: Content): Node {
+        let lNode: Node;
 
-        // Wrap text nodes into span element.
-        if (pTemplate instanceof TextNode) {
-            // Wrap text node.
-            const lSpanWrapper: HTMLSpanElement = <HTMLSpanElement>ElementCreator.createElement('span');
-            lSpanWrapper.appendChild(<Text>pNode);
+        if (pContent instanceof BaseBuilder) {
+            lNode = pContent.anchor;
+        } else {
+            // Check if parent is a component.
+            if (ComponentConnection.componentManagerOf(pParentElement)) {
+                // Wrap text nodes into span element.
+                let lSlotedElement: Element;
+                if (pContent instanceof Text) {
+                    // Wrap text node.
+                    const lSpanWrapper: HTMLSpanElement = <HTMLSpanElement>ElementCreator.createElement('span');
+                    lSpanWrapper.appendChild(<Text>pContent);
 
-            lNode = lSpanWrapper;
-        }
+                    lSlotedElement = lSpanWrapper;
+                } else {
+                    // Content can only be element. No Text and no comment.
+                    lSlotedElement = <Element>pContent;
+                }
 
-        if (lNode instanceof Element) {
-            lNode.setAttribute('slot', lSlotName);
+                lNode = lSlotedElement;
+            } else {
+                lNode = pContent;
+            }
         }
 
         return lNode;
     }
 }
+
+export type Boundary = {
+    start: Node;
+    end: Node;
+};
+
+export type BoundaryDescription = {
+    start: Node | BaseBuilder;
+    end: Node | BaseBuilder;
+};
+
+export type Content = Node | BaseBuilder;

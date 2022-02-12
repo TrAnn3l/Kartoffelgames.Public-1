@@ -1,9 +1,9 @@
 import { Injector } from '@kartoffelgames/core.dependency-injection';
+import { ComponentModules } from '../module/component-modules';
 import { AttributeModuleAccessType } from '../enum/attribute-module-access-type';
 import { ModuleType } from '../enum/module-type';
 import { AttributeModuleSettings } from '../interface/module/attribute-module';
 import { IPwbStaticAttributeModule, PwbStaticAttributeModuleConstructor } from '../interface/module/static-attribute-module';
-import { ModuleStorage } from '../module/module-storage';
 
 /**
  * AtScript. PWB static attribute module.
@@ -130,7 +130,7 @@ export function StaticAttributeModule(pSettings: AttributeModuleSettings): any {
         };
 
         // Add module to storage.
-        ModuleStorage.addModule(lStaticAttributeModule);
+        ComponentModules.addModule(lStaticAttributeModule);
 
         return lStaticAttributeModule;
     };

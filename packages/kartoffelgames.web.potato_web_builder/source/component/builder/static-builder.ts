@@ -1,293 +1,200 @@
-import { BaseContent, HtmlContent } from '../../types';
-import { BaseBuilder } from './base-builder';
-import { ManipulatorBuilder } from './manipulator-builder';
-import { Dictionary, Exception } from '@kartoffelgames/core.data';
-import { BaseXmlNode, TextNode, XmlElement } from '@kartoffelgames/core.xml';
-import { LayerValues } from '../values/layer-values';
-import { ComponentModules } from '../component-modules';
-import { ComponentManager } from '../component-manager';
-import { ElementCreator } from '../content/element-creator';
-import { IPwbStaticAttributeModule, PwbStaticAttributeModuleConstructor } from '../../interface/module/static-attribute-module';
+import { Exception } from '@kartoffelgames/core.data';
+import { BaseXmlNode, TextNode, XmlDocument, XmlElement } from '@kartoffelgames/core.xml';
+import { ModuleType } from '../../enum/module-type';
+import { IPwbAttributeModuleConstructor } from '../../interface/module/attribute-module';
 import { IPwbExpressionModule } from '../../interface/module/expression-module';
-import { AttributeModuleAccessType } from '../../enum/attribute-module-access-type';
+import { IPwbStaticAttributeModule, PwbStaticAttributeModuleConstructor } from '../../interface/module/static-attribute-module';
+import { ComponentModules } from '../../module/component-modules';
+import { ElementCreator } from '../content/element-creator';
+import { LayerValues } from '../values/layer-values';
+import { BaseBuilder } from './base-builder';
+import { MultiplicatorBuilder } from './multiplicator-builder';
 
 export class StaticBuilder extends BaseBuilder {
+    private mInitialized: boolean;
+
     /**
-     * Build handler that handles initialisation and update of template.
-     * @param pTemplates - Templates that the component builder needs to build.
-     * @param pAttributeModules - All attributes of component.
-     * @param pParentComponentValues - Parents component values.
-     * @param pManipulatorScope - If builder is inside an manipulator scope.
+     * Constructor.
+     * @param pTemplate - Template.
+     * @param pShadowParent - Shadow parent html element.
+     * @param pModules - Attribute modules.
+     * @param pParentLayerValues - 
+     * @param pParentBuilder 
      */
-    public constructor(pTemplates: Array<BaseXmlNode>, pAttributeModules: ComponentModules, pParentComponentValues: LayerValues, pComponentHandler: ComponentManager, pManipulatorScope: boolean) {
-        super(pTemplates, pAttributeModules, new LayerValues(pParentComponentValues), pComponentHandler, pManipulatorScope);
+    public constructor(pTemplate: BaseXmlNode, pShadowParent: BaseXmlNode, pModules: ComponentModules, pParentLayerValues: LayerValues, pParentBuilder: BaseBuilder) {
+        super(pTemplate, pShadowParent, pModules, pParentLayerValues, pParentBuilder);
+
+        // Not initialized on start.
+        this.mInitialized = false;
     }
 
     /**
-     * Initialize build.
-     * Initializes builder in content after this function.
+     * Update static builder.
      */
-    public initialize(): void {
-        this.buildContentFrame(null, this.contentManager.template);
-
-        // Create temporary templates for execution.
-        const lBufferTemplates: Dictionary<HtmlContent, XmlElement> = new Dictionary<HtmlContent, XmlElement>();
-
-        // Execute all none manipulative modules.
-        let lAttributeChanged: boolean = true;
-        let lIterations: number = 0;
-        while (lAttributeChanged) {
-            if (++lIterations > 20) {
-                throw new Exception('To many module iteration. Check for attribute manipulation loops or to many attributes.', this);
-            }
-
-            // Execute all read modules and restart execution chain if any module has manipulated templates attributes.
-            if (this.deepExecuteTemplateModules(null, lBufferTemplates, AttributeModuleAccessType.Write)) {
-                continue;
-            }
-
-            // Execute all read/write modules and restart execution chain if any module has manipulated templates attributes.
-            if (this.deepExecuteTemplateModules(null, lBufferTemplates, AttributeModuleAccessType.ReadWrite)) {
-                continue;
-            }
-
-            // Execute all writing modules.  No restart needed. Writing modules can not manipulate attributes.
-            this.deepExecuteTemplateModules(null, lBufferTemplates, AttributeModuleAccessType.Read);
-            lAttributeChanged = false;
+    protected onUpdate(): boolean {
+        if (this.mInitialized) {
+            this.mInitialized = true;
+            this.buildTemplate([this.template]);
         }
 
-        // Add all none module attributes and texts
-        this.deepAddNativeData(null, lBufferTemplates);
-    }
+        // Get all modules.
+        const lModuleList: Array<IPwbExpressionModule | IPwbStaticAttributeModule> = this.contentManager.linkedModuleList;
 
-    /**
-     * Update all template elements that are affected by the property change.
-     */
-    protected update(): boolean {
-        // Get all modules that are currently used. Sort by module write , read/write, read.
-        let lStaticModule: Array<IPwbStaticAttributeModule> = this.contentManager.linkedStaticModules;
-        lStaticModule = lStaticModule.sort((pA, pB) => {
-            const lConstructorA: PwbStaticAttributeModuleConstructor = <PwbStaticAttributeModuleConstructor>pA.constructor;
-            const lConstructorB: PwbStaticAttributeModuleConstructor = <PwbStaticAttributeModuleConstructor>pB.constructor;
+        // Sort by write->readwrite->read->expression and update.
+        lModuleList.sort((pModuleA, pModuleB): number => {
+            const lModuleConstructorA: IPwbAttributeModuleConstructor = <IPwbAttributeModuleConstructor><any>pModuleA.constructor;
+            const lModuleConstructorB: IPwbAttributeModuleConstructor = <IPwbAttributeModuleConstructor><any>pModuleB.constructor;
 
-            if (lConstructorA.isWriting && lConstructorB.isReading) {
-                return -1;
+            // "Calculate" execution priority of module A.
+            let lCompareValueA: number;
+            if (lModuleConstructorA.moduleType === ModuleType.Static) {
+                if (lModuleConstructorA.isWriting && !lModuleConstructorA.isReading) {
+                    lCompareValueA = 4;
+                } else if (lModuleConstructorA.isWriting && lModuleConstructorA.isReading) {
+                    lCompareValueA = 3;
+                } else if (!lModuleConstructorA.isWriting && lModuleConstructorA.isReading) {
+                    lCompareValueA = 2;
+                }
+            } else if (lModuleConstructorA.moduleType === ModuleType.Expression) {
+                lCompareValueA = 1;
             }
 
-            return 0;
+            // "Calculate" execution priority of module A.
+            let lCompareValueB: number;
+            if (lModuleConstructorB.moduleType === ModuleType.Static) {
+                if (lModuleConstructorB.isWriting && !lModuleConstructorB.isReading) {
+                    lCompareValueB = 4;
+                } else if (lModuleConstructorB.isWriting && lModuleConstructorB.isReading) {
+                    lCompareValueB = 3;
+                } else if (!lModuleConstructorB.isWriting && lModuleConstructorB.isReading) {
+                    lCompareValueB = 2;
+                }
+            } else if (lModuleConstructorB.moduleType === ModuleType.Expression) {
+                lCompareValueB = 1;
+            }
+
+            return lCompareValueA - lCompareValueB;
         });
 
-        let lAnyUpdateWasMade: boolean = false;
-
-        // Update all modules. Result doesn't matter should allways be false.
-        for (const lModule of lStaticModule) {
-            if (lModule.update()) {
-                lAnyUpdateWasMade = true;
-            }
+        let lUpdated: boolean = false;
+        for (const lModule of lModuleList) {
+            lUpdated = lModule.update() || lUpdated;
         }
 
-        // Get all used expression modules. Those have always low priority. No need to sort.
-        const lExpressionModules: Array<IPwbExpressionModule> = this.contentManager.linkedExpressionModules;
-        for (const lModule of lExpressionModules) {
-            if (lModule.update()) {
-                lAnyUpdateWasMade = true;
-            }
-        }
-
-        return lAnyUpdateWasMade;
+        return lUpdated;
     }
 
     /**
-     * Add native attributes or text and execute all expressions.
-     * @param pNode - Element or Text-
-     * @param pTemplate - Template. Not required for Text.
+     * Build template. Creates and link modules.
+     * @param pTemplateNodeList - Template node list.
+     * @param pParentElement - Parent element of templates.
      */
-    private addNativeData(pNode: HtmlContent, pTemplate: BaseXmlNode): void;
-    private addNativeData(pNode: Text): void;
-    private addNativeData(pNode: Text | HtmlContent, pTemplate?: BaseXmlNode): void {
-        if (pNode instanceof Element) {
-            // For each xml attribute.
-            for (const lAttribute of (<XmlElement>pTemplate).attributeList) {
-                // Get expression module and process.
-                const lExpressionModule: IPwbExpressionModule = this.contentManager.attributeModules.getExpressionModule(pNode, lAttribute.name, lAttribute.value, this.values, this.componentHandler);
-                const lHadExpression: boolean = lExpressionModule.process();
-
-                // Link module and element if attribute had any expression.
-                if (lHadExpression) {
-                    this.contentManager.linkModule(pNode, lExpressionModule);
-                }
-            }
-        } else if (pNode instanceof Text) {
-            // Use original because it does not get altered.
-            const lOriginalTemplate: TextNode = this.contentManager.getTemplateByContent(pNode);
-
-            // Get expression module and process.
-            const lExpressionModule: IPwbExpressionModule = this.contentManager.attributeModules.getExpressionModule(pNode, null, lOriginalTemplate.text, this.values, this.componentHandler);
-            const lHadExpression: boolean = lExpressionModule.process();
-
-            // Link module and element if text had any expression.
-            if (lHadExpression) {
-                this.contentManager.linkModule(pNode, lExpressionModule);
-            }
+    private buildTemplate(pTemplateNodeList: Array<BaseXmlNode>, pParentElement: Element = null, pShadowParent: BaseXmlNode = null): void {
+        // Get shadow parent of template nodes.
+        // Use builder shadow parent is template is a root node.
+        let lShadowParent: BaseXmlNode = pShadowParent;
+        if (!lShadowParent) {
+            lShadowParent = this.shadowParent;
         }
-    }
 
-    /**
-     * Recursion.
-     * Build content frames. HTMLElements without parameter.
-     * Custom elements will be created as correct elements.
-     * @param pParentHtmlElement - Parent element of template.
-     * @param pTemplate - Template element that should be build.
-     */
-    private buildContentFrame(pParentHtmlElement: HtmlContent | null, pTemplate: Array<BaseXmlNode>) {
-        // For each template node inside template.
-        for (const lTemplateNode of pTemplate) {
-            // Check template type.
-            if (lTemplateNode instanceof TextNode) {
-                // Create and add empt text node mustache expression is executed later.
-                const lTextNode = ElementCreator.createText('');
-                this.contentManager.appendContent(pParentHtmlElement, lTextNode, lTemplateNode);
+        // Create each template.
+        for (const lTemplateNode of pTemplateNodeList) {
+            if (lTemplateNode instanceof XmlDocument) {
+                // Ignore documents just process body.
+                this.buildTemplate(lTemplateNode.body, pParentElement, lTemplateNode);
+            } else if (lTemplateNode instanceof TextNode) {
+                this.buildTextTemplate(lTemplateNode, pParentElement);
             } else if (lTemplateNode instanceof XmlElement) {
-                // Check if template element is manipulator or not.
-                if (this.contentManager.attributeModules.checkTemplateIsManipulator(lTemplateNode)) {
-                    // Create new component builder and add to content.
-                    const lManipulatorBuilder: ManipulatorBuilder = new ManipulatorBuilder(lTemplateNode, this.contentManager.attributeModules, this.values, this.componentHandler);
-
-                    this.contentManager.appendContent(pParentHtmlElement, lManipulatorBuilder, lTemplateNode);
+                // Differentiate between static and multiplicator templates.
+                if (this.contentManager.modules.templateUsesMultiplicatorModule(lTemplateNode)) {
+                    this.buildMultiplicatorTemplate(lTemplateNode, pParentElement, lShadowParent);
                 } else {
-                    // Try to get potential parent if no real parent is specified.
-                    const lFutureparent: Element = pParentHtmlElement ?? this.contentManager.getLastElement().parentElement;
-
-                    // Create HTMLElement or custom element.
-                    const lCreatedHtmlElement: HtmlContent = ElementCreator.createElement(lTemplateNode, lFutureparent);
-
-                    // Append element to component content.
-                    this.contentManager.appendContent(pParentHtmlElement, lCreatedHtmlElement, lTemplateNode);
-
-                    // Add all childs to this element
-                    this.buildContentFrame(lCreatedHtmlElement, <Array<BaseXmlNode>>lTemplateNode.childList);
+                    this.buildStaticTemplate(lTemplateNode, pParentElement);
                 }
             }
+
+            // Ignore comments.
         }
-    }
+    };
 
     /**
-     * Add all Attributes and TextNodes and execute all expressions that are inside texts.
-     * @param pParentElement - Parent element which child are checked expressions and executes.
-     * @param pBufferTemplates - Buffer with current executed modules.
+     * Build text template and append to parent.
+     * @param pTextTemplate - Text template.
+     * @param pParentHtmlElement - Build parent element of template. 
      */
-    private deepAddNativeData(pParentElement: HtmlContent | null, pBufferTemplates: Dictionary<HtmlContent, XmlElement>): void {
-        const lChildList: Array<BaseContent> = this.contentManager.getChildList(pParentElement);
+    public buildTextTemplate(pTextTemplate: TextNode, pParentHtmlElement: Element): void {
+        // Create and process expression module, append text node to content.
+        const lTextValue: string = pTextTemplate.text;
+        const lHtmlNode: Text = ElementCreator.createText('');
 
-        // For each child.
-        for (const lChild of lChildList) {
-            if (lChild instanceof Element) {
-                // All buffer templates should be initalised. So no check for undefined.
-                const lBufferTemplate: XmlElement = pBufferTemplates.get(lChild);
-
-                // Add all native data to child.
-                this.addNativeData(lChild, lBufferTemplate);
-
-                // Add attributes and texts for all childs.
-                this.deepAddNativeData(lChild, pBufferTemplates);
-            } else if (lChild instanceof Text) {
-                this.addNativeData(lChild);
-            }
-        }
-    }
-
-    /**
-     * Executes all modules of parents childs.
-     * Updates buffer templates.
-     * Returns if any module manipulates the templates attributes.
-     * @param pParentElement - Parent element which child are checked for modules and executes.
-     * @param pBufferTemplates - Buffer with current executed modules.
-     * @param pAccessFilter - [OPTIONAL] Execute only modules which has the specified accessor type.
-     */
-    private deepExecuteTemplateModules(pParentElement: HtmlContent | null, pBufferTemplates: Dictionary<HtmlContent, XmlElement>, pAccessFilter: AttributeModuleAccessType): boolean {
-        const lChildList: Array<BaseContent> = this.contentManager.getChildList(pParentElement);
-        let lModuleWasExecuted: boolean = false;
-
-        // For each child.
-        for (const lChild of lChildList) {
-            // Only html elements.
-            if (lChild instanceof Element) {
-                // Try to get current buffer template.
-                let lBufferTemplate: XmlElement = pBufferTemplates.get(lChild);
-                if (typeof lBufferTemplate === 'undefined') {
-                    // Get clone of template element.
-                    lBufferTemplate = <XmlElement>this.contentManager.getTemplateByContent(lChild).clone();
-                    pBufferTemplates.add(lChild, lBufferTemplate);
-                }
-
-                // Execute all modules of child with set access type.
-                if (this.executeTemplateModules(lChild, lBufferTemplate, pAccessFilter)) {
-                    lModuleWasExecuted = true;
-                }
-
-                // Execute all modules for child childs
-                if (this.deepExecuteTemplateModules(lChild, pBufferTemplates, pAccessFilter)) {
-                    lModuleWasExecuted = true;
-                }
-            }
+        // TODO: Rework expressionmodule.
+        // Create and link expression module, link only if text has any expression.
+        const lExpressionModule: IPwbExpressionModule = this.contentManager.modules.getExpressionModule(lHtmlNode, null, lTextValue, this.values, this.componentManager);
+        if (lExpressionModule.update()) {
+            this.contentManager.linkModule(lExpressionModule, lHtmlNode);
+        } else {
+            lHtmlNode.textContent = lTextValue;
         }
 
-        return lModuleWasExecuted;
+        // Append text to parent.
+        this.contentManager.append(lHtmlNode, pParentHtmlElement);
     }
 
-    /**
-     * Executes module, add rebuild trigger and link module with element.
-     * @param pModule - Static module.
-     * @param pElement -Element of module.
-     */
-    private executeModule(pModule: IPwbStaticAttributeModule, pTargetElement: HtmlContent): boolean {
-        const lModuleConstructor: PwbStaticAttributeModuleConstructor = <PwbStaticAttributeModuleConstructor>pModule.constructor;
+    public buildStaticTemplate(pElementTemplate: XmlElement, pParentHtmlElement: Element) {
+        // Build element.
+        const lHtmlNode: Element = ElementCreator.createElement(pElementTemplate);
 
-        // Check if module is allowd in current scope.
-        if (this.inManipulatorScope && lModuleConstructor.forbiddenInManipulatorScopes) {
-            throw new Exception(`Module ${lModuleConstructor.attributeSelector.source} is forbidden inside manipulator scopes.`, this);
-        }
-
-        // Execute module. No useable result. 
-        pModule.process();
-
-        // Map module with build child.
-        this.contentManager.linkModule(pTargetElement, pModule);
-
-        // Check if module manipulates templates attributes.
-        return lModuleConstructor.manipulatesAttributes;
-    }
-
-    /**
-     * Execute all modules of template for element of specified access type.
-     * @param pElement - Element for which all modules should be executed.
-     * @param pTemplate - Template element of element.
-     * @param pModuleFilter - Filter for modules access types.
-     */
-    private executeTemplateModules(pElement: HtmlContent, pTemplate: XmlElement, pModuleFilter: AttributeModuleAccessType): boolean {
-        let lManipulatedAttributes: boolean = false;
-
-        // For each xml attribute.
-        for (const lAttribute of pTemplate.attributeList) {
+        // Set attributes. Create and link modules.
+        for (const lAttribute of pElementTemplate.attributeList) {
+            // TODO: Rework static modules.
             // Find attribute module for attribute.
-            const lAttributeModule: IPwbStaticAttributeModule = this.contentManager.attributeModules.getStaticModule(
-                pElement,
-                pTemplate,
+            const lAttributeModule: IPwbStaticAttributeModule = this.contentManager.modules.getStaticModule(
+                lHtmlNode,
+                pElementTemplate,
                 this.values,
                 lAttribute,
-                this.componentHandler,
-                pModuleFilter
+                this.componentManager
             );
 
-            // Check if module exists for attribute.
+            // Check if module exists for attribute and link.
             if (typeof lAttributeModule !== 'undefined') {
-                // Check if module manipulates templates attributes.
-                if (this.executeModule(lAttributeModule, pElement)) {
-                    lManipulatedAttributes = true;
+                const lModuleConstructor: PwbStaticAttributeModuleConstructor = <PwbStaticAttributeModuleConstructor>lAttributeModule.constructor;
+
+                // Check if module is allowd in current scope.
+                if (this.inManipulatorScope && lModuleConstructor.forbiddenInManipulatorScopes) {
+                    throw new Exception(`Module ${lModuleConstructor.attributeSelector.source} is forbidden inside manipulator scopes.`, this);
+                }
+
+                this.contentManager.linkModule(lAttributeModule, lHtmlNode);
+            } else {
+                // TODO: Rework expressionmodule.
+                // Create and link expression module, link only if attribute has any expression.
+                const lExpressionModule: IPwbExpressionModule = this.contentManager.modules.getExpressionModule(lHtmlNode, lAttribute.qualifiedName, lAttribute.value, this.values, this.componentManager);
+                if (lExpressionModule.update()) {
+                    this.contentManager.linkModule(lExpressionModule, lHtmlNode);
+                } else {
+                    lHtmlNode.setAttribute(lAttribute.qualifiedName, lAttribute.value);
                 }
             }
         }
 
-        return lManipulatedAttributes;
+        // Append element to parent.
+        this.contentManager.append(lHtmlNode, pParentHtmlElement);
+
+        // Build childs.
+        this.buildTemplate(pElementTemplate.childList, lHtmlNode, pElementTemplate);
+    }
+
+    /**
+     * Build template with multiplicator module.
+     * Creates a new multiplicator builder and append to content.
+     * @param pMultiplicatorTemplate - Template with multiplicator module.
+     * @param pParentHtmlElement - Build parent element of template.
+     * @param pShadowParent - Parent template element that is loosly linked as parent.
+     */
+    public buildMultiplicatorTemplate(pMultiplicatorTemplate: XmlElement, pParentHtmlElement: Element, pShadowParent: BaseXmlNode) {
+        // Create new component builder and add to content.
+        const lMultiplicatorBuilder: MultiplicatorBuilder = new MultiplicatorBuilder(pMultiplicatorTemplate, pShadowParent, this.contentManager.modules, this.values, this);
+        this.contentManager.append(lMultiplicatorBuilder, pParentHtmlElement);
     }
 }

@@ -156,7 +156,7 @@ export class PwbApp {
         // Call creation inside change detection zone.
         return this.changeDetection.execute(() => {
             // Get selector of user
-            const lSelector: string = Metadata.get(pComponentConstructor).getMetadata(MetadataKey.METADATA_SELECTOR);
+            const lSelector: string = <string>Metadata.get(pComponentConstructor).getMetadata(MetadataKey.METADATA_SELECTOR);
 
             // Check if constructor is a component constructor.
             let lContent: HTMLElement;

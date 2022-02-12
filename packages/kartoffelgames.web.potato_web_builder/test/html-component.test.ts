@@ -22,7 +22,7 @@ import { LoopError } from '../source/component/handler/loop-detection-handler';
 import { ComponentConnection } from '../source/component/component-connection';
 import { HtmlComponent } from '../source/decorator/html-component';
 import { Export } from '../source/decorator/export';
-import { PwbComponent } from '../source/handler/pwb-component';
+import { PwbElementReference } from '../source/component/user_reference/pwb-element-reference';
 import { HtmlComponentEvent } from '../source/decorator/html-component-event';
 import { IdChild } from '../source/decorator/id-child';
 import { ManipulatorAttributeModule } from '../source/decorator/manipulator-attribute-module';
@@ -99,7 +99,7 @@ describe('HtmlComponent', () => {
             public testMethod() { return; }
         }
 
-        const lCustomElement: HTMLElement = <HTMLElement>new (window.customElements.get(Metadata.get(TestCustomElement).getMetadata(MetadataKey.METADATA_SELECTOR)))();
+        const lCustomElement: HTMLElement = <HTMLElement>new (window.customElements.get(<string>Metadata.get(TestCustomElement).getMetadata(MetadataKey.METADATA_SELECTOR)))();
 
         assert.ok(lCustomElement instanceof Element);
 
@@ -324,11 +324,11 @@ describe('HtmlComponent', () => {
             `
         })
         class MyComponent {
-            public readonly element: PwbComponent;
+            public readonly element: PwbElementReference;
             public inputValue: string;
             public list = ['a', 'b', 'c'];
 
-            public constructor(pElement: PwbComponent, pApp: PwbApp) {
+            public constructor(pElement: PwbElementReference, pApp: PwbApp) {
                 this.inputValue = 'Starting input value';
                 this.element = pElement;
             }
@@ -891,7 +891,7 @@ describe('HtmlComponent', () => {
 
             private readonly mElement: HTMLElement & HTMLElement;
 
-            public constructor(pElement: PwbComponent) {
+            public constructor(pElement: PwbElementReference) {
                 this.mElement = <any>pElement.componentElement;
             }
 
@@ -934,7 +934,7 @@ describe('HtmlComponent', () => {
         // Create dialog component.
         const lDialogData = new Dictionary<string, any>();
         //lDialogData.add('placeholder', 'MyPlaceholder');
-        const lDialogComponent: HTMLElement & PwbDialogComponent = <any>new (window.customElements.get(Metadata.get(PwbDialogComponent).getMetadata(MetadataKey.METADATA_SELECTOR)))();
+        const lDialogComponent: HTMLElement & PwbDialogComponent = <any>new (window.customElements.get(<string>Metadata.get(PwbDialogComponent).getMetadata(MetadataKey.METADATA_SELECTOR)))();
         lDialogComponent.dialogComponentName = lSelectorName;
         lDialogComponent.dialogData = lDialogData;
 
@@ -952,7 +952,7 @@ describe('HtmlComponent', () => {
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         class TestCustomElement1 {
-            constructor(pElement: PwbComponent) {
+            constructor(pElement: PwbElementReference) {
                 assert.equal(ChangeDetection.current.name.toLowerCase(), 'myapp');
                 pDone();
             }
@@ -1611,9 +1611,9 @@ describe('HtmlComponent', () => {
         })
         class TestCustomElement implements IPwbAfterInit {
             public value: string = 'aaa';
-            private readonly mComponent: PwbComponent;
+            private readonly mComponent: PwbElementReference;
 
-            public constructor(pComponent: PwbComponent) {
+            public constructor(pComponent: PwbElementReference) {
                 this.mComponent = pComponent;
             }
 

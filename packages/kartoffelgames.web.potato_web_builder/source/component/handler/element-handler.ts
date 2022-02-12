@@ -44,6 +44,9 @@ export class ElementHandler {
         this.mAttributeHandler = new AttributeHandler(pUserObjectHandler, pHtmlElement);
         this.mUserObjectHandler = pUserObjectHandler;
         this.mSlotNameList = new List<string>();
+
+        // Connect user class with element attributes.
+        this.connectExportedProperties();
     }
 
     /**
@@ -52,14 +55,6 @@ export class ElementHandler {
      */
     public addValidSlot(pSlotName: string): void {
         this.mSlotNameList.push(pSlotName);
-    }
-
-    /**
-     * Connect all exported properties with html element.
-     */
-    public connectExportedProperties(): void {
-        const lExportedPropertyList: Array<string | symbol> = Metadata.get(this.mUserObjectHandler.userClass).getMetadata(MetadataKey.METADATA_EXPORTED_PROPERTIES);
-        this.mAttributeHandler.connectExportedProperties(lExportedPropertyList ?? new Array<string | symbol>());
     }
 
     /**
@@ -95,4 +90,11 @@ export class ElementHandler {
         return lSlotName;
     }
 
+    /**
+     * Connect all exported properties with html element.
+     */
+    private connectExportedProperties(): void {
+        const lExportedPropertyList: Array<string | symbol> = Metadata.get(this.mUserObjectHandler.userClass).getMetadata(MetadataKey.METADATA_EXPORTED_PROPERTIES);
+        this.mAttributeHandler.connectExportedProperties(lExportedPropertyList ?? new Array<string | symbol>());
+    }
 }

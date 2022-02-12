@@ -7,8 +7,5 @@ dist
 node_modules
 scratchpad
 debug.log
-/packages/**/library/test
-/packages/**/library/enviroment
-/packages/**/library/scratchpad
-/packages/**/library/build
+/packages/**/library
 !/enviroment/project_blueprint/scratchpad

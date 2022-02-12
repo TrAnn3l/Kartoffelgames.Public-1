@@ -85,13 +85,13 @@ export class ComponentScopeExecutor {
 
         const lResult: List<string> = new List<string>();
 
-        // Find all Occurences of the search string.
+        // Find all words that can be a variable.
         while ((lFoundOccurrence = lFindingRegex.exec(pExpression))) {
             const lVariableName: string = lFoundOccurrence[0];
 
             // Ignore names in strings, numbers and properties.
             if (!lVariableName.startsWith('"') && !lVariableName.startsWith(`'`) && !lVariableName.startsWith('`') && !/^[0-9]/.test(lVariableName) && !lVariableName.startsWith('.')) {
-                // Ignore this and window context.
+                // Ignore system names.
                 if (!lSystemNames.includes(lVariableName)) {
                     lResult.push(lVariableName);
                 }

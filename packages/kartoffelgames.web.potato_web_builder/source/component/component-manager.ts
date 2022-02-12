@@ -1,13 +1,13 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { UserClass } from '../interface/user-class';
 import { StaticBuilder } from './builder/static-builder';
-import { ComponentModules } from './component-modules';
+import { ComponentModules } from '../module/component-modules';
 import { LayerValues } from './values/layer-values';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { XmlDocument } from '@kartoffelgames/core.xml';
 import { PwbApp } from '../pwb-app';
 import { ElementCreator } from './content/element-creator';
-import { PwbComponent } from '../handler/pwb-component';
+import { PwbElementReference } from './user_reference/pwb-element-reference';
 import { UpdateScope } from '../enum/update-scope';
 import { TemplateParser } from '../parser/template-parser';
 import { UpdateHandler } from './handler/update-handler';
@@ -16,6 +16,7 @@ import { ElementHandler } from './handler/element-handler';
 import { ComponentConnection } from './component-connection';
 import { UserEventHandler } from './handler/user-event-handler';
 import { PwbExpressionModuleConstructor } from '../interface/module/expression-module';
+import { PwbUpdateReference } from './user_reference/pwb-update-reference';
 
 /**
  * Base component handler. Handles initialisation and update of components.
@@ -25,7 +26,6 @@ export class ComponentManager {
     private static readonly mXmlParser: TemplateParser = new TemplateParser();
 
     private readonly mElementHandler: ElementHandler;
-    private mFirstAttachment: boolean;
     private readonly mRootBuilder: StaticBuilder;
     private readonly mUpdateHandler: UpdateHandler;
     private readonly mUserEventHandler: UserEventHandler;
@@ -56,7 +56,7 @@ export class ComponentManager {
      * Get component values of the root builder. 
      */
     public get rootValues(): LayerValues {
-        return this.mRootBuilder.values;
+        return this.mRootBuilder.values.rootValue;
     }
 
     /**
@@ -67,29 +67,43 @@ export class ComponentManager {
     }
 
     /**
-     * Constructor.
-     * Initialized build parameter.
-     * @param pUserClassObject - User class object.
-     * @param pTemplate - Template content of component.
-     * @param pAttributeModules - Attribute modules of component.
+     * 
+     * @param pUserClass - User class constructor.
+     * @param pTemplate - Template as xml string.
+     * @param pExpressionModule - Expression module constructor.
+     * @param pHtmlComponent - HTMLElement of component.
+     * @param pUpdateScope - Update scope of component.
      */
     public constructor(pUserClass: UserClass, pTemplate: string, pExpressionModule: PwbExpressionModuleConstructor, pHtmlComponent: HTMLElement, pUpdateScope: UpdateScope) {
         // Load cached or create new module handler and template.
-        let [lModules, lTemplate] = ComponentManager.mComponentCache.get(pUserClass);
-        if (!lModules || !lTemplate) {
+        const lCache: [ComponentModules, XmlDocument] = ComponentManager.mComponentCache.get(pUserClass);
+        let lModules: ComponentModules;
+        let lTemplate: XmlDocument;
+        if (!lCache) {
             lTemplate = ComponentManager.mXmlParser.parse(pTemplate);
             lModules = new ComponentModules(pExpressionModule);
             ComponentManager.mComponentCache.set(pUserClass, [lModules, lTemplate]);
+        } else {
+            [lModules, lTemplate] = lCache;
         }
 
         // Create update handler.
         const lUpdateScope: UpdateScope = pUpdateScope ?? UpdateScope.Global;
-        this.mUpdateHandler = new UpdateHandler(this.mUserObjectHandler, lUpdateScope);
-        this.mUpdateHandler.addUpdateListener(() => { return this.mRootBuilder.updateBuild(); });
+        this.mUpdateHandler = new UpdateHandler(lUpdateScope);
+        this.mUpdateHandler.addUpdateListener(() => {
+            // Call user class on update function.
+            this.mUserObjectHandler.callOnPwbUpdate();
+
+            // Update and callback after update.
+            if (this.mRootBuilder.update()) {
+                this.mUserObjectHandler.callAfterPwbUpdate();
+            }
+        });
 
         // Create user object handler.
         const lLocalInjections: Array<object> = new Array<object>();
-        lLocalInjections.push(new PwbComponent(this));
+        lLocalInjections.push(new PwbElementReference(this));
+        lLocalInjections.push(new PwbUpdateReference(this));
         lLocalInjections.push(ChangeDetection.current?.getZoneData(PwbApp.PUBLIC_APP_KEY));
         this.mUserObjectHandler = new UserObjectHandler(pUserClass, this.updateHandler, lLocalInjections);
 
@@ -98,7 +112,6 @@ export class ComponentManager {
 
         // Create element handler and export properties.
         this.mElementHandler = new ElementHandler(pHtmlComponent, this.mUserObjectHandler);
-        this.mElementHandler.connectExportedProperties();
 
         // Connect with this component manager.
         ComponentConnection.connectComponentManagerWith(this.elementHandler.htmlElement, this);
@@ -108,18 +121,9 @@ export class ComponentManager {
         // Create user event handler.
         this.mUserEventHandler = new UserEventHandler(this.userObjectHandler);
 
-        // Create component values handler with watched user class object.
-        const lComponentValues: LayerValues = new LayerValues(this);
-
-
-
-
         // Create component builder.
-        this.mRootBuilder = new StaticBuilder(lTemplate.body, lModules, lComponentValues, this, false);
+        this.mRootBuilder = new StaticBuilder(lTemplate, lTemplate, lModules, new LayerValues(this), null);
         this.elementHandler.shadowRoot.appendChild(this.mRootBuilder.anchor);
-
-        // Initialize lists and default values.
-        this.mFirstAttachment = true;
 
         this.mUserObjectHandler.callAfterPwbInitialize();
     }
@@ -138,12 +142,6 @@ export class ComponentManager {
      * Called when component get attached to DOM.
      */
     public connected(): void {
-        if (!this.mFirstAttachment) {
-            this.mFirstAttachment = true;
-            // Start initialize build.
-            this.mRootBuilder.initializeBuild();
-        }
-
         this.updateHandler.enabled = true;
 
         // Trigger light update.
@@ -167,8 +165,8 @@ export class ComponentManager {
         // Remove change listener from app.
         this.updateHandler.deconstruct();
 
-        // Deconstruct all child element.s
-        this.mRootBuilder.deleteBuild();
+        // Deconstruct all child element.
+        this.mRootBuilder.deconstruct();
     }
 
     /**

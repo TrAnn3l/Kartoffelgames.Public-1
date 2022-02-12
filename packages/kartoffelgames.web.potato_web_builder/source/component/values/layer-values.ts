@@ -21,6 +21,17 @@ export class LayerValues {
     }
 
     /**
+     * Get root value of component.
+     */
+    public get rootValue(): LayerValues {
+        if (this.mParentLayer !== null) {
+            return this;
+        } else {
+            return this.mParentLayer.rootValue;
+        }
+    }
+
+    /**
      * Get all keys of temorary values.
      */
     private get temporaryValuesList(): Array<string> {
@@ -128,6 +139,6 @@ export class LayerValues {
      * @param pValue - Value.
      */
     public setRootValue<TValue>(pKey: string, pValue: TValue): void {
-        this.mComponentManager.rootValues.setLayerValue(pKey, pValue);
+        this.rootValue.setLayerValue(pKey, pValue);
     }
 }

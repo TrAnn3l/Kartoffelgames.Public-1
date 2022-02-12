@@ -1,38 +1,40 @@
 import { LayerValues } from '../values/layer-values';
-import { ContentManager } from '../content/content-manager';
-import { ComponentModules } from '../component-modules';
+import { Boundary, ContentManager } from '../content/content-manager';
+import { ComponentModules } from '../../module/component-modules';
 import { ComponentManager } from '../component-manager';
-import { BaseXmlNode } from '@kartoffelgames/core.xml';
+import { BaseXmlNode, XmlElement } from '@kartoffelgames/core.xml';
+import { MultiplicatorBuilder } from './multiplicator-builder';
+import { StaticBuilder } from './static-builder';
 
 /**
  * Builder helper that builds and updates content of component.
  */
 export abstract class BaseBuilder {
-    private readonly mComponentHandler: ComponentManager;
     private readonly mComponentValues: LayerValues;
     private readonly mContentManager: ContentManager;
-    private mIgnoreCurrentUpdateCycle: boolean;
-    private readonly mInManipulatorScope: boolean;
+    private readonly mParentBuilder: BaseBuilder;
+    private readonly mShadowParent: BaseXmlNode;
+    private readonly mTemplate: BaseXmlNode;
 
     /**
-     * Get component content of builder.
+     * Content anchor for later appending build and initilised elements on this place.
      */
-    public get contentManager(): ContentManager {
-        return this.mContentManager;
+    public get anchor(): Comment {
+        return this.mContentManager.anchor;
     }
 
     /**
-     * Get component handler.
+     * Get boundary of builder. Top and bottom element of builder.
      */
-    public get componentHandler(): ComponentManager {
-        return this.mComponentHandler;
+    public get boundary(): Boundary {
+        return this.mContentManager.getBoundary();
     }
 
     /**
-     * If builder is inside an manipulator scope.
+     * Content template.
      */
-    public get inManipulatorScope(): boolean {
-        return this.mInManipulatorScope;
+    public get template(): BaseXmlNode {
+        return this.mTemplate;
     }
 
     /**
@@ -43,106 +45,90 @@ export abstract class BaseBuilder {
     }
 
     /**
-     * Content anchor for later appending build and initilised elements on this place.
+     * Shadow parent of all template elements.
+     * Not actuall parent for 
      */
-    public get anchor(): Comment {
-        return this.mContentManager.anchor;
+    protected get shadowParent(): BaseXmlNode {
+        return this.mShadowParent;
     }
 
     /**
-     * Initialization state of builder.
+     * If builder is inside an manipulator scope.
      */
-    public get initialized(): boolean {
-        return this.contentManager.initialized;
+    protected get inManipulatorScope(): boolean {
+        if (this instanceof MultiplicatorBuilder) {
+            return true;
+        } else if (!this.mParentBuilder) {
+            return false;
+        } else {
+            return this.mParentBuilder.inManipulatorScope;
+        }
     }
 
     /**
-     * Get if current update cycle should be ignored.
+     * Get component content of builder.
      */
-    public get ignoreCurrentUpdateCycle(): boolean {
-        return this.mIgnoreCurrentUpdateCycle;
+    protected get contentManager(): ContentManager {
+        return this.mContentManager;
     }
 
     /**
-     * Set if current update cycle should be ignored.
+     * Get component handler.
      */
-    public set ignoreCurrentUpdateCycle(pValue: boolean) {
-        this.mIgnoreCurrentUpdateCycle = pValue;
+    protected get componentManager(): ComponentManager {
+        return this.mComponentValues.componentManager;
     }
 
     /**
      * Constructor.
      * Builder helper that builds and updates content of component.
      * @param pComponentContent - Component content.
-     * @param pComponentValues - New component values.
+     * @param pParentLayerValues - New component values.
      * @param pManipulatorScope - If builder is inside an manipulator scope.
      */
-    public constructor(pTemplate: Array<BaseXmlNode>, pAttributeModules: ComponentModules, pComponentValues: LayerValues, pComponentHandler: ComponentManager, pManipulatorScope: boolean) {
-        this.mContentManager = new ContentManager(pTemplate, pAttributeModules);
-        this.mComponentValues = pComponentValues;
-        this.mInManipulatorScope = pManipulatorScope;
-        this.mComponentHandler = pComponentHandler;
+    public constructor(pTemplate: BaseXmlNode, pShadowParent: BaseXmlNode, pModules: ComponentModules, pParentLayerValues: LayerValues, pParentBuilder: BaseBuilder) {
+        this.mShadowParent = pShadowParent;
+        this.mParentBuilder = pParentBuilder;
+
+        // Clone template and connect to shadow parent.
+        const lTemplateClone: BaseXmlNode = pTemplate.clone();
+        lTemplateClone.parent = this.shadowParent;
+        this.mTemplate = pTemplate;
+
+        // Create new layer of values.
+        this.mComponentValues = new LayerValues(pParentLayerValues);
+
+        let lPrefix: string = (this instanceof StaticBuilder) ? 'STATIC' : 'MULTIPLICATE;';
+        this.mContentManager = new ContentManager(pModules, lPrefix);
     }
 
     /**
      * Cleanup all modules, content and anchor.
-     * Manager is unuseable after this.
+     * Builder is unuseable after this.
      */
-    public deleteBuild(): void {
-        this.contentManager.clearContent();
-    }
-
-    /**
-     * Initialize build.
-     */
-    public initializeBuild(): void {
-        // Initialize builder. Create and append content.
-        this.initialize();
-
-        // Initialize uninitialized content.
-        this.contentManager.initializeContent();
+    public deconstruct(): void {
+        this.contentManager.deconstruct();
     }
 
     /**
      * Update content based on changed property.
      */
-    public updateBuild(): boolean {
-        let lAnyUpdateWasMade: boolean = false;
+    public update(): boolean {
+        // Update this builder.
+        let lUpdated: boolean = this.onUpdate();
 
-        // Update only if update has any effect.
-        if (!this.mIgnoreCurrentUpdateCycle) {
-            // Update this builder.
-            if (this.update()) {
-                lAnyUpdateWasMade = true;
-            }
-
-            // Initialize new content.
-            this.contentManager.initializeContent();
-
-            // Update all child builder
-            if (this.contentManager.updateChildBuilder()) {
-                lAnyUpdateWasMade = true;
-            }
+        // Update all child builder and keep updated true state.
+        for (const lBuilder of this.contentManager.childBuilderList) {
+            lUpdated = lBuilder.update() || lUpdated;
         }
 
-        // Reset after this update cycle. Next cycle may have an effect.
-        this.mIgnoreCurrentUpdateCycle = false;
-
-        return lAnyUpdateWasMade;
+        return lUpdated;
     }
-
-    /**
-     * Initialize and build content.
-     * Created and appends content.
-     * 
-     * Do not initialize content.
-     */
-    protected abstract initialize(): void;
 
     /**
      * Update content.
      * Return all build handler that was alread updated or new created.
      * Calls update on all other builder handler that was not updated.
      */
-    protected abstract update(): boolean;
+    protected abstract onUpdate(): boolean;
 }

@@ -35,6 +35,8 @@ export class SlotAttributeModule implements IPwbManipulatorAttributeOnProcess {
      * Process module.
      */
     public onProcess(): ModuleManipulatorResult {
+        // TODO: Anonymous slot. With "$--"" ???
+
         // Get name of slot. Remove starting $.
         const lSlotName: string = this.mAttribute.name.substr(1);
 

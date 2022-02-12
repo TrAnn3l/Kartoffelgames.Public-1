@@ -1,7 +1,7 @@
 import { Injector } from '@kartoffelgames/core.dependency-injection';
+import { ComponentModules } from '../module/component-modules';
 import { ModuleType } from '../enum/module-type';
 import { ExpressionModuleSetting, IPwbExpressionModule, PwbExpressionModuleConstructor } from '../interface/module/expression-module';
-import { ModuleStorage } from '../module/module-storage';
 import { HtmlContent } from '../types';
 
 /**
@@ -149,7 +149,7 @@ export function ExpressionModule(pSettings: ExpressionModuleSetting): any {
         };
 
         // Add module to storage.
-        ModuleStorage.addModule(lExpressionModule);
+        ComponentModules.addModule(lExpressionModule);
 
         return lExpressionModule;
     };

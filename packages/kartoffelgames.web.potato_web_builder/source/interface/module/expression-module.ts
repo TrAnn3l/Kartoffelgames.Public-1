@@ -27,6 +27,8 @@ export interface IPwbExpressionModule extends IPwbExpressionOnProcess {
      * @returns if any update was made.
      */
     update(): boolean;
+
+    deconstruct(): void;
 }
 
 export type PwbExpressionModuleConstructor = {

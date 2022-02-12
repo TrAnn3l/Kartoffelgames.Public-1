@@ -13,8 +13,6 @@ export class UpdateHandler {
     private readonly mUpdateScope: UpdateScope;
     private mUpdateSheduled: boolean;
     private readonly mUpdateWaiter: List<() => void>;
-    private readonly mUserObjectHandler: UserObjectHandler;
-
 
     /**
      * Get enabled state of update handler.
@@ -36,13 +34,12 @@ export class UpdateHandler {
      * Constructor.
      * @param pUpdateScope - Update scope.
      */
-    public constructor(pUserObjectHandler: UserObjectHandler, pUpdateScope: UpdateScope) {
+    public constructor(pUpdateScope: UpdateScope) {
         this.mUpdateScope = pUpdateScope;
         this.mUpdateListener = new List<UpdateListener>();
         this.mEnabled = false;
         this.mUpdateWaiter = new List<() => void>();
         this.mLoopDetectionHandler = new LoopDetectionHandler(10);
-        this.mUserObjectHandler = pUserObjectHandler;
 
         // Create new change detection if component is not inside change detection or mode is capsuled.
         if (!ChangeDetection.current || this.mUpdateScope === UpdateScope.Capsuled) {
@@ -139,14 +136,11 @@ export class UpdateHandler {
     /**
      * Call all update listener.
      */
-    private dispatchUpdateListener(pReason: ChangeDetectionReason): boolean {
-        // Trigger all update listener and check if any updates happened.
-        let lChanges: boolean = false;
+    private dispatchUpdateListener(pReason: ChangeDetectionReason): void {
+        // Trigger all update listener.
         for (const lListener of this.mUpdateListener) {
-            lChanges = lListener.bind(this, pReason) || lChanges;
+            lListener.bind(this, pReason);
         }
-
-        return lChanges;
     }
 
     /**
@@ -162,28 +156,20 @@ export class UpdateHandler {
 
         this.mLoopDetectionHandler.callAsynchron(() => {
             this.mChangeDetection.execute(() => {
-                // Call user class on update function.
-                this.mUserObjectHandler.callOnPwbUpdate();
-
                 // Outside update before actual update happens.
                 this.mUpdateSheduled = false;
 
                 // Update component and get if any update was made.
-                const lHasUpdated: boolean = this.dispatchUpdateListener(pReason);
+                this.dispatchUpdateListener(pReason);
 
                 // Release all update waiter
                 for (const lUpdateWaiter of this.mUpdateWaiter) {
                     lUpdateWaiter();
                 }
                 this.mUpdateWaiter.clear();
-
-                // Call user class on update function if any update was made.
-                if (lHasUpdated) {
-                    this.mUserObjectHandler.callAfterPwbUpdate();
-                }
             });
         }, pReason);
     }
 }
 
-export type UpdateListener = (pReason: ChangeDetectionReason) => boolean;
+export type UpdateListener = (pReason: ChangeDetectionReason) => void;
