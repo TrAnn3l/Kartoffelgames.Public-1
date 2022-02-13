@@ -1,13 +1,14 @@
 import { Dictionary, List } from '@kartoffelgames/core.data';
-import { BaseXmlNode, XmlElement } from '@kartoffelgames/core.xml';
-import { IPwbExpressionModule } from '../../interface/module/expression-module';
-import { IPwbManipulatorAttributeModule } from '../../interface/module/manipulator-attribute-module';
-import { IPwbStaticAttributeModule } from '../../interface/module/static-attribute-module';
 import { BaseBuilder } from '../builder/base-builder';
 import { ComponentConnection } from '../component-connection';
 import { ComponentManager } from '../component-manager';
 import { ComponentModules } from '../../module/component-modules';
 import { ElementCreator } from './element-creator';
+import { BaseModule } from '../../module/base/base-module';
+import { MultiplicatorModule } from '../../module/base/multiplicator-module';
+import { StaticModule } from '../../module/base/static-module';
+import { ExpressionModule } from '../../module/base/expression-module';
+import { XmlElement } from '@kartoffelgames/core.xml';
 
 // TODO: Access Builder parent element without Node.parentElement
 // TODO: Better base append-method.
@@ -18,8 +19,8 @@ export class ContentManager {
     private readonly mRootChildList: List<Content>;
     private readonly mContentAnchor: Comment;
     private readonly mModules: ComponentModules;
-    private readonly mLinkedModules: Dictionary<Node, Array<IPwbExpressionModule | IPwbStaticAttributeModule>>;
-    private mMultiplicatorModule: IPwbManipulatorAttributeModule;
+    private readonly mLinkedModules: Dictionary<Node, Array<BaseModule<boolean, any>>>;
+    private mMultiplicatorModule: MultiplicatorModule;
     private readonly mBoundaryDescription: BoundaryDescription;
 
     /**
@@ -47,22 +48,22 @@ export class ContentManager {
     /**
      * Get multiplicator module of layer.
      */
-    public get multiplicatorModule(): IPwbManipulatorAttributeModule {
+    public get multiplicatorModule(): MultiplicatorModule {
         return this.mMultiplicatorModule;
     }
 
     /**
      * Set multiplicator module of layer.
      */
-    public set multiplicatorModule(pModule: IPwbManipulatorAttributeModule) {
+    public set multiplicatorModule(pModule: MultiplicatorModule) {
         this.mMultiplicatorModule = pModule;
     }
 
     /**
      * Get all linked module lists.
      */
-    public get linkedModuleList(): Array<IPwbExpressionModule | IPwbStaticAttributeModule> {
-        const lAllModuleList: Array<IPwbExpressionModule | IPwbStaticAttributeModule> = new Array<IPwbExpressionModule | IPwbStaticAttributeModule>();
+    public get linkedModuleList(): Array<BaseModule<boolean, any>> {
+        const lAllModuleList: Array<BaseModule<boolean, any>> = new Array<BaseModule<boolean, any>>();
         for (const lNodeModuleList of this.mLinkedModules.values()) {
             lAllModuleList.push(...lNodeModuleList);
         }
@@ -85,7 +86,7 @@ export class ContentManager {
         this.mRootChildList = new List<Content>();
         this.mChildBuilderList = new List<BaseBuilder>();
         this.mChildComponentList = new List<Element>();
-        this.mLinkedModules = new Dictionary<Node, Array<IPwbExpressionModule | IPwbStaticAttributeModule>>();
+        this.mLinkedModules = new Dictionary<Node, Array<BaseModule<boolean, any>>>();
         this.mContentAnchor = ElementCreator.createComment(pAnchorPrefix + ' ' + Math.random().toString(16).substring(3).toUpperCase());
         this.mBoundaryDescription = {
             start: this.mContentAnchor,
@@ -174,12 +175,12 @@ export class ContentManager {
         }
 
         // Register element.
-        if(pChild instanceof Text && pChild !== lSlotableNode){
+        if (pChild instanceof Text && pChild !== lSlotableNode) {
             // Register span wrapped text.
             this.registerContent(lSlotableNode, !pParentElement, pTarget);
         } else {
             this.registerContent(pChild, !pParentElement, pTarget);
-        }   
+        }
     }
 
     /**
@@ -198,7 +199,7 @@ export class ContentManager {
             pChild.parentElement?.removeChild(pChild);
 
             // Unlink modules.
-            const lModuleList: Array<IPwbExpressionModule | IPwbStaticAttributeModule> = this.mLinkedModules.get(pChild);
+            const lModuleList: Array<BaseModule<boolean, any>> = this.mLinkedModules.get(pChild);
             if (lModuleList) {
                 // Deconstruct all linked modules.
                 for (const lModule of lModuleList) {
@@ -272,11 +273,11 @@ export class ContentManager {
      * @param pModule - Module.
      * @param pNode - Build node.
      */
-    public linkModule(pModule: IPwbExpressionModule | IPwbStaticAttributeModule, pNode: Node): void {
+    public linkModule(pModule: StaticModule | ExpressionModule, pNode: Node): void {
         // Get module list of node. Create if it not exists.
-        let lModuleList: Array<IPwbExpressionModule | IPwbStaticAttributeModule> = this.mLinkedModules.get(pNode);
+        let lModuleList: Array<BaseModule<boolean, any>> = this.mLinkedModules.get(pNode);
         if (!lModuleList) {
-            lModuleList = new Array<IPwbExpressionModule | IPwbStaticAttributeModule>();
+            lModuleList = new Array<BaseModule<boolean, any>>();
             this.mLinkedModules.set(pNode, lModuleList);
         }
 
@@ -362,8 +363,11 @@ export class ContentManager {
                 // Wrap text nodes into span element.
                 let lSlotedElement: Element;
                 if (pContent instanceof Text) {
+                    const lSpanTemplate: XmlElement = new XmlElement();
+                    lSpanTemplate.tagName = 'span';
+
                     // Wrap text node.
-                    const lSpanWrapper: HTMLSpanElement = <HTMLSpanElement>ElementCreator.createElement('span');
+                    const lSpanWrapper: HTMLSpanElement = <HTMLSpanElement>ElementCreator.createElement(lSpanTemplate);
                     lSpanWrapper.appendChild(<Text>pContent);
 
                     lSlotedElement = lSpanWrapper;

@@ -1,13 +1,13 @@
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { ComponentManager } from '../../../component/component-manager';
 import { LayerValues } from '../../../component/values/layer-values';
-import { ManipulatorAttributeModule } from '../../../decorator/manipulator-attribute-module';
-import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
+import { ManipulatorAttributeModule } from '../../../decorator/module/manipulator-attribute-module';
+import { ModuleAccessType } from '../../../enum/module-access-type';
 import { IPwbManipulatorAttributeOnProcess } from '../../../interface/module/manipulator-attribute-module';
-import { ModuleManipulatorResult } from '../../base/module-manipulator-result';
+import { MultiplicatorResult } from '../../base/result/multiplicator-result';
 
 @ManipulatorAttributeModule({
-    accessType: AttributeModuleAccessType.Write,
+    accessType: ModuleAccessType.Write,
     attributeSelector: /^\$[\w]+$/,
     forbiddenInManipulatorScopes: true,
     manipulatesAttributes: false
@@ -34,7 +34,7 @@ export class SlotAttributeModule implements IPwbManipulatorAttributeOnProcess {
     /**
      * Process module.
      */
-    public onProcess(): ModuleManipulatorResult {
+    public onProcess(): MultiplicatorResult {
         // TODO: Anonymous slot. With "$--"" ???
 
         // Get name of slot. Remove starting $.
@@ -55,7 +55,7 @@ export class SlotAttributeModule implements IPwbManipulatorAttributeOnProcess {
         lClone.appendChild(lSlotElement);
 
         // Create result.
-        const lResult: ModuleManipulatorResult = new ModuleManipulatorResult();
+        const lResult: MultiplicatorResult = new MultiplicatorResult();
         lResult.addElement(lClone, new LayerValues(this.mValueHandler));
 
         return lResult;

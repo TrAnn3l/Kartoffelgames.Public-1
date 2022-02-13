@@ -1,8 +1,8 @@
 import { Injector } from '@kartoffelgames/core.dependency-injection';
-import { ComponentModules } from '../module/component-modules';
-import { ModuleType } from '../enum/module-type';
-import { ExpressionModuleSetting, IPwbExpressionModule, PwbExpressionModuleConstructor } from '../interface/module/expression-module';
-import { HtmlContent } from '../types';
+import { ComponentModules } from '../../module/component-modules_old';
+import { ModuleType } from '../../enum/module-type';
+import { ExpressionModuleSetting, IPwbExpressionModule, PwbExpressionModuleConstructor } from '../../interface/module/expression-module';
+import { HtmlContent } from '../../types';
 
 /**
  * AtScript. PWB Expression module.

@@ -3,20 +3,20 @@ import { XmlAttribute } from '@kartoffelgames/core.xml';
 import { ComponentConnection } from '../../../component/component-connection';
 import { ComponentManager } from '../../../component/component-manager';
 import { LayerValues } from '../../../component/values/layer-values';
-import { StaticAttributeModule } from '../../../decorator/static-attribute-module';
-import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
-import { IPwbStaticAttributeOnCleanup, IPwbStaticAttributeOnProcess } from '../../../interface/module/static-attribute-module';
+import { StaticAttributeModule } from '../../../decorator/module/static-attribute-module';
+import { ModuleAccessType } from '../../../enum/module-access-type';
+import { IPwbModuleOnDeconstruct, IPwbStaticAttributeOnProcess } from '../../../interface/module';
 import { HtmlContent } from '../../../types';
 import { ComponentEventEmitter } from '../../../user_class_manager/component-event-emitter';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
 
 @StaticAttributeModule({
-    accessType: AttributeModuleAccessType.Write,
+    accessType: ModuleAccessType.Write,
     forbiddenInManipulatorScopes: false,
     manipulatesAttributes: false,
     attributeSelector: /^\([[\w$]+\)$/
 })
-export class EventAttributeModule implements IPwbStaticAttributeOnProcess, IPwbStaticAttributeOnCleanup {
+export class EventAttributeModule implements IPwbStaticAttributeOnProcess, IPwbModuleOnDeconstruct {
     private readonly mAttribute: XmlAttribute;
     private mEmitter: ComponentEventEmitter<any>;
     private mEventName: string;
@@ -39,7 +39,7 @@ export class EventAttributeModule implements IPwbStaticAttributeOnProcess, IPwbS
     /**
      * Cleanup event on deconstruction.
      */
-    public onCleanup(): void {
+    public onDeconstruct(): void {
         if (typeof this.mEmitter === 'undefined') {
             this.mTargetElement.removeEventListener(this.mEventName, this.mListener);
         } else {

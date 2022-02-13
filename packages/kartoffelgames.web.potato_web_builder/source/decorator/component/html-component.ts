@@ -1,11 +1,11 @@
-import { ComponentManager } from '../component/component-manager';
+import { ComponentManager } from '../../component/component-manager';
 import { InjectionConstructor, Injector, Metadata } from '@kartoffelgames/core.dependency-injection';
-import { UserClass } from '../interface/user-class';
-import { PwbExpressionModuleConstructor } from '../interface/module/expression-module';
-import { PwbManipulatorAttributeModuleConstructor } from '../interface/module/manipulator-attribute-module';
-import { PwbStaticAttributeModuleConstructor } from '../interface/module/static-attribute-module';
-import { UpdateScope } from '../enum/update-scope';
-import { MetadataKey } from '../global-key';
+import { UserClass } from '../../interface/user-class';
+import { PwbExpressionModuleConstructor } from '../../interface/module/expression-module';
+import { PwbManipulatorAttributeModuleConstructor } from '../../interface/module/manipulator-attribute-module';
+import { PwbStaticAttributeModuleConstructor } from '../../interface/module';
+import { UpdateScope } from '../../enum/update-scope';
+import { MetadataKey } from '../../global-key';
 
 /**
  * AtScript. PWB Component.

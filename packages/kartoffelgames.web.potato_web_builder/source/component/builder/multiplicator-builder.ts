@@ -1,8 +1,7 @@
-import { List } from '@kartoffelgames/core.data';
 import { BaseXmlNode, XmlElement } from '@kartoffelgames/core.xml';
 import { ChangeState, DifferenceSearch, HistoryItem } from '@kartoffelgames/web.change-detection';
-import { IPwbManipulatorAttributeModule } from '../../interface/module/manipulator-attribute-module';
-import { ManipulatorElement, ModuleManipulatorResult } from '../../module/base/module-manipulator-result';
+import { MultiplicatorModule } from '../../module/base/multiplicator-module';
+import { ManipulatorElement, MultiplicatorResult } from '../../module/base/result/multiplicator-result';
 import { ComponentModules } from '../../module/component-modules';
 import { LayerValues } from '../values/layer-values';
 import { BaseBuilder } from './base-builder';
@@ -33,14 +32,12 @@ export class MultiplicatorBuilder extends BaseBuilder {
             lTemplateCopy.parent = this.shadowParent;
 
             // Create module and save inside
-            const lManipulatorModule: IPwbManipulatorAttributeModule = this.contentManager.modules.getManipulatorModule(lTemplateCopy, this.values, this.componentManager);
+            const lManipulatorModule: MultiplicatorModule = this.contentManager.modules.getElementMultiplicatorModule(lTemplateCopy, this.values, this.componentManager);
             this.contentManager.multiplicatorModule = lManipulatorModule;
         }
 
         // Call module update.
-        // TODO: Redesign multi-module
-        this.contentManager.multiplicatorModule.update();
-        const lModuleResult: ModuleManipulatorResult = this.contentManager.multiplicatorModule.process();
+        const lModuleResult: MultiplicatorResult = this.contentManager.multiplicatorModule.update();
         if (lModuleResult) {
             // Add shadow parent to all module results.
             for (const lResult of lModuleResult.elementList) {
@@ -54,8 +51,8 @@ export class MultiplicatorBuilder extends BaseBuilder {
             this.updateStaticBuilder(lOldStaticBuilderList, lModuleResult.elementList);
         }
 
-        // Multiplicator does never update anything.
-        // Child static modules doing the only update work.
+        // No need to report any update.
+        // New static builder are always updating.
         return false;
     }
 
@@ -84,7 +81,7 @@ export class MultiplicatorBuilder extends BaseBuilder {
      * @param pNewContentList - New content list.
      * @param pOldContentList - Old content list.
      */
-    private updateStaticBuilder(pOldContentList: Array<StaticBuilder>, pNewContentList: Array<ManipulatorElement>): Array<StaticBuilder> {
+    private updateStaticBuilder(pOldContentList: Array<StaticBuilder>, pNewContentList: Array<ManipulatorElement>): void {
         // Define difference search.
         const lDifferenceSearch: DifferenceSearch<StaticBuilder, ManipulatorElement> = new DifferenceSearch<StaticBuilder, ManipulatorElement>((pA, pB) => {
             return pB.componentValues.equal(pA.values) && pB.template.equals(pA.template);
@@ -92,7 +89,6 @@ export class MultiplicatorBuilder extends BaseBuilder {
 
         // Get differences of old an new content.
         const lDifferenceList: Array<HistoryItem<StaticBuilder, ManipulatorElement>> = lDifferenceSearch.differencesOf(pOldContentList, pNewContentList);
-        const lNewAddedBuilder: Array<StaticBuilder> = new Array<StaticBuilder>();
 
         let lLastContent: StaticBuilder = null;
         for (const lHistoryItem of lDifferenceList) {
@@ -104,12 +100,7 @@ export class MultiplicatorBuilder extends BaseBuilder {
             } else if (lHistoryItem.changeState === ChangeState.Insert) {
                 // Create new static builder, insert after last content.
                 lLastContent = this.insertNewContent(lHistoryItem.item, lLastContent);
-
-                // Save new created builder as new added.
-                lNewAddedBuilder.push(lLastContent);
             }
         }
-
-        return lNewAddedBuilder;
     }
 }

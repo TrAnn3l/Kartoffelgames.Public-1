@@ -6,13 +6,13 @@ import { UserObject } from '../source/interface/user-class';
 import { PwbApp } from '../source/pwb-app';
 import './mock/request-animation-frame-mock-session';
 import { ComponentScopeExecutor } from '../source/module/execution/component-scope-executor';
-import { ModuleManipulatorResult } from '../source/module/base/module-manipulator-result';
+import { MultiplicatorResult } from '../source/module/base/result/multiplicator-result';
 import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { TemplateParser } from '../source/parser/template-parser';
 import { XmlAttribute, XmlDocument, XmlElement } from '@kartoffelgames/core.xml';
 import { LayerValues } from '../source/component/values/layer-values';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
-import { AttributeModuleAccessType } from '../source/enum/attribute-module-access-type';
+import { ModuleAccessType } from '../source/enum/module-access-type';
 import '../source/index';
 import { WebsiteConfiguration } from './test_files/configuration/website-configuration';
 import { ColorConfiguration } from './test_files/configuration/color-configuration';
@@ -20,12 +20,12 @@ import { UpdateScope } from '../source/enum/update-scope';
 import { MetadataKey } from '../source/global-key';
 import { LoopError } from '../source/component/handler/loop-detection-handler';
 import { ComponentConnection } from '../source/component/component-connection';
-import { HtmlComponent } from '../source/decorator/html-component';
-import { Export } from '../source/decorator/export';
-import { PwbElementReference } from '../source/component/user_reference/pwb-element-reference';
-import { HtmlComponentEvent } from '../source/decorator/html-component-event';
-import { IdChild } from '../source/decorator/id-child';
-import { ManipulatorAttributeModule } from '../source/decorator/manipulator-attribute-module';
+import { HtmlComponent } from '../source/decorator/component/html-component';
+import { Export } from '../source/decorator/component/export';
+import { PwbElementReference } from '../source/component/injection/pwb-element-reference';
+import { HtmlComponentEvent } from '../source/decorator/component/html-component-event';
+import { IdChild } from '../source/decorator/component/id-child';
+import { ManipulatorAttributeModule } from '../source/decorator/module/manipulator-attribute-module';
 import { IPwbManipulatorAttributeOnProcess } from '../source/interface/module/manipulator-attribute-module';
 
 const gRandomSelector = (): string => {
@@ -828,7 +828,7 @@ describe('HtmlComponent', () => {
 
     it('Additional Module', async () => {
         @ManipulatorAttributeModule({
-            accessType: AttributeModuleAccessType.Read,
+            accessType: ModuleAccessType.Read,
             attributeSelector: /^\*pwbDynamicContent$/,
             forbiddenInManipulatorScopes: false,
             manipulatesAttributes: false
@@ -852,7 +852,7 @@ describe('HtmlComponent', () => {
                 this.mAttribute = pAttribute;
             }
 
-            protected onProcess(): ModuleManipulatorResult {
+            protected onProcess(): MultiplicatorResult {
                 const lResult: any = ComponentScopeExecutor.executeSilent(this.mAttribute.value, this.mValueHandler);
                 this.mLastValue = lResult;
 
@@ -867,7 +867,7 @@ describe('HtmlComponent', () => {
                 const lNewNode: XmlElement = <XmlElement>this.mTargetTemplate.clone();
                 lNewNode.appendChild(...lDynamicContentNodes.body);
 
-                const lModuleResult: ModuleManipulatorResult = new ModuleManipulatorResult();
+                const lModuleResult: MultiplicatorResult = new MultiplicatorResult();
                 lModuleResult.addElement(lNewNode, new LayerValues(this.mValueHandler));
 
                 return lModuleResult;
@@ -892,7 +892,7 @@ describe('HtmlComponent', () => {
             private readonly mElement: HTMLElement & HTMLElement;
 
             public constructor(pElement: PwbElementReference) {
-                this.mElement = <any>pElement.componentElement;
+                this.mElement = <any>pElement.element;
             }
 
             @Export close = (): void => {
@@ -1374,7 +1374,7 @@ describe('HtmlComponent', () => {
 
     it('Wrong manipulation module', () => {
         @ManipulatorAttributeModule({
-            accessType: AttributeModuleAccessType.Write,
+            accessType: ModuleAccessType.Write,
             attributeSelector: /^\*testerrormodule$/,
             forbiddenInManipulatorScopes: false,
             manipulatesAttributes: false
@@ -1389,9 +1389,9 @@ describe('HtmlComponent', () => {
                 this.mValueHandler = pValueHandler;
             }
 
-            public onProcess(): ModuleManipulatorResult {
+            public onProcess(): MultiplicatorResult {
                 // Cant add same template or value handler for multiple elements.
-                const lModuleResult: ModuleManipulatorResult = new ModuleManipulatorResult();
+                const lModuleResult: MultiplicatorResult = new MultiplicatorResult();
                 lModuleResult.addElement(this.mTargetTemplate, this.mValueHandler);
                 lModuleResult.addElement(this.mTargetTemplate, this.mValueHandler);
 

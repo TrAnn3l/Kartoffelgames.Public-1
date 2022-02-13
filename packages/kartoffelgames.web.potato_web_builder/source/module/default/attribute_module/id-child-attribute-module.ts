@@ -1,16 +1,16 @@
 import { XmlAttribute } from '@kartoffelgames/core.xml';
 import { ComponentManager } from '../../../component/component-manager';
 import { LayerValues } from '../../../component/values/layer-values';
-import { StaticAttributeModule } from '../../../decorator/static-attribute-module';
-import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
-import { IPwbStaticAttributeOnProcess } from '../../../interface/module/static-attribute-module';
+import { StaticAttributeModule } from '../../../decorator/module/static-attribute-module';
+import { ModuleAccessType } from '../../../enum/module-access-type';
+import { IPwbStaticAttributeOnProcess } from '../../../interface/module';
 import { HtmlContent } from '../../../types';
 
 /**
  * Used with "#IdChildName" like => #PasswordInput.
  */
 @StaticAttributeModule({
-    accessType: AttributeModuleAccessType.Write,
+    accessType: ModuleAccessType.Write,
     forbiddenInManipulatorScopes: true,
     manipulatesAttributes: false,
     attributeSelector: /^#[[\w$]+$/

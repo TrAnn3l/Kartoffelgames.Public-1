@@ -1,9 +1,9 @@
 import { XmlAttribute } from '@kartoffelgames/core.xml';
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
 import { LayerValues } from '../../../component/values/layer-values';
-import { StaticAttributeModule } from '../../../decorator/static-attribute-module';
-import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
-import { IPwbStaticAttributeOnProcess, IPwbStaticAttributeOnUpdate } from '../../../interface/module/static-attribute-module';
+import { StaticAttributeModule } from '../../../decorator/module/static-attribute-module';
+import { ModuleAccessType } from '../../../enum/module-access-type';
+import { IPwbStaticAttributeOnProcess, IPwbModuleOnUpdate } from '../../../interface/module';
 import { HtmlContent } from '../../../types';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
 
@@ -12,12 +12,12 @@ import { ComponentScopeExecutor } from '../../execution/component-scope-executor
  * If the user class object changes, the view object value gets updated.
  */
 @StaticAttributeModule({
-    accessType: AttributeModuleAccessType.Read,
+    accessType: ModuleAccessType.Read,
     attributeSelector: /^\[[\w$]+\]$/,
     forbiddenInManipulatorScopes: false,
     manipulatesAttributes: false
 })
-export class OneWayBindingAttributeModule implements IPwbStaticAttributeOnProcess, IPwbStaticAttributeOnUpdate {
+export class OneWayBindingAttributeModule implements IPwbStaticAttributeOnProcess, IPwbModuleOnUpdate {
     private readonly mAttribute: XmlAttribute;
     private mExecutionString: string;
     private readonly mTargetElement: HtmlContent;

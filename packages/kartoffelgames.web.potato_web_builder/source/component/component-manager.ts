@@ -1,13 +1,13 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { UserClass } from '../interface/user-class';
 import { StaticBuilder } from './builder/static-builder';
-import { ComponentModules } from '../module/component-modules';
+import { ComponentModules } from '../module/component-modules_old';
 import { LayerValues } from './values/layer-values';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
-import { XmlDocument } from '@kartoffelgames/core.xml';
+import { XmlDocument, XmlElement } from '@kartoffelgames/core.xml';
 import { PwbApp } from '../pwb-app';
 import { ElementCreator } from './content/element-creator';
-import { PwbElementReference } from './user_reference/pwb-element-reference';
+import { PwbElementReference } from './injection/pwb-element-reference';
 import { UpdateScope } from '../enum/update-scope';
 import { TemplateParser } from '../parser/template-parser';
 import { UpdateHandler } from './handler/update-handler';
@@ -15,8 +15,9 @@ import { UserObjectHandler } from './handler/user-object-handler';
 import { ElementHandler } from './handler/element-handler';
 import { ComponentConnection } from './component-connection';
 import { UserEventHandler } from './handler/user-event-handler';
-import { PwbExpressionModuleConstructor } from '../interface/module/expression-module';
-import { PwbUpdateReference } from './user_reference/pwb-update-reference';
+import { PwbUpdateReference } from './injection/pwb-update-reference';
+import { PwbTemplateReference } from './injection/pwb-template-reference';
+import { ExpressionModule } from '../module/base/expression-module';
 
 /**
  * Base component handler. Handles initialisation and update of components.
@@ -74,7 +75,7 @@ export class ComponentManager {
      * @param pHtmlComponent - HTMLElement of component.
      * @param pUpdateScope - Update scope of component.
      */
-    public constructor(pUserClass: UserClass, pTemplate: string, pExpressionModule: PwbExpressionModuleConstructor, pHtmlComponent: HTMLElement, pUpdateScope: UpdateScope) {
+    public constructor(pUserClass: UserClass, pTemplate: string, pExpressionModule: typeof ExpressionModule, pHtmlComponent: HTMLElement, pUpdateScope: UpdateScope) {
         // Load cached or create new module handler and template.
         const lCache: [ComponentModules, XmlDocument] = ComponentManager.mComponentCache.get(pUserClass);
         let lModules: ComponentModules;
@@ -102,8 +103,9 @@ export class ComponentManager {
 
         // Create user object handler.
         const lLocalInjections: Array<object> = new Array<object>();
-        lLocalInjections.push(new PwbElementReference(this));
-        lLocalInjections.push(new PwbUpdateReference(this));
+        lLocalInjections.push(new PwbElementReference(pHtmlComponent));
+        lLocalInjections.push(new PwbUpdateReference(this.mUpdateHandler));
+        lLocalInjections.push(new PwbTemplateReference(lTemplate));
         lLocalInjections.push(ChangeDetection.current?.getZoneData(PwbApp.PUBLIC_APP_KEY));
         this.mUserObjectHandler = new UserObjectHandler(pUserClass, this.updateHandler, lLocalInjections);
 
@@ -133,7 +135,11 @@ export class ComponentManager {
      * @param pStyle - Css style as string.
      */
     public addStyle(pStyle: string): void {
-        const lStyleElement: Element = ElementCreator.createElement('style');
+        const lStyleTemplate: XmlElement = new XmlElement();
+        lStyleTemplate.tagName = 'style';
+        lStyleTemplate.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+
+        const lStyleElement: Element = ElementCreator.createElement(lStyleTemplate);
         lStyleElement.innerHTML = pStyle;
         this.elementHandler.shadowRoot.prepend(lStyleElement);
     }

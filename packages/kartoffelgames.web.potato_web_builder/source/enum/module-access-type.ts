@@ -1,7 +1,7 @@
 /**
  * Access types of attribute module.
  */
-export enum AttributeModuleAccessType {
+export enum ModuleAccessType {
     /**
      * Module reads information from view.
      */

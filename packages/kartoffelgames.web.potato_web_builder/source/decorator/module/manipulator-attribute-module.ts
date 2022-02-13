@@ -1,91 +1,74 @@
 import { Injector } from '@kartoffelgames/core.dependency-injection';
-import { ComponentModules } from '../module/component-modules';
-import { AttributeModuleAccessType } from '../enum/attribute-module-access-type';
-import { ModuleType } from '../enum/module-type';
-import { AttributeModuleSettings } from '../interface/module/attribute-module';
-import { IPwbStaticAttributeModule, PwbStaticAttributeModuleConstructor } from '../interface/module/static-attribute-module';
+import { ComponentModules } from '../../module/component-modules_old';
+import { ModuleAccessType } from '../../enum/module-access-type';
+import { ModuleType } from '../../enum/module-type';
+import { AttributeModuleSettings } from '../../interface/module/attribute-module';
+import { IPwbManipulatorAttributeModule, PwbManipulatorAttributeModuleConstructor } from '../../interface/module/manipulator-attribute-module';
+import { MultiplicatorResult } from '../../module/base/result/multiplicator-result';
 
 /**
- * AtScript. PWB static attribute module.
+ * AtScript. PWB Manipulator attribute module.
  * @param pSettings - Module settings.
  */
-export function StaticAttributeModule(pSettings: AttributeModuleSettings): any {
+export function ManipulatorAttributeModule(pSettings: AttributeModuleSettings): any {
 
     // Needs constructor without argument.
-    return (pStaticModuleConstructor: PwbStaticAttributeModuleConstructor) => {
+    return (pManipulatorModuleConstructor: PwbManipulatorAttributeModuleConstructor) => {
 
         // Set user class to be injectable
-        Injector.Injectable(pStaticModuleConstructor);
+        Injector.Injectable(pManipulatorModuleConstructor);
 
         /**
          * Inherit base constructor and extend by access modifier.
          */
-        const lStaticAttributeModule: PwbStaticAttributeModuleConstructor = class implements IPwbStaticAttributeModule {
+        const lManipulatorAttributeModule: PwbManipulatorAttributeModuleConstructor = class implements IPwbManipulatorAttributeModule {
             /**
              * Modules access type.
              */
-            static readonly accessType: AttributeModuleAccessType = pSettings.accessType;
+            public static readonly accessType: ModuleAccessType = pSettings.accessType;
 
             /**
              * Selector of attributes the modules gets applied.
              */
-            static readonly attributeSelector: RegExp = pSettings.attributeSelector;
+            public static readonly attributeSelector: RegExp = pSettings.attributeSelector;
 
             /**
              * If module is forbidden inside manipulator scopes.
              */
             // eslint-disable-next-line @typescript-eslint/naming-convention
-            static readonly forbiddenInManipulatorScopes: boolean = pSettings.forbiddenInManipulatorScopes;
+            public static readonly forbiddenInManipulatorScopes: boolean = pSettings.forbiddenInManipulatorScopes;
 
             /**
              * If modules reads data into the view.
              */
             // eslint-disable-next-line @typescript-eslint/naming-convention
-            static readonly isReading: boolean = (pSettings.accessType & AttributeModuleAccessType.Read) === AttributeModuleAccessType.Read;
+            public static readonly isReading: boolean = (pSettings.accessType & ModuleAccessType.Read) === ModuleAccessType.Read;
 
             /**
              * If modules writes data out of the view.
              */
             // eslint-disable-next-line @typescript-eslint/naming-convention
-            static readonly isWriting: boolean = (pSettings.accessType & AttributeModuleAccessType.Write) === AttributeModuleAccessType.Write;
+            public static readonly isWriting: boolean = (pSettings.accessType & ModuleAccessType.Write) === ModuleAccessType.Write;
 
             /**
              * If module removes or adds attributes to the provided template element.
              */
             // eslint-disable-next-line @typescript-eslint/naming-convention
-            static readonly manipulatesAttributes: boolean = pSettings.manipulatesAttributes;
+            public static readonly manipulatesAttributes: boolean = pSettings.manipulatesAttributes;
 
             /**
              * This module type.
              */
-            static readonly moduleType: ModuleType.Static = ModuleType.Static;
+            public static readonly moduleType: ModuleType.Manipulator = ModuleType.Manipulator;
 
-            private readonly mModuleObject: IPwbStaticAttributeModule;
+            private readonly mModuleObject: IPwbManipulatorAttributeModule;
 
             /**
              * Constructor.
              * @param pArgs - Arguments for inner module object.
              */
             public constructor(...pArgs: Array<any>) {
-                this.mModuleObject = new (<any>pStaticModuleConstructor)(...pArgs);
-            }
-
-            /**
-             * Cleanup events and other data that does not delete itself.
-             * Added data to the values handler cleanup itself.
-             */
-            public cleanup(): void {
-                this.onCleanup();
-            }
-
-            /**
-             * Cleanup events and other data that does not delete itself. 
-             * Added data to the values handler cleanup itself
-             */
-            public onCleanup(): void {
-                if (typeof this.mModuleObject.onCleanup === 'function') {
-                    this.mModuleObject.onCleanup();
-                }
+                this.mModuleObject = new (<any>pManipulatorModuleConstructor)(...pArgs);
             }
 
             /**
@@ -94,10 +77,12 @@ export function StaticAttributeModule(pSettings: AttributeModuleSettings): any {
              * Adding or removing attributes is allowed. 
              * Removes the xml attribute from the template.
              */
-            public onProcess(): void {
+            public onProcess(): MultiplicatorResult {
                 if (typeof this.mModuleObject.onProcess === 'function') {
-                    this.mModuleObject.onProcess();
+                    return this.mModuleObject.onProcess();
                 }
+
+                return new MultiplicatorResult();
             }
 
             /**
@@ -116,8 +101,8 @@ export function StaticAttributeModule(pSettings: AttributeModuleSettings): any {
             /**
              * Processes the module.
              */
-            public process(): void {
-                this.onProcess();
+            public process(): MultiplicatorResult {
+                return this.onProcess();
             }
 
             /**
@@ -130,8 +115,8 @@ export function StaticAttributeModule(pSettings: AttributeModuleSettings): any {
         };
 
         // Add module to storage.
-        ComponentModules.addModule(lStaticAttributeModule);
+        ComponentModules.addModule(lManipulatorAttributeModule);
 
-        return lStaticAttributeModule;
+        return lManipulatorAttributeModule;
     };
 }

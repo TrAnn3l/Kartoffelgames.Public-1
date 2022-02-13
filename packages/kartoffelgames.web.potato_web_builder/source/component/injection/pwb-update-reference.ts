@@ -1,14 +1,15 @@
 import { ComponentManager } from '../component-manager';
+import { UpdateHandler } from '../handler/update-handler';
 
 export class PwbUpdateReference {
-    private readonly mComponentManager: ComponentManager;
+    private readonly mUpdateHandler: UpdateHandler;
 
     /**
      * Constructor.
-     * @param pComponentHandler - Component handler.
+     * @param pUpdateHandler - Update handler.
      */
-    public constructor(pComponentHandler: ComponentManager) {
-        this.mComponentManager = pComponentHandler;
+    public constructor(pUpdateHandler: UpdateHandler) {
+        this.mUpdateHandler = pUpdateHandler;
     }
 
     /**
@@ -16,8 +17,8 @@ export class PwbUpdateReference {
      */
     public update(): void {
         // Call update component just in case of manual updating.
-        this.mComponentManager.updateHandler.forceUpdate({
-            source: this.mComponentManager.userObjectHandler.userObject,
+        this.mUpdateHandler.forceUpdate({
+            source: this,
             property: Symbol('manual update'),
             stacktrace: Error().stack
         });

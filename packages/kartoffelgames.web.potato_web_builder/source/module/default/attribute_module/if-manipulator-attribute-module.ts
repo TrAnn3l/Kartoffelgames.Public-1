@@ -1,10 +1,10 @@
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
 import { LayerValues } from '../../../component/values/layer-values';
-import { ManipulatorAttributeModule } from '../../../decorator/manipulator-attribute-module';
-import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
+import { ManipulatorAttributeModule } from '../../../decorator/module/manipulator-attribute-module';
+import { ModuleAccessType } from '../../../enum/module-access-type';
 import { IPwbManipulatorAttributeOnProcess, IPwbManipulatorAttributeOnUpdate } from '../../../interface/module/manipulator-attribute-module';
-import { ModuleManipulatorResult } from '../../base/module-manipulator-result';
+import { MultiplicatorResult } from '../../base/result/multiplicator-result';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
 
 /**
@@ -12,7 +12,7 @@ import { ComponentScopeExecutor } from '../../execution/component-scope-executor
  * If the executed result of the attribute value is false, the element will not be append to view.
  */
 @ManipulatorAttributeModule({
-    accessType: AttributeModuleAccessType.Write,
+    accessType: ModuleAccessType.Write,
     attributeSelector: /^\*pwbIf$/,
     forbiddenInManipulatorScopes: false,
     manipulatesAttributes: false
@@ -40,7 +40,7 @@ export class IfManipulatorAttributeModule implements IPwbManipulatorAttributeOnP
      * Process module.
      * Execute attribute value and decide if template should be rendered.
      */
-    public onProcess(): ModuleManipulatorResult {
+    public onProcess(): MultiplicatorResult {
         const lExecutionResult: any = ComponentScopeExecutor.executeSilent(this.mAttribute.value, this.mValueHandler);
 
         // Add compare handler with depth 0. No need to check for inner values on boolean compare.
@@ -48,7 +48,7 @@ export class IfManipulatorAttributeModule implements IPwbManipulatorAttributeOnP
         this.mBooleanExpression = this.mAttribute.value;
 
         // If in any way the execution result is true, add template to result.
-        const lModuleResult: ModuleManipulatorResult = new ModuleManipulatorResult();
+        const lModuleResult: MultiplicatorResult = new MultiplicatorResult();
         if (lExecutionResult) {
             lModuleResult.addElement(this.mTargetTemplate.clone(), new LayerValues(this.mValueHandler));
         }

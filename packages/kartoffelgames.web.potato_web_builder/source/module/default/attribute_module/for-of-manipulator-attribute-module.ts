@@ -1,12 +1,12 @@
 import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
 import { LayerValues } from '../../../component/values/layer-values';
-import { ModuleManipulatorResult } from '../../base/module-manipulator-result';
+import { MultiplicatorResult } from '../../base/result/multiplicator-result';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
-import { ManipulatorAttributeModule } from '../../../decorator/manipulator-attribute-module';
+import { ManipulatorAttributeModule } from '../../../decorator/module/manipulator-attribute-module';
 import { IPwbManipulatorAttributeOnProcess, IPwbManipulatorAttributeOnUpdate } from '../../../interface/module/manipulator-attribute-module';
-import { AttributeModuleAccessType } from '../../../enum/attribute-module-access-type';
+import { ModuleAccessType } from '../../../enum/module-access-type';
 
 /**
  * For of.
@@ -14,7 +14,7 @@ import { AttributeModuleAccessType } from '../../../enum/attribute-module-access
  * Syntax: "[CustomName] in [List] (;[CustomIndexName] = index)?"
  */
 @ManipulatorAttributeModule({
-    accessType: AttributeModuleAccessType.Write,
+    accessType: ModuleAccessType.Write,
     attributeSelector: /^\*pwbFor$/,
     forbiddenInManipulatorScopes: false,
     manipulatesAttributes: false
@@ -42,7 +42,7 @@ export class ForOfManipulatorAttributeModule implements IPwbManipulatorAttribute
      * Process module.
      * Execute attribute value and decide if template should be rendered.
      */
-    public onProcess(): ModuleManipulatorResult {
+    public onProcess(): MultiplicatorResult {
         // [CustomName:1] in [List value:2] (;[CustomIndexName:4]=[Index calculating with "index" as key:5])?
         const lRegexAttributeInformation: RegExp = new RegExp(/^\s*([a-zA-Z]+[a-zA-Z0-9]*)\s*of\s+([^;]+)\s*(;\s*([a-zA-Z]+[a-zA-Z0-9]*)\s*=\s*(.*)\s*)?$/);
 
@@ -52,7 +52,7 @@ export class ForOfManipulatorAttributeModule implements IPwbManipulatorAttribute
         // If attribute value does not match regex.
         if (lAttributeInformation) {
             // Create module result that watches for changes in [PropertyName].
-            const lModuleResult: ModuleManipulatorResult = new ModuleManipulatorResult();
+            const lModuleResult: MultiplicatorResult = new MultiplicatorResult();
 
             // Try to get list object from component values.
             const lListObject: { [key: string]: any; } = ComponentScopeExecutor.executeSilent(lAttributeInformation[2], this.mValueHandler);
