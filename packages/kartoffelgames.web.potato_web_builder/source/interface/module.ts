@@ -1,7 +1,6 @@
-import { ExpressionModule } from '../module/base/expression-module';
-import { MultiplicatorModule } from '../module/base/multiplicator-module';
+import { ModuleAccessType } from '../enum/module-access-type';
+import { ModuleType } from '../enum/module-type';
 import { MultiplicatorResult } from '../module/base/result/multiplicator-result';
-import { StaticModule } from '../module/base/static-module';
 
 // Base.
 export interface IPwbModuleObject<TResult> extends IPwbModuleOnUpdate<TResult>, IPwbModuleOnDeconstruct { }
@@ -38,4 +37,9 @@ export interface IPwbModuleOnDeconstruct {
     onDeconstruct(): void;
 }
 
-
+export interface ModuleDefinition {
+    type: ModuleType;
+    selector: RegExp;
+    forbiddenInManipulatorScopes: boolean;
+    access: ModuleAccessType;
+};

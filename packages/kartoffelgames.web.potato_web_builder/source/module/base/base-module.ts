@@ -5,7 +5,7 @@ import { ComponentManager } from '../../component/component-manager';
 import { LayerValues } from '../../component/values/layer-values';
 import { ModuleAccessType } from '../../enum/module-access-type';
 import { ModuleType } from '../../enum/module-type';
-import { IPwbModuleClass, IPwbModuleObject } from '../../interface/module';
+import { IPwbModuleClass, IPwbModuleObject, ModuleDefinition } from '../../interface/module';
 import { AttributeReference } from './injection/attribute-reference';
 import { TargetReference } from './injection/target-reference';
 import { TemplateReference } from './injection/template-reference';
@@ -113,13 +113,6 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
         return lModuleObject;
     }
 }
-
-export type ModuleDefinition = {
-    type: ModuleType;
-    selector: RegExp;
-    forbiddenInManipulatorScopes: boolean;
-    access: ModuleAccessType;
-};
 
 export type BaseModuleConstructorParameter<TModuleObjectResult> = {
     moduleDefinition: ModuleDefinition,

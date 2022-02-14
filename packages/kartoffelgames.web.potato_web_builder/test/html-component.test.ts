@@ -26,7 +26,8 @@ import { PwbElementReference } from '../source/component/injection/pwb-element-r
 import { HtmlComponentEvent } from '../source/decorator/component/html-component-event';
 import { IdChild } from '../source/decorator/component/id-child';
 import { ManipulatorAttributeModule } from '../source/decorator/module/manipulator-attribute-module';
-import { IPwbManipulatorAttributeOnProcess } from '../source/interface/module/manipulator-attribute-module';
+import { PwbUpdateReference } from '../source/index';
+import { IPwbMultiplicatorModuleOnUpdate } from '../source/interface/module';
 
 const gRandomSelector = (): string => {
     let lResult = '';
@@ -324,18 +325,18 @@ describe('HtmlComponent', () => {
             `
         })
         class MyComponent {
-            public readonly element: PwbElementReference;
+            public readonly updater: PwbUpdateReference;
             public inputValue: string;
             public list = ['a', 'b', 'c'];
 
-            public constructor(pElement: PwbElementReference, pApp: PwbApp) {
+            public constructor(pElement: PwbUpdateReference, pApp: PwbApp) {
                 this.inputValue = 'Starting input value';
-                this.element = pElement;
+                this.updater = pElement;
             }
 
             public newElement() {
                 this.list.push('NewElement');
-                this.element.update();
+                this.updater.update();
             }
         }
 
@@ -1380,7 +1381,7 @@ describe('HtmlComponent', () => {
             manipulatesAttributes: false
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        class WrongManipulatorAttributeModule implements IPwbManipulatorAttributeOnProcess {
+        class WrongManipulatorAttributeModule implements IPwbMultiplicatorModuleOnUpdate {
             private readonly mTargetTemplate: XmlElement;
             private readonly mValueHandler: LayerValues;
 
@@ -1389,7 +1390,7 @@ describe('HtmlComponent', () => {
                 this.mValueHandler = pValueHandler;
             }
 
-            public onProcess(): MultiplicatorResult {
+            public onUpdate(): MultiplicatorResult {
                 // Cant add same template or value handler for multiple elements.
                 const lModuleResult: MultiplicatorResult = new MultiplicatorResult();
                 lModuleResult.addElement(this.mTargetTemplate, this.mValueHandler);
@@ -1611,14 +1612,14 @@ describe('HtmlComponent', () => {
         })
         class TestCustomElement implements IPwbAfterInit {
             public value: string = 'aaa';
-            private readonly mComponent: PwbElementReference;
+            private readonly mUpdater: PwbUpdateReference;
 
-            public constructor(pComponent: PwbElementReference) {
-                this.mComponent = pComponent;
+            public constructor(pComponent: PwbUpdateReference) {
+                this.mUpdater = pComponent;
             }
 
             @Export update(): void {
-                this.mComponent.update();
+                this.mUpdater.update();
             }
 
             public afterPwbInitialize(): void {
