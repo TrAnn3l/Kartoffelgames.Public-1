@@ -1,10 +1,10 @@
-import { XmlAttribute } from '@kartoffelgames/core.xml';
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
 import { LayerValues } from '../../../component/values/layer-values';
 import { StaticAttributeModule } from '../../../decorator/module/static-attribute-module';
 import { ModuleAccessType } from '../../../enum/module-access-type';
-import { IPwbStaticAttributeOnProcess, IPwbModuleOnUpdate } from '../../../interface/module';
-import { HtmlContent } from '../../../types';
+import { IPwbStaticModuleOnUpdate } from '../../../interface/module';
+import { AttributeReference } from '../../base/injection/attribute-reference';
+import { TargetReference } from '../../base/injection/target-reference';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
 
 /**
@@ -12,48 +12,36 @@ import { ComponentScopeExecutor } from '../../execution/component-scope-executor
  * If the user class object changes, the view object value gets updated.
  */
 @StaticAttributeModule({
-    accessType: ModuleAccessType.Read,
-    attributeSelector: /^\[[\w$]+\]$/,
-    forbiddenInManipulatorScopes: false,
-    manipulatesAttributes: false
+    selector: /^\[[\w$]+\]$/,
+    access: ModuleAccessType.Read,
+    forbiddenInManipulatorScopes: false
 })
-export class OneWayBindingAttributeModule implements IPwbStaticAttributeOnProcess, IPwbModuleOnUpdate {
-    private readonly mAttribute: XmlAttribute;
-    private mExecutionString: string;
-    private readonly mTargetElement: HtmlContent;
-    private mTargetProperty: string;
-    private mValueCompare: CompareHandler<any>;
+export class OneWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
+    private readonly mExecutionString: string;
+    private readonly mTargetReference: TargetReference;
+    private readonly mTargetProperty: string;
+    private readonly mValueCompare: CompareHandler<any>;
     private readonly mValueHandler: LayerValues;
 
     /**
      * Constructor.
-     * @param pTargetElement - Target element.
+     * @param pTargetReference - Target element.
      * @param pValueHandler - Values of component.
-     * @param pAttribute - Attribute of module.
+     * @param pAttributeReference - Attribute of module.
      */
-    public constructor(pTargetElement: Element, pValueHandler: LayerValues, pAttribute: XmlAttribute) {
-        this.mTargetElement = pTargetElement;
+    public constructor(pTargetReference: TargetReference, pValueHandler: LayerValues, pAttributeReference: AttributeReference) {
+        this.mTargetReference = pTargetReference;
         this.mValueHandler = pValueHandler;
-        this.mAttribute = pAttribute;
-    }
 
-    /**
-     * Process module.
-     * Initialize watcher and set view value with user class object value on startup.
-     */
-    public onProcess(): void {
         // Get execution string.
-        this.mExecutionString = this.mAttribute.value;
+        this.mExecutionString = pAttributeReference.value.value;
 
         // Get view object information. Remove starting [ and end ].
-        this.mTargetProperty = this.mAttribute.qualifiedName.substr(1, this.mAttribute.qualifiedName.length - 2);
+        const lAttributeKey: string = pAttributeReference.value.qualifiedName;
+        this.mTargetProperty = lAttributeKey.substr(1, lAttributeKey.length - 2);
 
-        // Get result of string execution and save as comparison object.
-        const lExecutionResult: any = ComponentScopeExecutor.executeSilent(this.mExecutionString, this.mValueHandler);
-        this.mValueCompare = new CompareHandler(lExecutionResult, 4);
-
-        // Set view object property.
-        this.setValueToTarget(lExecutionResult);
+        // Create empty compare handler with unique symbol.
+        this.mValueCompare = new CompareHandler(Symbol('Uncompareable'), 4);
     }
 
     /**
@@ -62,21 +50,14 @@ export class OneWayBindingAttributeModule implements IPwbStaticAttributeOnProces
      */
     public onUpdate(): boolean {
         const lExecutionResult: any = ComponentScopeExecutor.executeSilent(this.mExecutionString, this.mValueHandler);
-        if (!this.mValueCompare.compare(lExecutionResult)) {
+
+        if (!this.mValueCompare.compareAndUpdate(lExecutionResult)) {
             // Set view object property.
-            this.setValueToTarget(lExecutionResult);
+            Reflect.set(this.mTargetReference.value, this.mTargetProperty, lExecutionResult);
 
             return true;
         }
 
         return false;
-    }
-
-    /**
-     * Set value to target element.
-     * @param pValue - Value.
-     */
-    private setValueToTarget(pValue: any) {
-        (<any>this.mTargetElement)[this.mTargetProperty] = pValue;
     }
 }

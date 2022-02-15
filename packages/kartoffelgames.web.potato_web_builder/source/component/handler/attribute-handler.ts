@@ -42,13 +42,13 @@ export class AttributeHandler {
 
             // Setter and getter of this property. Execute changes inside component handlers change detection.
             lDescriptor.set = (pValue: any) => {
-                (<any>this.mUserObjectHandler.userObject)[lExportProperty] = pValue;
+                Reflect.set(this.mUserObjectHandler.userObject, lExportProperty, pValue);
 
                 // Call OnAttributeChange.
                 this.mUserObjectHandler.callOnPwbAttributeChange(lExportProperty);
             };
             lDescriptor.get = () => {
-                let lValue: any = (<any>this.mUserObjectHandler.userObject)[lExportProperty];
+                let lValue: any = Reflect.get(this.mUserObjectHandler.userObject, lExportProperty);
 
                 // Bind "this" context to the exported function.
                 if (typeof lValue === 'function') {
@@ -74,7 +74,7 @@ export class AttributeHandler {
         this.mHtmlElement.setAttribute = (pQualifiedName: string, pValue: string) => {
             // Check if attribute is an exported value and set value to user class object.
             if (pExportedProperties.includes(pQualifiedName)) {
-                (<any>this.mHtmlElement)[pQualifiedName] = pValue;
+                Reflect.set(this.mHtmlElement, pQualifiedName, pValue);
             }
 
             lOriginalSetAttribute.call(this.mHtmlElement, pQualifiedName, pValue);
@@ -84,7 +84,7 @@ export class AttributeHandler {
         this.mHtmlElement.getAttribute = (pQualifiedName: string): string => {
             // Check if attribute is an exported value and return value of user class object.
             if (pExportedProperties.includes(pQualifiedName)) {
-                return (<any>this.mHtmlElement)[pQualifiedName];
+                return Reflect.get(this.mHtmlElement, pQualifiedName);
             }
 
             return lOriginalGetAttribute.call(this.mHtmlElement, pQualifiedName);

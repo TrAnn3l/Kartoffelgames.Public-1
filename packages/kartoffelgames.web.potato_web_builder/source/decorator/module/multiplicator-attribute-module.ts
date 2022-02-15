@@ -5,10 +5,10 @@ import { IPwbMultiplicatorModuleClass } from '../../interface/module';
 import { ComponentModules } from '../../module/component-modules';
 
 /**
- * AtScript. PWB Manipulator attribute module.
+ * AtScript. PWB Multiplicator attribute module.
  * @param pSettings - Module settings.
  */
-export function ManipulatorAttributeModule(pSettings: AttributeModuleSettings): any {
+export function MultiplicatorAttributeModule(pSettings: AttributeModuleSettings): any {
 
     // Needs constructor without argument.
     return (pManipulatorModuleConstructor: IPwbMultiplicatorModuleClass) => {

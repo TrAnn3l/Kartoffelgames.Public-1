@@ -57,7 +57,7 @@ class InteractionDetectionProxy {
             return lDesciptor.value;
         }
         // Check if object is the original but has the proxys information.
-        const lWrapper = pProxy[InteractionDetectionProxy.OBSERVER_ORIGINAL_KEY];
+        const lWrapper = Reflect.get(pProxy, InteractionDetectionProxy.OBSERVER_ORIGINAL_KEY);
         if (lWrapper) {
             return lWrapper;
         }
@@ -127,7 +127,7 @@ class InteractionDetectionProxy {
              * @param pPropertyName - Name of property.
              */
             deleteProperty(pTargetObject, pPropertyName) {
-                delete pTargetObject[pPropertyName];
+                Reflect.deleteProperty(pTargetObject, pPropertyName);
                 lSelf.dispatchChangeEvent(pTargetObject, pPropertyName, Error().stack);
                 return true;
             },
@@ -153,7 +153,7 @@ class InteractionDetectionProxy {
                 let lPromiseConstructor = Promise;
                 /* istanbul ignore next */
                 while (patcher_1.Patcher.ORIGINAL_CLASS_KEY in lPromiseConstructor) {
-                    lPromiseConstructor = lPromiseConstructor[patcher_1.Patcher.ORIGINAL_CLASS_KEY];
+                    lPromiseConstructor = Reflect.get(lPromiseConstructor, patcher_1.Patcher.ORIGINAL_CLASS_KEY);
                 }
                 // Override possible system promise. 
                 if (lFunctionResult instanceof lPromiseConstructor) {

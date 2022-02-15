@@ -1,119 +1,128 @@
 import { Dictionary, Exception } from '@kartoffelgames/core.data';
+import { XmlElement } from '@kartoffelgames/core.xml';
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
 import { LayerValues } from '../../../component/values/layer-values';
+import { MultiplicatorAttributeModule } from '../../../decorator/module/multiplicator-attribute-module';
+import { IPwbMultiplicatorModuleOnUpdate } from '../../../interface/module';
+import { AttributeReference } from '../../base/injection/attribute-reference';
+import { TemplateReference } from '../../base/injection/template-reference';
 import { MultiplicatorResult } from '../../base/result/multiplicator-result';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
-import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
-import { ManipulatorAttributeModule } from '../../../decorator/module/manipulator-attribute-module';
-import { IPwbManipulatorAttributeOnProcess, IPwbManipulatorAttributeOnUpdate } from '../../../interface/module/manipulator-attribute-module';
-import { ModuleAccessType } from '../../../enum/module-access-type';
 
 /**
  * For of.
  * Doublicates html element for each item in object or array.
- * Syntax: "[CustomName] in [List] (;[CustomIndexName] = index)?"
+ * Syntax: "[CustomName] of [List] (;[CustomIndexName] = index)?"
  */
-@ManipulatorAttributeModule({
-    accessType: ModuleAccessType.Write,
-    attributeSelector: /^\*pwbFor$/,
-    forbiddenInManipulatorScopes: false,
-    manipulatesAttributes: false
+@MultiplicatorAttributeModule({
+    selector: /^\*pwbFor$/
 })
-export class ForOfManipulatorAttributeModule implements IPwbManipulatorAttributeOnProcess, IPwbManipulatorAttributeOnUpdate {
-    private readonly mAttribute: XmlAttribute;
-    private mListExpression: string;
-    private readonly mTargetTemplate: XmlElement;
-    private mValueCompare: CompareHandler<any>;
+export class ForOfManipulatorAttributeModule implements IPwbMultiplicatorModuleOnUpdate {
+    private readonly mAttributeReference: AttributeReference;
+    private readonly mTemplateReference: TemplateReference;
     private readonly mValueHandler: LayerValues;
+    private readonly mCompareHandler: CompareHandler<any>;
 
     /**
      * Constructor.
-     * @param pTargetTemplate - Target templat.
+     * @param pTemplateReference - Target templat.
      * @param pValueHandler - Values of component.
-     * @param pAttribute - Attribute of module.
+     * @param pAttributeReference - Attribute of module.
      */
-    public constructor(pTargetTemplate: XmlElement, pValueHandler: LayerValues, pAttribute: XmlAttribute) {
-        this.mTargetTemplate = pTargetTemplate;
+    public constructor(pTemplateReference: TemplateReference, pValueHandler: LayerValues, pAttributeReference: AttributeReference) {
+        this.mTemplateReference = pTemplateReference;
         this.mValueHandler = pValueHandler;
-        this.mAttribute = pAttribute;
+        this.mAttributeReference = pAttributeReference;
+        this.mCompareHandler = new CompareHandler(Symbol('Uncompareable'), 4);
     }
 
     /**
      * Process module.
      * Execute attribute value and decide if template should be rendered.
      */
-    public onProcess(): MultiplicatorResult {
-        // [CustomName:1] in [List value:2] (;[CustomIndexName:4]=[Index calculating with "index" as key:5])?
+    public onUpdate(): MultiplicatorResult {
+        // [CustomName:1] of [List value:2] (;[CustomIndexName:4]=[Index calculating with "index" as key:5])?
         const lRegexAttributeInformation: RegExp = new RegExp(/^\s*([a-zA-Z]+[a-zA-Z0-9]*)\s*of\s+([^;]+)\s*(;\s*([a-zA-Z]+[a-zA-Z0-9]*)\s*=\s*(.*)\s*)?$/);
 
-        // Get information from attribute value.
-        const lAttributeInformation: RegExpExecArray = lRegexAttributeInformation.exec(this.mAttribute.value);
-
-        // If attribute value does not match regex.
+        // If attribute value does match regex.
+        const lAttributeInformation: RegExpExecArray = lRegexAttributeInformation.exec(this.mAttributeReference.value.value);
         if (lAttributeInformation) {
+
+            // Split match into useable parts.
+            const lExpression: ForOfExpression = {
+                variable: lAttributeInformation[1],
+                value: lAttributeInformation[2],
+                indexName: lAttributeInformation[4],
+                indexExpression: lAttributeInformation[5]
+            };
+
             // Create module result that watches for changes in [PropertyName].
             const lModuleResult: MultiplicatorResult = new MultiplicatorResult();
 
             // Try to get list object from component values.
-            const lListObject: { [key: string]: any; } = ComponentScopeExecutor.executeSilent(lAttributeInformation[2], this.mValueHandler);
+            const lListObject: { [key: string]: any; } = ComponentScopeExecutor.executeSilent(lExpression.value, this.mValueHandler);
 
-            // Save values for later update check.
-            this.mValueCompare = new CompareHandler(lListObject, 4);
-            this.mListExpression = lAttributeInformation[2];
+            // Skip if values are the same.
+            if (this.mCompareHandler.compareAndUpdate(lListObject)) {
+                return null;
+            }
 
             // Only proceed if value is added to html element.
             if (typeof lListObject === 'object' && lListObject !== null || Array.isArray(lListObject)) {
-                // Add template for element function.
-                const lAddTempateForElement = (pObjectValue: any, pObjectKey: number | string) => {
-                    const lClonedTemplate: XmlElement = <XmlElement>this.mTargetTemplate.clone();
-                    const lComponentValues: LayerValues = new LayerValues(this.mValueHandler);
-                    lComponentValues.setLayerValue(lAttributeInformation[1], pObjectValue);
-
-                    // If custom index is used.
-                    if (lAttributeInformation[4]) {
-                        // Add index key as extenal value to execution.
-                        const lExternalValues: Dictionary<string, any> = new Dictionary<string, any>();
-                        lExternalValues.add('$index', pObjectKey);
-
-                        // Execute index expression
-                        const lIndexExpressionResult: any = ComponentScopeExecutor.executeSilent(lAttributeInformation[5], lComponentValues, lExternalValues);
-
-                        // Set custom index name as temporary value.
-                        lComponentValues.setLayerValue(lAttributeInformation[4], lIndexExpressionResult);
-                    }
-
-                    // Add element.
-                    lModuleResult.addElement(lClonedTemplate, lComponentValues);
-
-                };
-
                 // For array loop for arrays and for-in for objects.
                 if (Array.isArray(lListObject)) {
                     for (let lIndex: number = 0; lIndex < lListObject.length; lIndex++) {
-                        lAddTempateForElement(lListObject[lIndex], lIndex);
+                        this.addTempateForElement(lModuleResult, lExpression, lListObject[lIndex], lIndex);
                     }
                 } else {
                     for (const lListObjectKey in lListObject) {
-                        lAddTempateForElement(lListObject[lListObjectKey], lListObjectKey);
+                        this.addTempateForElement(lModuleResult, lExpression, lListObject[lListObjectKey], lListObjectKey);
                     }
                 }
-            }
-            // Else: Just ignore. Can be changed later.
 
-            // Return module result.
-            return lModuleResult;
+                return lModuleResult;
+            } else {
+                // Just ignore. Can be changed later.
+                return null;
+            }
         } else {
-            throw new Exception(`pwbFor-Paramater value has wrong format: ${this.mAttribute.value.toString()}`, this);
+            throw new Exception(`pwbFor-Paramater value has wrong format: ${this.mAttributeReference.value.toString()}`, this);
         }
     }
 
     /**
-     * Decide if module / element should be updated.
-     * @returns if element of module should be updated.
+     * Add template for element function.
+     * @param pModuleResult - module result.
+     * @param pExpression - for of expression.
+     * @param pObjectValue - value.
+     * @param pObjectKey - value key.
      */
-    public onUpdate(): boolean {
-        const lListObject: { [key: string]: any; } = ComponentScopeExecutor.executeSilent(this.mListExpression, this.mValueHandler);
-        // Update if values are not same.
-        return !this.mValueCompare.compare(lListObject);
-    }
+    private addTempateForElement = (pModuleResult: MultiplicatorResult, pExpression: ForOfExpression, pObjectValue: any, pObjectKey: number | string) => {
+        const lClonedTemplate: XmlElement = <XmlElement>this.mTemplateReference.value.clone();
+        const lComponentValues: LayerValues = new LayerValues(this.mValueHandler);
+        lComponentValues.setLayerValue(pExpression.variable, pObjectValue);
+
+        // If custom index is used.
+        if (pExpression.indexName) {
+            // Add index key as extenal value to execution.
+            const lExternalValues: Dictionary<string, any> = new Dictionary<string, any>();
+            lExternalValues.add('$index', pObjectKey);
+
+            // Execute index expression
+            const lIndexExpressionResult: any = ComponentScopeExecutor.executeSilent(pExpression.indexExpression, lComponentValues, lExternalValues);
+
+            // Set custom index name as temporary value.
+            lComponentValues.setLayerValue(pExpression.indexName, lIndexExpressionResult);
+        }
+
+        // Add element.
+        pModuleResult.addElement(lClonedTemplate, lComponentValues);
+    };
 }
+
+type ForOfExpression = {
+    variable: string,
+    value: string,
+    indexName?: string,
+    indexExpression?: string;
+};

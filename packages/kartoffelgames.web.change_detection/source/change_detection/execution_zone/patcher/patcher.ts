@@ -42,7 +42,7 @@ export class Patcher {
                     pObject.addEventListener(lEventName, () => { return; });
                 }
 
-                (<any>pObject)[Patcher.EVENT_TARGET_PATCHED_KEY] = true;
+                Reflect.set(pObject, Patcher.EVENT_TARGET_PATCHED_KEY, true);
             }
         });
     }
@@ -97,8 +97,8 @@ export class Patcher {
                         const lPatchedParameterFunction: (...pArgs: Array<any>) => any = lSelf.wrapFunctionInZone(lSelf.patchFunctionParameter(lArgument), lCurrentZone);
 
                         // Cross reference original and patched function.
-                        (<any>lPatchedParameterFunction)[Patcher.ORIGINAL_FUNCTION_KEY] = lOriginalParameterFunction;
-                        (<any>lOriginalParameterFunction)[Patcher.PATCHED_FUNCTION_KEY] = lPatchedParameterFunction;
+                        Reflect.set(lPatchedParameterFunction, Patcher.ORIGINAL_FUNCTION_KEY, lOriginalParameterFunction);
+                        Reflect.set(lOriginalParameterFunction, Patcher.PATCHED_FUNCTION_KEY, lPatchedParameterFunction);
 
                         pArgs[lArgIndex] = lPatchedParameterFunction;
                     }
@@ -109,7 +109,7 @@ export class Patcher {
         };
 
         // Add original class with symbol key.
-        (<any>lPatchedClass)[Patcher.ORIGINAL_CLASS_KEY] = lOriginalClass;
+        Reflect.set(lPatchedClass, Patcher.ORIGINAL_CLASS_KEY, lOriginalClass);
 
         return lPatchedClass;
     }
@@ -133,13 +133,13 @@ export class Patcher {
             // Remove event.
             const lOriginalRemoveEventListener = lProto.removeEventListener;
             lProto.removeEventListener = function (pType: string, pCallback: EventListenerOrEventListenerObject | null, pOptions?: EventListenerOptions | boolean): void {
-                const lPatchedCallback = (<any>pCallback)[Patcher.PATCHED_FUNCTION_KEY];
+                const lPatchedCallback: any = Reflect.get(pCallback, Patcher.PATCHED_FUNCTION_KEY);
                 lOriginalRemoveEventListener.call(this, pType, lPatchedCallback, pOptions);
             };
 
             // Cross reference original and patched function.
-            (<any>lProto).removeEventListener[Patcher.ORIGINAL_FUNCTION_KEY] = lOriginalRemoveEventListener;
-            (<any>lOriginalRemoveEventListener)[Patcher.PATCHED_FUNCTION_KEY] = lProto.removeEventListener;
+            Reflect.set(lProto.removeEventListener, Patcher.ORIGINAL_FUNCTION_KEY, lOriginalRemoveEventListener);
+            Reflect.set(lOriginalRemoveEventListener, Patcher.PATCHED_FUNCTION_KEY, lProto.removeEventListener);
         }
     }
 
@@ -163,9 +163,9 @@ export class Patcher {
                     const lOriginalParameterFunction: (...pArgs: Array<any>) => any = lArgument;
                     const lPatchedParameterFunction: (...pArgs: Array<any>) => any = lSelf.wrapFunctionInZone(lSelf.patchFunctionParameter(lArgument), lCurrentZone);
 
-                    /// Cross reference original and patched function.
-                    (<any>lPatchedParameterFunction)[Patcher.ORIGINAL_FUNCTION_KEY] = lOriginalParameterFunction;
-                    (<any>lOriginalParameterFunction)[Patcher.PATCHED_FUNCTION_KEY] = lPatchedParameterFunction;
+                    // Cross reference original and patched function.
+                    Reflect.set(lPatchedParameterFunction, Patcher.ORIGINAL_FUNCTION_KEY, lOriginalParameterFunction);
+                    Reflect.set(lOriginalParameterFunction, Patcher.PATCHED_FUNCTION_KEY, lPatchedParameterFunction);
 
                     pArgs[lArgIndex] = lPatchedParameterFunction;
                 }
@@ -175,8 +175,8 @@ export class Patcher {
         };
 
         // Cross reference original and patched function.
-        (<any>lPatchedFunction)[Patcher.ORIGINAL_FUNCTION_KEY] = pFunction;
-        (<any>pFunction)[Patcher.PATCHED_FUNCTION_KEY] = lPatchedFunction;
+        Reflect.set(lPatchedFunction, Patcher.ORIGINAL_FUNCTION_KEY, pFunction);
+        Reflect.set(pFunction, Patcher.PATCHED_FUNCTION_KEY, lPatchedFunction);
 
         return lPatchedFunction;
     }
@@ -320,8 +320,8 @@ export class Patcher {
         };
 
         // Save original function
-        (<any>lPatchedFunction)[Patcher.ORIGINAL_FUNCTION_KEY] = pFunction;
-        (<any>pFunction)[Patcher.PATCHED_FUNCTION_KEY] = lPatchedFunction;
+        Reflect.set(lPatchedFunction, Patcher.ORIGINAL_FUNCTION_KEY, pFunction);
+        Reflect.set(pFunction, Patcher.PATCHED_FUNCTION_KEY, lPatchedFunction);
 
         return lPatchedFunction;
     }

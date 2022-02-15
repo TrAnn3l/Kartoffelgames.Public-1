@@ -1,66 +1,49 @@
 import { Dictionary } from '@kartoffelgames/core.data';
-import { CompareHandler } from '@kartoffelgames/web.change-detection';
-import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
-import { StaticAttributeModule } from '../../../decorator/module/static-attribute-module';
-import { IPwbStaticAttributeOnProcess, IPwbModuleOnUpdate } from '../../../interface/module';
 import { XmlAttribute } from '@kartoffelgames/core.xml';
-import { HtmlContent } from '../../../types';
-import { LayerValues } from '../../../component/values/layer-values';
+import { CompareHandler } from '@kartoffelgames/web.change-detection';
 import { ComponentManager } from '../../../component/component-manager';
+import { LayerValues } from '../../../component/values/layer-values';
+import { StaticAttributeModule } from '../../../decorator/module/static-attribute-module';
 import { ModuleAccessType } from '../../../enum/module-access-type';
+import { IPwbStaticModuleOnUpdate } from '../../../interface/module';
+import { HtmlContent } from '../../../types';
+import { AttributeReference } from '../../base/injection/attribute-reference';
+import { TargetReference } from '../../base/injection/target-reference';
+import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
 
 @StaticAttributeModule({
-    accessType: ModuleAccessType.ReadWrite,
-    attributeSelector: /^\[\([[\w$]+\)\]$/,
-    forbiddenInManipulatorScopes: false,
-    manipulatesAttributes: false
+    selector: /^\[\([[\w$]+\)\]$/,
+    access: ModuleAccessType.ReadWrite,
+    forbiddenInManipulatorScopes: false
 })
-export class TwoWayBindingAttributeModule implements IPwbStaticAttributeOnProcess, IPwbModuleOnUpdate {
-    private readonly mAttribute: XmlAttribute;
-    private readonly mComponentHandler: ComponentManager;
-    private readonly mTargetElement: HtmlContent;
-    private mTargetViewCompareHandler: CompareHandler<any>;
-    private mTargetViewProperty: string;
-    private mThisCompareHandler: CompareHandler<any>;
-    private mThisValueExpression: string;
+export class TwoWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
+    private readonly mAttributeReference: AttributeReference;
+    private readonly mTargetReference: TargetReference;
+    private mViewCompareHandler: CompareHandler<any>;
+    private mViewProperty: string;
+    private mUserObjectCompareHandler: CompareHandler<any>;
+    private mThisProperty: string;
     private readonly mValueHandler: LayerValues;
 
     /**
      * Constructor.
-     * @param pTargetElement - Target element.
+     * @param pTargetReference - Target element.
      * @param pValueHandler - Values of component.
      * @param pAttribute - Attribute of module.
      */
-    public constructor(pTargetElement: Element, pValueHandler: LayerValues, pAttribute: XmlAttribute, pComponentHandler: ComponentManager) {
-        this.mTargetElement = pTargetElement;
+    public constructor(pTargetReference: TargetReference, pValueHandler: LayerValues, pAttributeReference: AttributeReference) {
+        this.mTargetReference = pTargetReference;
         this.mValueHandler = pValueHandler;
-        this.mAttribute = pAttribute;
-        this.mComponentHandler = pComponentHandler;
-    }
+        this.mAttributeReference = pAttributeReference;
 
-    /**
-     * Process module.
-     * Initialize watcher and set view value with user class object value on startup.
-     */
-    public onProcess(): void {
         // Get property name.
-        this.mTargetViewProperty = this.mAttribute.qualifiedName.substr(2, this.mAttribute.qualifiedName.length - 4);
-        this.mThisValueExpression = this.mAttribute.value;
-
-        // Try to update view only on module initialize.
-        const lThisValue: any = ComponentScopeExecutor.executeSilent(this.mThisValueExpression, this.mValueHandler);
-
-        // Register all events.
-        this.mComponentHandler.updateHandler.registerObject(this.mTargetElement);
-
-        // Only update if not undefined
-        if (typeof lThisValue !== 'undefined') {
-            (<any>this.mTargetElement)[this.mTargetViewProperty] = lThisValue;
-        }
+        const lAttributeKey: string = this.mAttributeReference.value.qualifiedName;
+        this.mViewProperty = lAttributeKey.substr(2, lAttributeKey.length - 4);
+        this.mThisProperty = this.mAttributeReference.value.value;
 
         // Add comparison handler for this and for the target view value.
-        this.mThisCompareHandler = new CompareHandler(lThisValue, 4);
-        this.mTargetViewCompareHandler = new CompareHandler((<any>this.mTargetElement)[this.mTargetViewProperty], 4);
+        this.mUserObjectCompareHandler = new CompareHandler(Symbol('Uncompareable'), 4);
+        this.mViewCompareHandler = new CompareHandler(Symbol('Uncompareable'), 4);
     }
 
     /**
@@ -70,30 +53,31 @@ export class TwoWayBindingAttributeModule implements IPwbStaticAttributeOnProces
     public onUpdate(): boolean {
         let lValueChanged: boolean = false;
         // Try to update view only on module initialize.
-        const lThisValue: any = ComponentScopeExecutor.executeSilent(this.mThisValueExpression, this.mValueHandler);
+        const lThisValue: any = ComponentScopeExecutor.executeSilent(this.mThisProperty, this.mValueHandler);
 
         // Check for changes in this value.
-        if (!this.mThisCompareHandler.compare(lThisValue)) {
+        if (!this.mUserObjectCompareHandler.compareAndUpdate(lThisValue)) {
             // Update target view
-            (<any>this.mTargetElement)[this.mTargetViewProperty] = lThisValue;
-            // Update compare 
-            this.mTargetViewCompareHandler.compare(lThisValue);
+            Reflect.set(this.mTargetReference.value, this.mViewProperty, lThisValue);
+
+            // Update view compare with same value. 
+            this.mViewCompareHandler.update(lThisValue);
 
             // Set flag that value was updated.
             lValueChanged = true;
         } else {
-            const lTargetViewValue: any = (<any>this.mTargetElement)[this.mTargetViewProperty];
+            const lTargetViewValue: any = Reflect.get(this.mTargetReference.value, this.mViewProperty);
 
             // Check for changes in view.
-            if (!this.mTargetViewCompareHandler.compare(lTargetViewValue)) {
+            if (!this.mViewCompareHandler.compareAndUpdate(lTargetViewValue)) {
                 const lExtendedValues: Dictionary<string, any> = new Dictionary<string, any>();
                 lExtendedValues.set('$DATA', lTargetViewValue);
 
                 // Update value.
-                ComponentScopeExecutor.execute(`${this.mThisValueExpression} = $DATA;`, this.mValueHandler, lExtendedValues);
+                ComponentScopeExecutor.execute(`${this.mThisProperty} = $DATA;`, this.mValueHandler, lExtendedValues);
 
                 // Update compare.
-                this.mThisCompareHandler.compare(lTargetViewValue);
+                this.mUserObjectCompareHandler.update(lTargetViewValue);
 
                 // Set flag that value was updated.
                 lValueChanged = true;

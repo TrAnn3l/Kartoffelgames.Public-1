@@ -25,7 +25,7 @@ import { Export } from '../source/decorator/component/export';
 import { PwbElementReference } from '../source/component/injection/pwb-element-reference';
 import { HtmlComponentEvent } from '../source/decorator/component/html-component-event';
 import { IdChild } from '../source/decorator/component/id-child';
-import { ManipulatorAttributeModule } from '../source/decorator/module/manipulator-attribute-module';
+import { MultiplicatorAttributeModule } from '../source/decorator/module/multiplicator-attribute-module';
 import { PwbUpdateReference } from '../source/index';
 import { IPwbMultiplicatorModuleOnUpdate } from '../source/interface/module';
 
@@ -828,7 +828,7 @@ describe('HtmlComponent', () => {
     });
 
     it('Additional Module', async () => {
-        @ManipulatorAttributeModule({
+        @MultiplicatorAttributeModule({
             accessType: ModuleAccessType.Read,
             attributeSelector: /^\*pwbDynamicContent$/,
             forbiddenInManipulatorScopes: false,
@@ -1374,7 +1374,7 @@ describe('HtmlComponent', () => {
     });
 
     it('Wrong manipulation module', () => {
-        @ManipulatorAttributeModule({
+        @MultiplicatorAttributeModule({
             accessType: ModuleAccessType.Write,
             attributeSelector: /^\*testerrormodule$/,
             forbiddenInManipulatorScopes: false,

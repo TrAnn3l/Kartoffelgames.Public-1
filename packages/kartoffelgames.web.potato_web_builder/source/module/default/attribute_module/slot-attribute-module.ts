@@ -1,22 +1,20 @@
-import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
+import { XmlElement } from '@kartoffelgames/core.xml';
 import { ComponentManager } from '../../../component/component-manager';
 import { LayerValues } from '../../../component/values/layer-values';
-import { ManipulatorAttributeModule } from '../../../decorator/module/manipulator-attribute-module';
-import { ModuleAccessType } from '../../../enum/module-access-type';
-import { IPwbManipulatorAttributeOnProcess } from '../../../interface/module/manipulator-attribute-module';
+import { MultiplicatorAttributeModule } from '../../../decorator/module/multiplicator-attribute-module';
+import { IPwbMultiplicatorModuleOnUpdate } from '../../../interface/module';
+import { AttributeReference } from '../../base/injection/attribute-reference';
+import { TemplateReference } from '../../base/injection/template-reference';
 import { MultiplicatorResult } from '../../base/result/multiplicator-result';
 
-@ManipulatorAttributeModule({
-    accessType: ModuleAccessType.Write,
-    attributeSelector: /^\$[\w]+$/,
-    forbiddenInManipulatorScopes: true,
-    manipulatesAttributes: false
+@MultiplicatorAttributeModule({
+    selector: /^\$[\w]+$/
 })
-export class SlotAttributeModule implements IPwbManipulatorAttributeOnProcess {
-    private readonly mAttribute: XmlAttribute;
-    private readonly mComponentManager: ComponentManager;
-    private readonly mTargetTemplate: XmlElement;
+export class SlotAttributeModule implements IPwbMultiplicatorModuleOnUpdate {
+    private readonly mAttributeReference: AttributeReference;
+    private readonly mTemplateReference: TemplateReference;
     private readonly mValueHandler: LayerValues;
+    private mCalled: boolean;
 
     /**
      * Constructor.
@@ -24,32 +22,36 @@ export class SlotAttributeModule implements IPwbManipulatorAttributeOnProcess {
      * @param pValueHandler - Values of component.
      * @param pAttribute - Attribute of module.
      */
-    public constructor(pComponentManager: ComponentManager, pTargetTemplate: XmlElement, pValueHandler: LayerValues, pAttribute: XmlAttribute) {
-        this.mTargetTemplate = pTargetTemplate;
+    public constructor(pValueHandler: LayerValues, pAttributeReference: AttributeReference, pTemplateReference: TemplateReference) {
+        this.mTemplateReference = pTemplateReference;
         this.mValueHandler = pValueHandler;
-        this.mAttribute = pAttribute;
-        this.mComponentManager = pComponentManager;
+        this.mAttributeReference = pAttributeReference;
     }
 
     /**
      * Process module.
      */
-    public onProcess(): MultiplicatorResult {
-        // TODO: Anonymous slot. With "$--"" ???
+    public onUpdate(): MultiplicatorResult {
+        // Skip update if slot is already set.
+        if(!this.mCalled){
+            this.mCalled = true;
+            return null;
+        }
 
         // Get name of slot. Remove starting $.
-        const lSlotName: string = this.mAttribute.name.substr(1);
-
-        // Add slot name to valid slot names.
-        this.mComponentManager.elementHandler.addValidSlot(lSlotName);
+        const lSlotName: string = this.mAttributeReference.value.name.substr(1);
 
         // Clone currrent template element.
-        const lClone: XmlElement = <XmlElement>this.mTargetTemplate.clone();
+        const lClone: XmlElement = <XmlElement>this.mTemplateReference.value.clone();
 
         // Create slot element
         const lSlotElement: XmlElement = new XmlElement();
         lSlotElement.tagName = 'slot';
-        lSlotElement.setAttribute('name', lSlotName);
+
+        // Set slot as default of name is $DEFAUKLT
+        if (lSlotName !== 'DEFAULT') {
+            lSlotElement.setAttribute('name', lSlotName);
+        }
 
         // Add slot to element.
         lClone.appendChild(lSlotElement);

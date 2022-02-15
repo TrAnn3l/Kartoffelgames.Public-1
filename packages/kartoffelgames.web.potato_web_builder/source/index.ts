@@ -25,5 +25,5 @@ export { HtmlComponent } from './decorator/component/html-component';
 export { IdChild } from './decorator/component/id-child';
 export { Export } from './decorator/component/export';
 export { ExpressionModule } from './decorator/module/expression-module';
-export { ManipulatorAttributeModule } from './decorator/module/manipulator-attribute-module';
+export { MultiplicatorAttributeModule as ManipulatorAttributeModule } from './decorator/module/multiplicator-attribute-module';
 export { StaticAttributeModule } from './decorator/module/static-attribute-module';

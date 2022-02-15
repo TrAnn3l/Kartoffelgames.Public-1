@@ -1,24 +1,27 @@
 import { ComponentScopeExecutor } from '../execution/component-scope-executor';
 import { LayerValues } from '../../component/values/layer-values';
-import { ExpressionModule } from '../../decorator/expression-module';
-import { IPwbExpressionOnProcess } from '../../interface/module/expression-module';
+import { ExpressionModule } from '../../decorator/module/expression-module';
+import { IPwbExpressionModuleOnUpdate } from '../../interface/module';
+import { ValueReference } from '../base/injection/value-reference';
 
 /**
  * Wannabe Mustache expression executor.
  * Executes readonly expressions inside double brackets.
  */
 @ExpressionModule({
-    expressionSelector: /{{.*?}}/
+    selector: /{{.*?}}/
 })
-export class MustacheExpressionModule implements IPwbExpressionOnProcess {
+export class MustacheExpressionModule implements IPwbExpressionModuleOnUpdate {
     private readonly mValueHandler: LayerValues;
+    private readonly mExpressionReference: ValueReference;
 
     /**
      * Constructor.
      * @param pValueHandler - Values of component.
      */
-    public constructor(pValueHandler: LayerValues) {
+    public constructor(pValueHandler: LayerValues, pExpressionReference: ValueReference) {
         this.mValueHandler = pValueHandler;
+        this.mExpressionReference = pExpressionReference;
     }
 
     /**
@@ -27,9 +30,10 @@ export class MustacheExpressionModule implements IPwbExpressionOnProcess {
      * @param pValues - Component values.
      * @returns expression result.
      */
-    public processExpression(pExpression: string): string {
+    public onUpdate(): string {
         // Cut out mustache.
-        const lExpressionText: string = pExpression.substr(2, pExpression.length - 4);
+        const lExpression = this.mExpressionReference.value;
+        const lExpressionText: string = lExpression.substr(2, lExpression.length - 4);
 
         // Execute string
         const lExecutionResult: any = ComponentScopeExecutor.executeSilent(lExpressionText, this.mValueHandler);

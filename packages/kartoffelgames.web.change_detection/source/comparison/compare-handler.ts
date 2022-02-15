@@ -216,7 +216,9 @@ export class CompareHandler<TValue> {
 
         // Compare each key.
         for (const lKey in pNewValue) {
-            if (!this.compareValue((<any>pNewValue)[lKey], (<any>pLastValue)[lKey], pCurrentDepth + 1)) {
+            const lNewValue: any = Reflect.get(pNewValue, lKey);
+            const lLastValue: any = Reflect.get(pLastValue, lKey);
+            if (!this.compareValue(lNewValue, lLastValue, pCurrentDepth + 1)) {
                 return false;
             }
         }

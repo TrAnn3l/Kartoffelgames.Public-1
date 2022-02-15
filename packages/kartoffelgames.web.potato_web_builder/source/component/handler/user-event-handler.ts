@@ -27,7 +27,8 @@ export class UserEventHandler {
             // When event was set. 
             const lEventProperty: string = lEventPropertyList.get(pEventName);
             if (typeof lEventProperty === 'string') {
-                const lEventEmitter: ComponentEventEmitter<any> = (<any>this.mUserObjectHandler.userObject)[lEventProperty];
+                const lEventEmitter: ComponentEventEmitter<any> = Reflect.get(this.mUserObjectHandler.userObject, lEventProperty);
+
                 // When event is event emitter.
                 if (lEventEmitter instanceof ComponentEventEmitter) {
                     return lEventEmitter;

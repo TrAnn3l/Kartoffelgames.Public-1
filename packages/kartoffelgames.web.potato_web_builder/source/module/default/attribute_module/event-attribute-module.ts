@@ -1,63 +1,40 @@
-import { Dictionary } from '@kartoffelgames/core.data';
-import { XmlAttribute } from '@kartoffelgames/core.xml';
+import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { ComponentConnection } from '../../../component/component-connection';
 import { ComponentManager } from '../../../component/component-manager';
 import { LayerValues } from '../../../component/values/layer-values';
 import { StaticAttributeModule } from '../../../decorator/module/static-attribute-module';
 import { ModuleAccessType } from '../../../enum/module-access-type';
-import { IPwbModuleOnDeconstruct, IPwbStaticAttributeOnProcess } from '../../../interface/module';
-import { HtmlContent } from '../../../types';
+import { IPwbModuleOnDeconstruct } from '../../../interface/module';
 import { ComponentEventEmitter } from '../../../user_class_manager/component-event-emitter';
+import { AttributeReference } from '../../base/injection/attribute-reference';
+import { TargetReference } from '../../base/injection/target-reference';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
 
 @StaticAttributeModule({
-    accessType: ModuleAccessType.Write,
-    forbiddenInManipulatorScopes: false,
-    manipulatesAttributes: false,
-    attributeSelector: /^\([[\w$]+\)$/
+    selector: /^\([[\w$]+\)$/,
+    access: ModuleAccessType.Write,
+    forbiddenInManipulatorScopes: false
 })
-export class EventAttributeModule implements IPwbStaticAttributeOnProcess, IPwbModuleOnDeconstruct {
-    private readonly mAttribute: XmlAttribute;
+export class EventAttributeModule implements IPwbModuleOnDeconstruct {
     private mEmitter: ComponentEventEmitter<any>;
     private mEventName: string;
     private mListener: (this: null, pEvent: any) => void;
-    private readonly mTargetElement: HtmlContent;
+    private readonly mTargetReference: TargetReference;
     private readonly mValueHandler: LayerValues;
 
     /**
      * Constructor.
-     * @param pTargetElement - Target element.
+     * @param pTargetReference - Target element.
      * @param pValueHandler - Values of component.
-     * @param pAttribute - Attribute of module.
+     * @param pAttributeReference - Attribute of module.
      */
-    public constructor(pTargetElement: Element, pValueHandler: LayerValues, pAttribute: XmlAttribute) {
-        this.mTargetElement = pTargetElement;
+    public constructor(pTargetReference: TargetReference, pValueHandler: LayerValues, pAttributeReference: AttributeReference) {
+        this.mTargetReference = pTargetReference;
         this.mValueHandler = pValueHandler;
-        this.mAttribute = pAttribute;
-    }
-
-    /**
-     * Cleanup event on deconstruction.
-     */
-    public onDeconstruct(): void {
-        if (typeof this.mEmitter === 'undefined') {
-            this.mTargetElement.removeEventListener(this.mEventName, this.mListener);
-        } else {
-            this.mEmitter.removeListener(this.mListener);
-        }
-    }
-
-    /**
-     * Process module.
-     * Execute string on elements event.
-     */
-    public onProcess(): void {
-        const lSelf: this = this;
-
-        this.mEventName = this.mAttribute.name.substr(1, this.mAttribute.name.length - 2);
+        this.mEventName = pAttributeReference.value.name.substr(1, pAttributeReference.value.name.length - 2);
 
         // Try to get user class event from target element component manager..
-        const lTargetComponentManager: ComponentManager = ComponentConnection.componentManagerOf(this.mTargetElement);
+        const lTargetComponentManager: ComponentManager = ComponentConnection.componentManagerOf(this.mTargetReference);
         if (lTargetComponentManager) {
             this.mEmitter = lTargetComponentManager.userEventHandler.getEventEmitter(this.mEventName);
         }
@@ -69,14 +46,29 @@ export class EventAttributeModule implements IPwbStaticAttributeOnProcess, IPwbM
             lExternalValues.add('$event', pEvent);
 
             // Execute string with external event value.
-            ComponentScopeExecutor.execute(lSelf.mAttribute.value, lSelf.mValueHandler, lExternalValues);
+            ComponentScopeExecutor.execute(pAttributeReference.value.value, this.mValueHandler, lExternalValues);
         };
 
         // Add native element or user class event listener.
-        if (this.mEmitter && this.mEmitter instanceof ComponentEventEmitter) {
-            this.mEmitter.addListener(this.mListener);
+        if (this.mEmitter) {
+            if (this.mEmitter instanceof ComponentEventEmitter) {
+                this.mEmitter.addListener(this.mListener);
+            } else {
+                throw new Exception('Event emmiter musst be of type ComponentEventEmitter', this);
+            }
         } else {
-            this.mTargetElement.addEventListener(this.mEventName, this.mListener);
+            this.mTargetReference.value.addEventListener(this.mEventName, this.mListener);
+        }
+    }
+
+    /**
+     * Cleanup event on deconstruction.
+     */
+    public onDeconstruct(): void {
+        if (typeof this.mEmitter === 'undefined') {
+            this.mTargetReference.value.removeEventListener(this.mEventName, this.mListener);
+        } else {
+            this.mEmitter.removeListener(this.mListener);
         }
     }
 }
