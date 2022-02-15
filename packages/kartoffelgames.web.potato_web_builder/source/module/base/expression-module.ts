@@ -1,8 +1,8 @@
 import { TextNode, XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { LayerValues } from '../..';
 import { ComponentManager } from '../../component/component-manager';
-import { IPwbExpressionModuleClass, IPwbExpressionModuleObject } from '../../interface/module';
-import { BaseModule, ModuleDefinition } from './base-module';
+import { IPwbExpressionModuleClass, IPwbExpressionModuleObject, ModuleDefinition } from '../../interface/module';
+import { BaseModule } from './base-module';
 
 export class ExpressionModule extends BaseModule<boolean, string> {
     private readonly mProcessList: Array<string | IPwbExpressionModuleObject>;

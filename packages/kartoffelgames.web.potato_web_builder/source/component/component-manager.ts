@@ -1,7 +1,7 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { UserClass } from '../interface/user-class';
 import { StaticBuilder } from './builder/static-builder';
-import { ComponentModules } from '../module/component-modules_old';
+import { ComponentModules } from '../module/component-modules';
 import { LayerValues } from './values/layer-values';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { XmlDocument, XmlElement } from '@kartoffelgames/core.xml';
@@ -18,6 +18,7 @@ import { UserEventHandler } from './handler/user-event-handler';
 import { PwbUpdateReference } from './injection/pwb-update-reference';
 import { PwbTemplateReference } from './injection/pwb-template-reference';
 import { ExpressionModule } from '../module/base/expression-module';
+import { IPwbExpressionModuleClass } from '../interface/module';
 
 /**
  * Base component handler. Handles initialisation and update of components.
@@ -75,7 +76,7 @@ export class ComponentManager {
      * @param pHtmlComponent - HTMLElement of component.
      * @param pUpdateScope - Update scope of component.
      */
-    public constructor(pUserClass: UserClass, pTemplate: string, pExpressionModule: typeof ExpressionModule, pHtmlComponent: HTMLElement, pUpdateScope: UpdateScope) {
+    public constructor(pUserClass: UserClass, pTemplate: string, pExpressionModule: IPwbExpressionModuleClass, pHtmlComponent: HTMLElement, pUpdateScope: UpdateScope) {
         // Load cached or create new module handler and template.
         const lCache: [ComponentModules, XmlDocument] = ComponentManager.mComponentCache.get(pUserClass);
         let lModules: ComponentModules;

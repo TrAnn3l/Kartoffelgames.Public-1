@@ -1,11 +1,9 @@
 import { ComponentManager } from '../../component/component-manager';
 import { InjectionConstructor, Injector, Metadata } from '@kartoffelgames/core.dependency-injection';
 import { UserClass } from '../../interface/user-class';
-import { PwbExpressionModuleConstructor } from '../../interface/module/expression-module';
-import { PwbManipulatorAttributeModuleConstructor } from '../../interface/module/manipulator-attribute-module';
-import { PwbStaticAttributeModuleConstructor } from '../../interface/module';
 import { UpdateScope } from '../../enum/update-scope';
 import { MetadataKey } from '../../global-key';
+import { IPwbExpressionModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass } from '../../interface/module';
 
 /**
  * AtScript. PWB Component.
@@ -72,12 +70,12 @@ export function HtmlComponent(pParameter: HtmlComponentParameter): any {
  * Html component parameter.
  */
 type HtmlComponentParameter = {
-    expressionmodule?: PwbExpressionModuleConstructor | any;
+    expressionmodule?: IPwbExpressionModuleClass | any;
     style?: string,
     selector: string;
     template?: string;
     // Placeholder for listing modules that should be imported.
-    modules?: Array<PwbManipulatorAttributeModuleConstructor | PwbStaticAttributeModuleConstructor | any>;
+    modules?: Array<IPwbMultiplicatorModuleClass | IPwbStaticModuleClass | any>;
     // Placeholder for listing components that should be imported.
     components?: Array<InjectionConstructor>;
     updateScope?: UpdateScope;
