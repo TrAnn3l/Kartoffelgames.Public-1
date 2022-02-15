@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import { HtmlComponent } from '../source/decorator/html-component';
+import { HtmlComponent } from '../source/decorator/component/html-component';
 import { PwbApp } from '../source/pwb-app';
 
 const gRandomSelector = (): string => {
@@ -17,24 +17,18 @@ describe('PwbApp', () => {
         @HtmlComponent({ selector: gRandomSelector() })
         class TestCustomElement { }
 
-        const lApp = new PwbApp('MyApp', {
-            targetSelector: 'body',
-            content: TestCustomElement
-        });
-        assert.equal(lApp.changeDetection.name, 'MyApp');
+        const lApp = new PwbApp('MyApp');
+        lApp.addContent(TestCustomElement);
+        lApp.appendTo(document.body);
 
         assert.throws(() => {
-            lApp.addContent({});
+            lApp.addContent(<any>{});
         });
 
         const lNewLocation = document.createElement('div');
         lNewLocation.classList.add('newLocation');
         document.body.appendChild(lNewLocation);
-        lApp.moveTo('.newLocation');
-
-        assert.throws(() => {
-            lApp.moveTo('.NotThere');
-        });
+        lApp.appendTo(document.querySelector('.newLocation'));
 
         document.body.innerHTML = '';
     });
@@ -49,10 +43,10 @@ describe('PwbApp', () => {
         @HtmlComponent({ selector: gRandomSelector() })
         class TestCustomElement3 { }
 
-        const lApp = new PwbApp('MyApp', {
-            targetSelector: 'body',
-            content: [TestCustomElement, TestCustomElement2]
-        });
+        const lApp = new PwbApp('MyApp');
+        lApp.addContent(TestCustomElement);
+        lApp.addContent(TestCustomElement2);
+        lApp.appendTo(document.body);
 
         const lAppRoot = document.body.querySelector('.PwbAppRoot');
 
@@ -62,42 +56,5 @@ describe('PwbApp', () => {
 
         lApp.addContent(TestCustomElement3);
         assert.equal(lAppRoot.shadowRoot.childNodes.length, 3);
-    });
-
-    it('Content without target', () => {
-        @HtmlComponent({ selector: gRandomSelector() })
-        class TestCustomElement { }
-
-        new PwbApp('MyApp', {
-            content: TestCustomElement
-        });
-    });
-
-    it('Fails', () => {
-        assert.throws(() => {
-            new PwbApp('MyApp2', {
-                targetSelector: '.NotThere'
-            });
-        });
-
-        assert.throws(() => {
-            new PwbApp('MyApp2', {
-                content: {}
-            });
-        });
-    });
-
-    it('Styles', () => {
-        const lApp = new PwbApp('MyApp2', {
-            targetSelector: 'body',
-            style: 'div2 {}',
-            globalStyle: 'div {}'
-        });
-
-        assert.equal(document.head.querySelector('style').innerHTML, 'div {}');
-        assert.equal((<ShadowRoot>(<any>lApp).mCurrentAppRootShadowRoot).querySelector('style').innerHTML, 'div2 {}');
-
-        lApp.addStyle('div3 {}');
-        assert.equal((<ShadowRoot>(<any>lApp).mCurrentAppRootShadowRoot).querySelector('style').innerHTML, 'div3 {}');
     });
 });

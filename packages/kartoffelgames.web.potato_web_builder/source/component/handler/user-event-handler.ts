@@ -1,6 +1,6 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
-import { MetadataKey } from '../../global-key';
+import { MetadataKey } from '../../metadata-key';
 import { ComponentEventEmitter } from '../../user_class_manager/component-event-emitter';
 import { UserObjectHandler } from './user-object-handler';
 

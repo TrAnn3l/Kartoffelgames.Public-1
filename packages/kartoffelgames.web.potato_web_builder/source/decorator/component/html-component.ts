@@ -2,7 +2,7 @@ import { ComponentManager } from '../../component/component-manager';
 import { InjectionConstructor, Injector, Metadata } from '@kartoffelgames/core.dependency-injection';
 import { UserClass } from '../../interface/user-class';
 import { UpdateScope } from '../../enum/update-scope';
-import { MetadataKey } from '../../global-key';
+import { MetadataKey } from '../../metadata-key';
 import { IPwbExpressionModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass } from '../../interface/module';
 
 /**

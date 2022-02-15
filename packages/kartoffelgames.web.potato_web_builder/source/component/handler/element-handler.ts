@@ -1,7 +1,7 @@
 import { Exception, List } from '@kartoffelgames/core.data';
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
 import { BaseXmlNode } from '@kartoffelgames/core.xml';
-import { MetadataKey } from '../../global-key';
+import { MetadataKey } from '../../metadata-key';
 import { AttributeHandler } from './attribute-handler';
 import { UserObjectHandler } from './user-object-handler';
 

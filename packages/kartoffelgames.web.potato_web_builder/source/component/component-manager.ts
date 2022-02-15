@@ -1,24 +1,23 @@
 import { Dictionary } from '@kartoffelgames/core.data';
-import { UserClass } from '../interface/user-class';
-import { StaticBuilder } from './builder/static-builder';
-import { ComponentModules } from '../module/component-modules';
-import { LayerValues } from './values/layer-values';
-import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { XmlDocument, XmlElement } from '@kartoffelgames/core.xml';
-import { PwbApp } from '../pwb-app';
-import { ElementCreator } from './content/element-creator';
-import { PwbElementReference } from './injection/pwb-element-reference';
+import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { UpdateScope } from '../enum/update-scope';
-import { TemplateParser } from '../parser/template-parser';
-import { UpdateHandler } from './handler/update-handler';
-import { UserObjectHandler } from './handler/user-object-handler';
-import { ElementHandler } from './handler/element-handler';
-import { ComponentConnection } from './component-connection';
-import { UserEventHandler } from './handler/user-event-handler';
-import { PwbUpdateReference } from './injection/pwb-update-reference';
-import { PwbTemplateReference } from './injection/pwb-template-reference';
-import { ExpressionModule } from '../module/base/expression-module';
 import { IPwbExpressionModuleClass } from '../interface/module';
+import { UserClass } from '../interface/user-class';
+import { ComponentModules } from '../module/component-modules';
+import { TemplateParser } from '../parser/template-parser';
+import { PwbApp } from '../pwb-app';
+import { StaticBuilder } from './builder/static-builder';
+import { ComponentConnection } from './component-connection';
+import { ElementCreator } from './content/element-creator';
+import { ElementHandler } from './handler/element-handler';
+import { UpdateHandler } from './handler/update-handler';
+import { UserEventHandler } from './handler/user-event-handler';
+import { UserObjectHandler } from './handler/user-object-handler';
+import { PwbElementReference } from './injection/pwb-element-reference';
+import { PwbTemplateReference } from './injection/pwb-template-reference';
+import { PwbUpdateReference } from './injection/pwb-update-reference';
+import { LayerValues } from './values/layer-values';
 
 /**
  * Base component handler. Handles initialisation and update of components.

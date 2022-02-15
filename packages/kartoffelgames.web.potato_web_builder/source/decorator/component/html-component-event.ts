@@ -1,7 +1,7 @@
 import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { UserClass } from '../../interface/user-class';
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
-import { MetadataKey } from '../../global-key';
+import { MetadataKey } from '../../metadata-key';
 
 /**
  * Define event for external access.
