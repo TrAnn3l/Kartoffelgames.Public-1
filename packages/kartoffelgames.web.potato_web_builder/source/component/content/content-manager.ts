@@ -2,7 +2,7 @@ import { Dictionary, List } from '@kartoffelgames/core.data';
 import { BaseBuilder } from '../builder/base-builder';
 import { ComponentConnection } from '../component-connection';
 import { ComponentManager } from '../component-manager';
-import { ComponentModules } from '../../module/component-modules';
+import { ComponentModules } from '../component-modules';
 import { ElementCreator } from './element-creator';
 import { BaseModule } from '../../module/base/base-module';
 import { MultiplicatorModule } from '../../module/base/multiplicator-module';

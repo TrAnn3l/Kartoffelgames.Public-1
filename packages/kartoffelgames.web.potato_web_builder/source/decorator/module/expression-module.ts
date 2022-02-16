@@ -2,7 +2,7 @@ import { Injector } from '@kartoffelgames/core.dependency-injection';
 import { ModuleAccessType } from '../../enum/module-access-type';
 import { ModuleType } from '../../enum/module-type';
 import { IPwbExpressionModuleClass } from '../../interface/module';
-import { ComponentModules } from '../../module/component-modules';
+import { Modules } from '../../module/modules';
 
 /**
  * AtScript. PWB Expression module.
@@ -14,7 +14,7 @@ export function ExpressionModule(pSettings: ExpressionModuleSetting): any {
         Injector.Injectable(pExpressionModuleConstructor);
 
         // Register module.
-        ComponentModules.add(pExpressionModuleConstructor, {
+        Modules.add(pExpressionModuleConstructor, {
             type: ModuleType.Expression,
             selector: pSettings.selector,
             forbiddenInManipulatorScopes: false,

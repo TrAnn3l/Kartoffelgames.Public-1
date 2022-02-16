@@ -1,36 +1,23 @@
-import { Dictionary } from '@kartoffelgames/core.data';
 import { LayerValues, TextNode, XmlAttribute, XmlElement } from '..';
-import { ComponentManager } from '../component/component-manager';
+import { ComponentManager } from './component-manager';
 import { ModuleType } from '../enum/module-type';
-import { IPwbExpressionModuleClass, IPwbModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass, ModuleDefinition } from '../interface/module';
-import { ExpressionModule } from './base/expression-module';
-import { MultiplicatorModule } from './base/multiplicator-module';
-import { StaticModule } from './base/static-module';
-import { MustacheExpressionModule } from './default/mustache-expression-module';
-
+import { IPwbExpressionModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass } from '../interface/module';
+import { ExpressionModule } from '../module/base/expression-module';
+import { MultiplicatorModule } from '../module/base/multiplicator-module';
+import { StaticModule } from '../module/base/static-module';
 // Import default modules
-import './default/attribute_module/event-attribute-module';
-import './default/attribute_module/for-of-manipulator-attribute-module';
-import './default/attribute_module/id-child-attribute-module';
-import './default/attribute_module/if-manipulator-attribute-module';
-import './default/attribute_module/one-way-binding-attribute-module';
-import './default/attribute_module/slot-attribute-module';
-import './default/attribute_module/two-way-binding-attribute-module';
+import '../module/default/attribute_module/event-attribute-module';
+import '../module/default/attribute_module/for-of-manipulator-attribute-module';
+import '../module/default/attribute_module/id-child-attribute-module';
+import '../module/default/attribute_module/if-manipulator-attribute-module';
+import '../module/default/attribute_module/one-way-binding-attribute-module';
+import '../module/default/attribute_module/slot-attribute-module';
+import '../module/default/attribute_module/two-way-binding-attribute-module';
+import { MustacheExpressionModule } from '../module/default/mustache-expression-module';
+import { Modules } from '../module/modules';
+
 
 export class ComponentModules {
-    private static readonly mModuleClasses: Dictionary<ModuleDefinition, IPwbModuleClass<unknown>> = new Dictionary<ModuleDefinition, IPwbModuleClass<unknown>>();
-    private static readonly mModuleDefinition: Dictionary<IPwbModuleClass<unknown>, ModuleDefinition> = new Dictionary<IPwbModuleClass<unknown>, ModuleDefinition>();
-
-    /**
-     * Add module to global scope.
-     * @param pModuleClass - User module class.
-     * @param pModuleDefinition - Module definition.
-     */
-    public static add(pModuleClass: IPwbModuleClass<unknown>, pModuleDefinition: ModuleDefinition) {
-        ComponentModules.mModuleClasses.set(pModuleDefinition, pModuleClass);
-        ComponentModules.mModuleDefinition.set(pModuleClass, pModuleDefinition);
-    }
-
     private readonly mExpressionModule: IPwbExpressionModuleClass;
 
     /**
@@ -48,7 +35,7 @@ export class ComponentModules {
      */
     public getMultiplicatorAttribute(pTemplate: XmlElement): XmlAttribute {
         // Find manipulator module inside attributes.
-        for (const lDefinition of ComponentModules.mModuleDefinition.values()) {
+        for (const lDefinition of Modules.moduleDefinitions) {
             for (const lAttribute of pTemplate.attributeList) {
                 if (lDefinition.selector.test(lAttribute.qualifiedName)) {
                     return lAttribute;
@@ -65,13 +52,13 @@ export class ComponentModules {
      */
     public getElementMultiplicatorModule(pTemplate: XmlElement, pValues: LayerValues, pComponentManager: ComponentManager): MultiplicatorModule {
         // Find manipulator module inside attributes.
-        for (const lDefinition of ComponentModules.mModuleDefinition.values()) {
+        for (const lDefinition of Modules.moduleDefinitions) {
             for (const lAttribute of pTemplate.attributeList) {
                 if (lDefinition.type === ModuleType.Manipulator && lDefinition.selector.test(lAttribute.qualifiedName)) {
                     // Get constructor and create new module.
                     const lModule: MultiplicatorModule = new MultiplicatorModule({
                         moduleDefinition: lDefinition,
-                        moduleClass: <IPwbMultiplicatorModuleClass>ComponentModules.mModuleClasses.get(lDefinition),
+                        moduleClass: <IPwbMultiplicatorModuleClass>Modules.getModuleClass(lDefinition),
                         targetTemplate: pTemplate,
                         targetAttribute: lAttribute,
                         values: pValues,
@@ -101,12 +88,12 @@ export class ComponentModules {
             let lModuleFound: boolean = false;
 
             // Find static modules.
-            for (const lDefinition of ComponentModules.mModuleDefinition.values()) {
+            for (const lDefinition of Modules.moduleDefinitions) {
                 if (lDefinition.type === ModuleType.Static && lDefinition.selector.test(lAttribute.qualifiedName)) {
                     // Get constructor and create new module.
                     const lModule: StaticModule = new StaticModule({
                         moduleDefinition: lDefinition,
-                        moduleClass: <IPwbStaticModuleClass>ComponentModules.mModuleClasses.get(lDefinition),
+                        moduleClass: <IPwbStaticModuleClass>Modules.getModuleClass(lDefinition),
                         targetTemplate: pTemplate,
                         targetAttribute: lAttribute,
                         values: pValues,
@@ -123,7 +110,7 @@ export class ComponentModules {
             // When no static module is found, use expression module.
             if (!lModuleFound) {
                 const lModule: ExpressionModule = new ExpressionModule({
-                    moduleDefinition: ComponentModules.mModuleDefinition.get(this.mExpressionModule),
+                    moduleDefinition: Modules.getModuleDefinition(this.mExpressionModule),
                     moduleClass: this.mExpressionModule,
                     targetTemplate: pTemplate,
                     targetAttribute: lAttribute,
@@ -145,7 +132,7 @@ export class ComponentModules {
      */
     public getTextExpressionModule(pTemplate: TextNode, pTextNode: Text, pValues: LayerValues, pComponentManager: ComponentManager): ExpressionModule {
         const lModule: ExpressionModule = new ExpressionModule({
-            moduleDefinition: ComponentModules.mModuleDefinition.get(this.mExpressionModule),
+            moduleDefinition: Modules.getModuleDefinition(this.mExpressionModule),
             moduleClass: this.mExpressionModule,
             targetTemplate: pTemplate,
             values: pValues,

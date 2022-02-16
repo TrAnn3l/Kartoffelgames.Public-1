@@ -1,10 +1,8 @@
-import { LayerValues } from '../values/layer-values';
-import { Boundary, ContentManager } from '../content/content-manager';
-import { ComponentModules } from '../../module/component-modules';
+import { BaseXmlNode } from '@kartoffelgames/core.xml';
+import { ComponentModules } from '../component-modules';
 import { ComponentManager } from '../component-manager';
-import { BaseXmlNode, XmlElement } from '@kartoffelgames/core.xml';
-import { MultiplicatorBuilder } from './multiplicator-builder';
-import { StaticBuilder } from './static-builder';
+import { Boundary, ContentManager } from '../content/content-manager';
+import { LayerValues } from '../values/layer-values';
 
 /**
  * Builder helper that builds and updates content of component.
@@ -56,7 +54,7 @@ export abstract class BaseBuilder {
      * If builder is inside an manipulator scope.
      */
     protected get inManipulatorScope(): boolean {
-        if (this instanceof MultiplicatorBuilder) {
+        if (this.isMultiplicator()) {
             return true;
         } else if (!this.mParentBuilder) {
             return false;
@@ -98,7 +96,7 @@ export abstract class BaseBuilder {
         // Create new layer of values.
         this.mComponentValues = new LayerValues(pParentLayerValues);
 
-        let lPrefix: string = (this instanceof StaticBuilder) ? 'STATIC' : 'MULTIPLICATE;';
+        let lPrefix: string = this.isMultiplicator() ? 'MULTIPLICATE' : 'STATIC';
         this.mContentManager = new ContentManager(pModules, lPrefix);
     }
 
@@ -124,6 +122,11 @@ export abstract class BaseBuilder {
 
         return lUpdated;
     }
+
+    /**
+     * If builder is multiplicator.
+     */
+    protected abstract isMultiplicator(): boolean;
 
     /**
      * Update content.

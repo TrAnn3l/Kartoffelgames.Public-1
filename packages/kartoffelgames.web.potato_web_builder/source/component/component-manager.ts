@@ -4,7 +4,7 @@ import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { UpdateScope } from '../enum/update-scope';
 import { IPwbExpressionModuleClass } from '../interface/module';
 import { UserClass } from '../interface/user-class';
-import { ComponentModules } from '../module/component-modules';
+import { ComponentModules } from './component-modules';
 import { TemplateParser } from '../parser/template-parser';
 import { PwbApp } from '../pwb-app';
 import { StaticBuilder } from './builder/static-builder';

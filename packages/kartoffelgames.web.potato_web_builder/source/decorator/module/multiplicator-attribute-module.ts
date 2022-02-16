@@ -2,7 +2,7 @@ import { Injector } from '@kartoffelgames/core.dependency-injection';
 import { ModuleAccessType } from '../../enum/module-access-type';
 import { ModuleType } from '../../enum/module-type';
 import { IPwbMultiplicatorModuleClass } from '../../interface/module';
-import { ComponentModules } from '../../module/component-modules';
+import { Modules } from '../../module/modules';
 
 /**
  * AtScript. PWB Multiplicator attribute module.
@@ -17,7 +17,7 @@ export function MultiplicatorAttributeModule(pSettings: AttributeModuleSettings)
         Injector.Injectable(pManipulatorModuleConstructor);
 
         // Register module.
-        ComponentModules.add(pManipulatorModuleConstructor, {
+        Modules.add(pManipulatorModuleConstructor, {
             type: ModuleType.Manipulator,
             selector: pSettings.selector,
             forbiddenInManipulatorScopes: false,
@@ -28,4 +28,4 @@ export function MultiplicatorAttributeModule(pSettings: AttributeModuleSettings)
 
 type AttributeModuleSettings = {
     selector: RegExp;
-}
+};

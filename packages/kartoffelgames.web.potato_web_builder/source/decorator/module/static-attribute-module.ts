@@ -1,8 +1,8 @@
 import { Injector } from '@kartoffelgames/core.dependency-injection';
-import { ComponentModules } from '../../module/component-modules';
 import { ModuleAccessType } from '../../enum/module-access-type';
 import { ModuleType } from '../../enum/module-type';
 import { IPwbStaticModuleClass } from '../../interface/module';
+import { Modules } from '../../module/modules';
 
 /**
  * AtScript. PWB static attribute module.
@@ -17,7 +17,7 @@ export function StaticAttributeModule(pSettings: AttributeModuleSettings): any {
         Injector.Injectable(pStaticModuleConstructor);
 
         // Register module.
-        ComponentModules.add(pStaticModuleConstructor, {
+        Modules.add(pStaticModuleConstructor, {
             type: ModuleType.Manipulator,
             selector: pSettings.selector,
             forbiddenInManipulatorScopes: pSettings.forbiddenInManipulatorScopes,

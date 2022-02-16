@@ -2,7 +2,7 @@ import { BaseXmlNode, XmlElement } from '@kartoffelgames/core.xml';
 import { ChangeState, DifferenceSearch, HistoryItem } from '@kartoffelgames/web.change-detection';
 import { MultiplicatorModule } from '../../module/base/multiplicator-module';
 import { ManipulatorElement, MultiplicatorResult } from '../../module/base/result/multiplicator-result';
-import { ComponentModules } from '../../module/component-modules';
+import { ComponentModules } from '../component-modules';
 import { LayerValues } from '../values/layer-values';
 import { BaseBuilder } from './base-builder';
 import { StaticBuilder } from './static-builder';
@@ -19,6 +19,13 @@ export class MultiplicatorBuilder extends BaseBuilder {
      */
     public constructor(pTemplate: BaseXmlNode, pShadowParent: BaseXmlNode, pModules: ComponentModules, pParentLayerValues: LayerValues, pParentBuilder: BaseBuilder) {
         super(pTemplate, pShadowParent, pModules, pParentLayerValues, pParentBuilder);
+    }
+
+    /**
+     * If builder is multiplicator.
+     */
+    protected isMultiplicator(): boolean {
+        return true;
     }
 
     /**

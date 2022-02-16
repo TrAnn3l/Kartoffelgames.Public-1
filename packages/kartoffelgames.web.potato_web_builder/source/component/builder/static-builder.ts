@@ -4,7 +4,7 @@ import { ModuleType } from '../../enum/module-type';
 import { BaseModule } from '../../module/base/base-module';
 import { ExpressionModule } from '../../module/base/expression-module';
 import { StaticModule } from '../../module/base/static-module';
-import { ComponentModules } from '../../module/component-modules';
+import { ComponentModules } from '../component-modules';
 import { ElementCreator } from '../content/element-creator';
 import { LayerValues } from '../values/layer-values';
 import { BaseBuilder } from './base-builder';
@@ -26,6 +26,13 @@ export class StaticBuilder extends BaseBuilder {
 
         // Not initialized on start.
         this.mInitialized = false;
+    }
+
+    /**
+     * If builder is multiplicator.
+     */
+    protected isMultiplicator(): boolean {
+        return false;
     }
 
     /**
