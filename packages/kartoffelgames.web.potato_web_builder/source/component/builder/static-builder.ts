@@ -132,7 +132,7 @@ export class StaticBuilder extends BaseBuilder {
         const lHtmlNode: Text = ElementCreator.createText('');
 
         // Create and link expression module, link only if text has any expression.
-        const lExpressionModule: ExpressionModule = this.contentManager.modules.getTextExpressionModule(pTextTemplate, lHtmlNode, this.values, this.componentManager);
+        const lExpressionModule: ExpressionModule = this.contentManager.modules.getTextExpressionModule(pTextTemplate, lHtmlNode, this.values);
         this.contentManager.linkModule(lExpressionModule, lHtmlNode);
 
         // Append text to parent.
@@ -150,7 +150,7 @@ export class StaticBuilder extends BaseBuilder {
         const lHtmlNode: Element = ElementCreator.createElement(pElementTemplate);
 
         // Every attribute is a module. Even text attributes without any any expression.
-        for (const lModule of this.contentManager.modules.getElementStaticModules(pElementTemplate, lHtmlNode, this.values, this.componentManager)) {
+        for (const lModule of this.contentManager.modules.getElementStaticModules(pElementTemplate, lHtmlNode, this.values)) {
             // Check if module is allowd in current scope.
             if (this.inManipulatorScope && lModule.moduleDefinition.forbiddenInManipulatorScopes) {
                 throw new Exception(`Module ${lModule.moduleDefinition.selector.source} is forbidden inside manipulator scopes.`, this);

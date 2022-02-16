@@ -39,7 +39,7 @@ export class MultiplicatorBuilder extends BaseBuilder {
             lTemplateCopy.parent = this.shadowParent;
 
             // Create module and save inside
-            const lManipulatorModule: MultiplicatorModule = this.contentManager.modules.getElementMultiplicatorModule(lTemplateCopy, this.values, this.componentManager);
+            const lManipulatorModule: MultiplicatorModule = this.contentManager.modules.getElementMultiplicatorModule(lTemplateCopy, this.values);
             this.contentManager.multiplicatorModule = lManipulatorModule;
         }
 

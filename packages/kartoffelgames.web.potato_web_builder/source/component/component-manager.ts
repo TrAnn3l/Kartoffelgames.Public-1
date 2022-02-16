@@ -82,7 +82,7 @@ export class ComponentManager {
         let lTemplate: XmlDocument;
         if (!lCache) {
             lTemplate = ComponentManager.mXmlParser.parse(pTemplate);
-            lModules = new ComponentModules(pExpressionModule);
+            lModules = new ComponentModules(this, pExpressionModule);
             ComponentManager.mComponentCache.set(pUserClass, [lModules, lTemplate]);
         } else {
             [lModules, lTemplate] = lCache;

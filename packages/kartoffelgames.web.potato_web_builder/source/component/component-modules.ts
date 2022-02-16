@@ -19,14 +19,17 @@ import { Modules } from '../module/modules';
 
 export class ComponentModules {
     private readonly mExpressionModule: IPwbExpressionModuleClass;
+    private readonly mComponentManager: ComponentManager;
 
     /**
      * Constructor.
      * @param pExpressionModule - default expression module for this component. 
+     * @param pComponentManager - Component manager.
      */
-    public constructor(pExpressionModule?: IPwbExpressionModuleClass) {
+    public constructor(pComponentManager: ComponentManager, pExpressionModule?: IPwbExpressionModuleClass) {
         // Get expression module.
         this.mExpressionModule = pExpressionModule ?? <IPwbExpressionModuleClass><any>MustacheExpressionModule;
+        this.mComponentManager = pComponentManager;
     }
 
     /**
@@ -48,9 +51,10 @@ export class ComponentModules {
 
     /**
      * Check if template uses any manipulator modules.
-     * @param pKeyList - Key list for possible multiplicator modules.
+     * @param pTemplate - Template element.
+     * @param pValues - Values of current layer.
      */
-    public getElementMultiplicatorModule(pTemplate: XmlElement, pValues: LayerValues, pComponentManager: ComponentManager): MultiplicatorModule {
+    public getElementMultiplicatorModule(pTemplate: XmlElement, pValues: LayerValues): MultiplicatorModule {
         // Find manipulator module inside attributes.
         for (const lDefinition of Modules.moduleDefinitions) {
             for (const lAttribute of pTemplate.attributeList) {
@@ -62,7 +66,7 @@ export class ComponentModules {
                         targetTemplate: pTemplate,
                         targetAttribute: lAttribute,
                         values: pValues,
-                        componentManager: pComponentManager,
+                        componentManager: this.mComponentManager,
                     });
 
                     return lModule;
@@ -78,9 +82,8 @@ export class ComponentModules {
      * @param pTemplate - Template
      * @param pElement - Build template.
      * @param pValues - Layer values.
-     * @param pComponentManager - Component manager.
      */
-    public getElementStaticModules(pTemplate: XmlElement, pElement: Element, pValues: LayerValues, pComponentManager: ComponentManager): Array<ExpressionModule | StaticModule> {
+    public getElementStaticModules(pTemplate: XmlElement, pElement: Element, pValues: LayerValues): Array<ExpressionModule | StaticModule> {
         const lModules: Array<ExpressionModule | StaticModule> = new Array<ExpressionModule | StaticModule>();
 
         // Find static modules inside attributes.
@@ -97,7 +100,7 @@ export class ComponentModules {
                         targetTemplate: pTemplate,
                         targetAttribute: lAttribute,
                         values: pValues,
-                        componentManager: pComponentManager,
+                        componentManager: this.mComponentManager,
                         targetNode: pElement
                     });
 
@@ -115,7 +118,7 @@ export class ComponentModules {
                     targetTemplate: pTemplate,
                     targetAttribute: lAttribute,
                     values: pValues,
-                    componentManager: pComponentManager,
+                    componentManager: this.mComponentManager,
                     targetNode: pElement
                 });
 
@@ -128,15 +131,17 @@ export class ComponentModules {
 
     /**
      * Check if template uses any manipulator modules.
-     * @param pKeyList - Key list for possible multiplicator modules.
+     * @param pTemplate - Text node template.
+     * @param pTextNode - Build text node.
+     * @param pValues - Values of current layer.
      */
-    public getTextExpressionModule(pTemplate: TextNode, pTextNode: Text, pValues: LayerValues, pComponentManager: ComponentManager): ExpressionModule {
+    public getTextExpressionModule(pTemplate: TextNode, pTextNode: Text, pValues: LayerValues): ExpressionModule {
         const lModule: ExpressionModule = new ExpressionModule({
             moduleDefinition: Modules.getModuleDefinition(this.mExpressionModule),
             moduleClass: this.mExpressionModule,
             targetTemplate: pTemplate,
             values: pValues,
-            componentManager: pComponentManager,
+            componentManager: this.mComponentManager,
             targetNode: pTextNode
         });
 
