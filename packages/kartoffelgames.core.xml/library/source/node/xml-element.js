@@ -175,6 +175,10 @@ class XmlElement extends base_xml_node_1.BaseXmlNode {
             if (lPrefixNamespaceAttribute) {
                 return lPrefixNamespaceAttribute.value;
             }
+            // Get prefix namespace from parent, if parent is a xml element.
+            if (this.parent instanceof XmlElement) {
+                return this.parent.getNamespace(pPrefix);
+            }
         }
         else {
             // Check for local default namespace.
@@ -185,14 +189,10 @@ class XmlElement extends base_xml_node_1.BaseXmlNode {
             if (lDefaultNamespaceAttribute) {
                 return lDefaultNamespaceAttribute.value;
             }
+            // Get parent mapping.
+            return this.parent?.defaultNamespace ?? null;
         }
-        // Get parent mapping.
-        if (this.parent instanceof XmlElement) {
-            return this.parent.getNamespace(pPrefix);
-        }
-        else {
-            return undefined;
-        }
+        return null;
     }
     /**
      * Removes attribute and return if attribute was removed/existed.

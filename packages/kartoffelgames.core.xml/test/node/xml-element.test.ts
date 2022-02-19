@@ -168,6 +168,34 @@ describe('XmlElement', () => {
             // Evaluation.
             expect(lNamespaceResult).to.be.null;
         });
+
+        it('-- Read: Namespace from parent XmlDocument', () => {
+            // Setup. Create elements.
+            const lDefaultNamespace: string = 'DEFAULT__NAMESPACE';
+            const lDocument: XmlDocument = new XmlDocument(lDefaultNamespace);
+            const lXmlElement: XmlElement = new XmlElement();
+
+            // Setup. Append xml element to document.
+            lDocument.appendChild(lXmlElement);
+
+            // Process.
+            const lNamespaceResult: string = lXmlElement.namespace;
+
+            // Evaluation.
+            expect(lNamespaceResult).to.equal(lDefaultNamespace);
+        });
+
+        it('-- Read: Namespace prefix without namespace definition', () => {
+            // Setup. Create xml element and set default namespace.
+            const lXmlElement: XmlElement = new XmlElement();
+            lXmlElement.namespacePrefix = 'prefix';
+
+            // Process.
+            const lNamespaceResult: string = lXmlElement.namespace;
+
+            // Evaluation.
+            expect(lNamespaceResult).to.be.null;
+        });
     });
 
     it('Property: namespacePrefix', () => {

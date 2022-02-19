@@ -208,6 +208,11 @@ export class XmlElement extends BaseXmlNode {
             if (lPrefixNamespaceAttribute) {
                 return lPrefixNamespaceAttribute.value;
             }
+
+            // Get prefix namespace from parent, if parent is a xml element.
+            if (this.parent instanceof XmlElement) {
+                return this.parent.getNamespace(pPrefix);
+            }
         } else {
             // Check for local default namespace.
             const lDefaultNamespaceAttribute: XmlAttribute = this.attributeList.find((pAttribute: XmlAttribute) => {
@@ -218,14 +223,12 @@ export class XmlElement extends BaseXmlNode {
             if (lDefaultNamespaceAttribute) {
                 return lDefaultNamespaceAttribute.value;
             }
+
+            // Get parent mapping.
+            return this.parent?.defaultNamespace ?? null; 
         }
 
-        // Get parent mapping.
-        if (this.parent instanceof XmlElement) {
-            return this.parent.getNamespace(pPrefix);
-        } else {
-            return undefined;
-        }
+        return null;
     }
 
     /**
