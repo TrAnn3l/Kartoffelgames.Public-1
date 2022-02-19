@@ -39,7 +39,7 @@ export class StaticBuilder extends BaseBuilder {
      * Update static builder.
      */
     protected onUpdate(): boolean {
-        if (this.mInitialized) {
+        if (!this.mInitialized) {
             this.mInitialized = true;
             this.buildTemplate([this.template]);
         }

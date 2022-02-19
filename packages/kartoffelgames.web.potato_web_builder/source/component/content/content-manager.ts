@@ -156,9 +156,9 @@ export class ContentManager {
      */
     private insertContentAfter(pChild: Content, pParentElement: Element, pTarget: Content): void {
         // Find real parent.
-        const lParent: Element = pParentElement ?? this.mContentAnchor.parentElement;
+        const lParent: Element | ShadowRoot = pParentElement ?? this.mContentAnchor.parentElement ?? <ShadowRoot>this.mContentAnchor.getRootNode();
 
-        const lSlotableNode: Node = this.toSlotable(lParent, pChild);
+        const lSlotableNode: Node = this.contentToNode(pChild);
         if (!pTarget) {
             // No target means prepend.
             lParent.prepend(lSlotableNode);
@@ -346,43 +346,15 @@ export class ContentManager {
     }
 
     /**
-     * Parse an node so it contains the slot attribute with the correct slot name.
-     * @param pParentElement - parent element.
+     * Parse content to node.
      * @param pContent - Node that should be added.
-     * @param pTemplate - Template of node.
-     * @returns parsed element that has the slot attribute.
      */
-    private toSlotable(pParentElement: Element, pContent: Content): Node {
-        let lNode: Node;
-
+    private contentToNode(pContent: Content): Node {
         if (pContent instanceof BaseBuilder) {
-            lNode = pContent.anchor;
+            return pContent.anchor;
         } else {
-            // Check if parent is a component.
-            if (ComponentConnection.componentManagerOf(pParentElement)) {
-                // Wrap text nodes into span element.
-                let lSlotedElement: Element;
-                if (pContent instanceof Text) {
-                    const lSpanTemplate: XmlElement = new XmlElement();
-                    lSpanTemplate.tagName = 'span';
-
-                    // Wrap text node.
-                    const lSpanWrapper: HTMLSpanElement = <HTMLSpanElement>ElementCreator.createElement(lSpanTemplate);
-                    lSpanWrapper.appendChild(<Text>pContent);
-
-                    lSlotedElement = lSpanWrapper;
-                } else {
-                    // Content can only be element. No Text and no comment.
-                    lSlotedElement = <Element>pContent;
-                }
-
-                lNode = lSlotedElement;
-            } else {
-                lNode = pContent;
-            }
+            return pContent;
         }
-
-        return lNode;
     }
 }
 

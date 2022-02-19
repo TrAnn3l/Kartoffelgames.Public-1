@@ -139,7 +139,7 @@ export class UpdateHandler {
     private dispatchUpdateListener(pReason: ChangeDetectionReason): void {
         // Trigger all update listener.
         for (const lListener of this.mUpdateListener) {
-            lListener.bind(this, pReason);
+            lListener.bind(this)(pReason);
         }
     }
 
