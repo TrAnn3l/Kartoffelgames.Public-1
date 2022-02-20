@@ -1,12 +1,9 @@
 import { Dictionary } from '@kartoffelgames/core.data';
-import { XmlAttribute } from '@kartoffelgames/core.xml';
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
-import { ComponentManager } from '../../../component/component-manager';
 import { LayerValues } from '../../../component/values/layer-values';
 import { StaticAttributeModule } from '../../../decorator/module/static-attribute-module';
 import { ModuleAccessType } from '../../../enum/module-access-type';
 import { IPwbStaticModuleOnUpdate } from '../../../interface/module';
-import { HtmlContent } from '../../../types';
 import { AttributeReference } from '../../base/injection/attribute-reference';
 import { TargetReference } from '../../base/injection/target-reference';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';

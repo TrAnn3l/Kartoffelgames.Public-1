@@ -18,7 +18,7 @@ export function StaticAttributeModule(pSettings: AttributeModuleSettings): any {
 
         // Register module.
         Modules.add(pStaticModuleConstructor, {
-            type: ModuleType.Manipulator,
+            type: ModuleType.Static,
             selector: pSettings.selector,
             forbiddenInManipulatorScopes: pSettings.forbiddenInManipulatorScopes,
             access: pSettings.access

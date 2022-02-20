@@ -1,6 +1,6 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { Injection, InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
-import { BaseXmlNode, XmlAttribute } from '@kartoffelgames/core.xml';
+import { BaseXmlNode, XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { ComponentManager } from '../../component/component-manager';
 import { LayerValues } from '../../component/values/layer-values';
 import { ModuleAccessType } from '../../enum/module-access-type';
@@ -67,8 +67,17 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
      * @param pModuleDefinition - Definition.
      */
     constructor(pParameter: BaseModuleConstructorParameter<TModuleObjectResult>) {
+        // Clone template.
+        const lTemplateClone: BaseXmlNode = pParameter.targetTemplate.clone();
+        lTemplateClone.parent = pParameter.targetTemplate.parent;
+
+        // Remove target atribute.
+        if(lTemplateClone instanceof XmlElement && pParameter.targetAttribute){
+            lTemplateClone.removeAttribute(pParameter.targetAttribute.qualifiedName);
+        }
+
         this.mModuleDefinition = pParameter.moduleDefinition;
-        this.mTargetTemplate = pParameter.targetTemplate;
+        this.mTargetTemplate = lTemplateClone;
         this.mModuleClass = pParameter.moduleClass;
         this.mTargetNode = pParameter.targetNode;
         this.mTargetAttribute = pParameter.targetAttribute;
@@ -79,7 +88,7 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
         this.mInjections.set(LayerValues, pParameter.values);
         this.mInjections.set(ComponentManager, pParameter.componentManager);
         this.mInjections.set(AttributeReference, new AttributeReference(pParameter.targetAttribute));
-        this.mInjections.set(TemplateReference, new TemplateReference(pParameter.targetTemplate));
+        this.mInjections.set(TemplateReference, new TemplateReference(lTemplateClone));
         this.mInjections.set(TargetReference, new TargetReference(pParameter.targetNode));
     }
 

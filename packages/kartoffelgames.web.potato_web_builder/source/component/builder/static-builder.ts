@@ -175,13 +175,8 @@ export class StaticBuilder extends BaseBuilder {
      * @param pShadowParent - Parent template element that is loosly linked as parent.
      */
     public buildMultiplicatorTemplate(pMultiplicatorTemplate: XmlElement, pMultiplicatorAttribute: XmlAttribute, pParentHtmlElement: Element, pShadowParent: BaseXmlNode) {
-        // Clone template and remove multiplicator templat.
-        const lTemplateClone: XmlElement = pMultiplicatorTemplate.clone();
-        lTemplateClone.removeAttribute(pMultiplicatorAttribute.qualifiedName);
-        lTemplateClone.parent = pShadowParent;
-
         // Create new component builder and add to content.
-        const lMultiplicatorBuilder: MultiplicatorBuilder = new MultiplicatorBuilder(lTemplateClone, pShadowParent, this.contentManager.modules, this.values, this);
+        const lMultiplicatorBuilder: MultiplicatorBuilder = new MultiplicatorBuilder(pMultiplicatorTemplate, pShadowParent, this.contentManager.modules, this.values, this);
         this.contentManager.append(lMultiplicatorBuilder, pParentHtmlElement);
     }
 }

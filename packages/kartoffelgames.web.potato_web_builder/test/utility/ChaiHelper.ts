@@ -40,11 +40,16 @@ Assertion.addMethod('componentStructure', function (pChilds: ComponentStructure,
                 lActualStucture.push(null);
             } else if (lExpectedStructure) {
                 if (lActualNode instanceof Element) {
-                    lActualStucture.push({
+                    const lStructure: ChildNodeStructure = {
                         node: lActualClass,
-                        useShadowRoot: lExpectedStructure.useShadowRoot,
                         childs: lCreateMap(lActualNode, lExpectedStructure.childs, lExpectedStructure.useShadowRoot)
-                    });
+                    };
+
+                    if ('useShadowRoot' in lExpectedStructure) {
+                        lStructure.useShadowRoot = lExpectedStructure.useShadowRoot;
+                    }
+
+                    lActualStucture.push(lStructure);
                 } else {
                     lActualStucture.push(lActualClass);
                 }
@@ -71,7 +76,7 @@ export type ChildNodeStructure = {
 declare global {
     export namespace Chai {
         interface Assertion {
-            componentStructure(pChilds: ComponentStructure, pUseShadowRoot: boolean): void
+            componentStructure(pChilds: ComponentStructure, pUseShadowRoot: boolean): void;
         }
     }
 }

@@ -39,9 +39,12 @@ export class ComponentModules {
     public getMultiplicatorAttribute(pTemplate: XmlElement): XmlAttribute {
         // Find manipulator module inside attributes.
         for (const lDefinition of Modules.moduleDefinitions) {
-            for (const lAttribute of pTemplate.attributeList) {
-                if (lDefinition.selector.test(lAttribute.qualifiedName)) {
-                    return lAttribute;
+            // Only manipulator modules.
+            if (lDefinition.type === ModuleType.Manipulator) {
+                for (const lAttribute of pTemplate.attributeList) {
+                    if (lDefinition.selector.test(lAttribute.qualifiedName)) {
+                        return lAttribute;
+                    }
                 }
             }
         }
@@ -57,19 +60,22 @@ export class ComponentModules {
     public getElementMultiplicatorModule(pTemplate: XmlElement, pValues: LayerValues): MultiplicatorModule {
         // Find manipulator module inside attributes.
         for (const lDefinition of Modules.moduleDefinitions) {
-            for (const lAttribute of pTemplate.attributeList) {
-                if (lDefinition.type === ModuleType.Manipulator && lDefinition.selector.test(lAttribute.qualifiedName)) {
-                    // Get constructor and create new module.
-                    const lModule: MultiplicatorModule = new MultiplicatorModule({
-                        moduleDefinition: lDefinition,
-                        moduleClass: <IPwbMultiplicatorModuleClass>Modules.getModuleClass(lDefinition),
-                        targetTemplate: pTemplate,
-                        targetAttribute: lAttribute,
-                        values: pValues,
-                        componentManager: this.mComponentManager,
-                    });
+            // Only manipulator modules.
+            if (lDefinition.type === ModuleType.Manipulator) {
+                for (const lAttribute of pTemplate.attributeList) {
+                    if (lDefinition.selector.test(lAttribute.qualifiedName)) {
+                        // Get constructor and create new module.
+                        const lModule: MultiplicatorModule = new MultiplicatorModule({
+                            moduleDefinition: lDefinition,
+                            moduleClass: <IPwbMultiplicatorModuleClass>Modules.getModuleClass(lDefinition),
+                            targetTemplate: pTemplate,
+                            targetAttribute: lAttribute,
+                            values: pValues,
+                            componentManager: this.mComponentManager,
+                        });
 
-                    return lModule;
+                        return lModule;
+                    }
                 }
             }
         }

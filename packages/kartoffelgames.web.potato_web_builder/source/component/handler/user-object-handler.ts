@@ -6,6 +6,7 @@ import { UpdateHandler } from './update-handler';
 
 export class UserObjectHandler {
     private readonly mUserObject: UserObject;
+    private readonly mUserClass: UserClass;
 
     /**
      * Untracked user class instance.
@@ -18,7 +19,7 @@ export class UserObjectHandler {
      * User class.
      */
     public get userClass(): UserClass {
-        return <UserClass>this.mUserObject.constructor;
+        return this.mUserClass;
     }
 
     /**
@@ -48,6 +49,7 @@ export class UserObjectHandler {
             lUntrackedUserObject = Injection.createObject(pUserClass, lLocalInjections);
         });
         this.mUserObject = pUpdateHandler.registerObject(lUntrackedUserObject);
+        this.mUserClass = pUserClass;
     }
 
     /**

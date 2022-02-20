@@ -1,4 +1,4 @@
-import { BaseXmlNode, XmlElement } from '@kartoffelgames/core.xml';
+import { BaseXmlNode, XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { ChangeState, DifferenceSearch, HistoryItem } from '@kartoffelgames/web.change-detection';
 import { MultiplicatorModule } from '../../module/base/multiplicator-module';
 import { ManipulatorElement, MultiplicatorResult } from '../../module/base/result/multiplicator-result';
@@ -34,12 +34,10 @@ export class MultiplicatorBuilder extends BaseBuilder {
     protected onUpdate(): boolean {
         // Create multiplicator module if is does not exist.
         if (!this.contentManager.multiplicatorModule) {
-            // Clone template.
-            const lTemplateCopy: XmlElement = <XmlElement>this.template.clone();
-            lTemplateCopy.parent = this.shadowParent;
+            const lTemplate: XmlElement = <XmlElement>this.template;
 
             // Create module and save inside
-            const lManipulatorModule: MultiplicatorModule = this.contentManager.modules.getElementMultiplicatorModule(lTemplateCopy, this.values);
+            const lManipulatorModule: MultiplicatorModule = this.contentManager.modules.getElementMultiplicatorModule(lTemplate, this.values);
             this.contentManager.multiplicatorModule = lManipulatorModule;
         }
 
@@ -102,7 +100,7 @@ export class MultiplicatorBuilder extends BaseBuilder {
             // Update, Remove or do nothing with static builder depended on change state.
             if (lHistoryItem.changeState === ChangeState.Keep) {
                 lLastContent = lHistoryItem.item;
-            } if (lHistoryItem.changeState === ChangeState.Remove) {
+            } else if (lHistoryItem.changeState === ChangeState.Remove) {
                 this.contentManager.remove(lHistoryItem.item);
             } else if (lHistoryItem.changeState === ChangeState.Insert) {
                 // Create new static builder, insert after last content.

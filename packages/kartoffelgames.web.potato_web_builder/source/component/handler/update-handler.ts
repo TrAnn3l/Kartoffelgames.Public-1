@@ -162,11 +162,13 @@ export class UpdateHandler {
                 // Update component and get if any update was made.
                 this.dispatchUpdateListener(pReason);
 
-                // Release all update waiter
-                for (const lUpdateWaiter of this.mUpdateWaiter) {
-                    lUpdateWaiter();
+                // Release all update waiter when no update is sheduled.
+                if (!this.mUpdateSheduled) {
+                    for (const lUpdateWaiter of this.mUpdateWaiter) {
+                        lUpdateWaiter();
+                    }
+                    this.mUpdateWaiter.clear();
                 }
-                this.mUpdateWaiter.clear();
             });
         }, pReason);
     }

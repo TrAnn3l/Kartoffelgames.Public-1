@@ -6,6 +6,45 @@ import { MetadataKey } from '../../source/metadata-key';
 
 export class TestUtil {
     /**
+     * Get component inner values. Start new selector if value should be searched inside shadow root.
+     * @param pComponent - Component.
+     * @param pSelectorList - List of selectors.
+     */
+    public static getComponentNode<TExpected extends Element>(pComponent: Element, ...pSelectorList: Array<string>): TExpected {
+        // Clone selector list.
+        const lSelectorList: Array<string> = [...pSelectorList];
+
+        let lComponent: Element = pComponent;
+
+        // Check if element has shadow root.
+        if (lComponent.shadowRoot) {
+            lComponent = lComponent.shadowRoot.querySelector(lSelectorList.shift());
+        } else {
+            lComponent = lComponent.querySelector(lSelectorList.shift());
+        }
+
+        // Search next selector.
+        if (lSelectorList.length > 0) {
+            lComponent = TestUtil.getComponentNode(lComponent, ...pSelectorList);
+        }
+
+        return <TExpected>lComponent;
+    }
+
+    /**
+     * Get random component selector.
+     */
+    public static randomSelector(): string {
+        let lResult = '';
+        const lCharacters = 'abcdefghijklmnopqrstuvwxyz';
+        const lCharactersLength = lCharacters.length;
+        for (let lIndex = 0; lIndex < 10; lIndex++) {
+            lResult += lCharacters.charAt(Math.floor(Math.random() * lCharactersLength));
+        }
+        return `${lResult}-${lResult}`;
+    }
+
+    /**
      * Create component from selector.
      * @param pSelector - component selector.
      */
@@ -21,6 +60,24 @@ export class TestUtil {
         await ComponentConnection.componentManagerOf(lComponent).updateHandler.waitForUpdate();
 
         return lComponent;
+    }
+
+    /**
+     * Wait for component to update.
+     * @param pComponent - Component.
+     */
+    public static async waitForUpdate(pComponent: HTMLElement): Promise<void> {
+        const lComponentManager: ComponentManager = ComponentConnection.componentManagerOf(pComponent);
+        await lComponentManager.updateHandler.waitForUpdate();
+    }
+
+    /**
+     * Manual update component.
+     * @param pComponent - Component.
+     */
+    public static async manualUpdate(pComponent: HTMLElement): Promise<void> {
+        const lComponentManager: ComponentManager = ComponentConnection.componentManagerOf(pComponent);
+        await lComponentManager.updateHandler.requestUpdate({ source: pComponent, property: null, stacktrace: '' });
     }
 }
 

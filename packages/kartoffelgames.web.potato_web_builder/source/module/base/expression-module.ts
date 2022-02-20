@@ -73,6 +73,9 @@ export class ExpressionModule extends BaseModule<boolean, string> {
                 this.node.nodeValue = lNewValue;
             }
 
+            // Save last value.
+            this.mLastResult = lNewValue;
+
             return true;
         } else {
             return false;
