@@ -1,0 +1,21 @@
+{
+    "$schema": "https://turborepo.org/schema.json",
+    "baseBranch": "origin/master",
+    "pipeline": {
+        "build:debug": {
+            "dependsOn": [
+                "^build:debug"
+            ]
+        },
+        "build:release": {
+            "dependsOn": [
+                "^build:release"
+            ]
+        },
+        "test": {
+            "dependsOn": [
+                "^build:debug"
+            ]
+        }
+    }
+}

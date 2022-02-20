@@ -18,25 +18,5 @@
         "@typescript-eslint/parser": "~5.3.0",
         "eslint": "8.2.0",
         "turbo": "^1.0.28"
-    },
-    "turbo": {
-        "baseBranch": "origin/master",
-        "pipeline": {
-            "build:debug": {
-                "dependsOn": [
-                    "^build:debug"
-                ]
-            },
-            "build:release": {
-                "dependsOn": [
-                    "^build:release"
-                ]
-            },
-            "test": {
-                "dependsOn": [
-                    "^build:debug"
-                ]
-            }
-        }
     }
 }
