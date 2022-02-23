@@ -1,8 +1,11 @@
+import { InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
 import { expect } from 'chai';
 import { HtmlComponent } from '../../../source/decorator/component/html-component';
 import '../../mock/request-animation-frame-mock-session';
 import '../../utility/ChaiHelper';
 import { TestUtil } from '../../utility/TestUtil';
+
+const HTMLSlotElement: InjectionConstructor = <any>document.createElement('slot').constructor;
 
 describe('SlotAttribute', () => {
     it('-- Default slot', async () => {
@@ -19,8 +22,9 @@ describe('SlotAttribute', () => {
 
         // Evaluation.
         expect(lComponent).to.have.componentStructure([
-            Comment,
-            Comment,
+            Comment, // Component Anchor
+            Comment, // - Manipulator Anchor
+            Comment, // -- Manipulator Child Anchor
             {
                 node: HTMLDivElement,
                 childs: [HTMLSlotElement]
@@ -42,17 +46,19 @@ describe('SlotAttribute', () => {
 
         // Setup. Create element.
         const lComponent: HTMLElement & TestComponent = await <any>TestUtil.createComponent(TestComponent);
-        const lSlotNameResult: string = TestUtil.getComponentNode<HTMLSlotElement>(lComponent, 'div slot').getAttribute('name');
 
         // Evaluation.
         expect(lComponent).to.have.componentStructure([
-            Comment,
-            Comment,
+            Comment, // Component Anchor
+            Comment, // - Manipulator Anchor
+            Comment, // -- Manipulator Child Anchor
             {
                 node: HTMLDivElement,
-                childs: [HTMLSlotElement]
+                childs: [{
+                    node: HTMLSlotElement,
+                    attributes: [{ name: 'name', value: lSlotName, }]
+                }]
             }
         ], true);
-        expect(lSlotNameResult).to.equal(lSlotName);
     });
 });

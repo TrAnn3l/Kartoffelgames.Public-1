@@ -100,19 +100,7 @@ export class ContentManager {
      * @param pTarget - Target where child gets append after. 
      */
     public after(pChild: Content, pTarget: Content): void {
-        let lParent: Element;
-        if (this.mRootChildList.includes(pTarget)) {
-            lParent = null;
-        } else {
-            if (pTarget instanceof BaseBuilder) {
-                lParent = pTarget.boundary.start.parentElement;
-            } else {
-                lParent = pTarget.parentElement;
-            }
-
-        }
-
-        this.insertContentAfter(pChild, lParent, pTarget);
+        this.insertContent(pChild, pTarget, 'After');
     };
 
     /**
@@ -124,16 +112,7 @@ export class ContentManager {
     public append(pChild: Content): void;
     public append(pChild: Content, pParentElement: Element): void;
     public append(pChild: Content, pParentElement: Element = null): void {
-        let lTarget: Content;
-        if (pParentElement) {
-            // Last Child element of parent.
-            lTarget = pParentElement.childNodes[pParentElement.childNodes.length - 1];
-        } else {
-            // Boundary end.
-            lTarget = this.mBoundaryDescription.end;
-        }
-
-        this.insertContentAfter(pChild, pParentElement, lTarget);
+        this.insertContent(pChild, pParentElement, 'Append');
     };
 
     /**
@@ -145,41 +124,96 @@ export class ContentManager {
     public prepend(pChild: Content): void;
     public prepend(pChild: Content, pParentElement: Element): void;
     public prepend(pChild: Content, pParentElement: Element = null): void {
-        this.insertContentAfter(pChild, pParentElement, null);
+        this.insertContent(pChild, pParentElement, 'Prepend');
     };
 
     /**
-     * Append child after target.
-     * @param pChild - Child node.
-     * @param pParentElement - Parent element of child.
-     * @param pTarget - Target where child gets append after. 
+     * Add element to content.
+     * @param pChild - The element that should be added.
+     * @param pTarget - Parent element or target node.
+     * @param pMode - Add mode for child.
      */
-    private insertContentAfter(pChild: Content, pParentElement: Element, pTarget: Content): void {
-        // Find real parent.
-        const lParent: Element | ShadowRoot = pParentElement ?? this.mContentAnchor.parentElement ?? <ShadowRoot>this.mContentAnchor.getRootNode();
+    private insertContent(pChild: Content, pTarget: Content, pMode: "After"): void;
+    private insertContent(pChild: Content, pParent: Element, pMode: "Append" | "Prepend"): void;
+    private insertContent(pChild: Content, pTarget: Content, pMode: "Append" | "After" | "Prepend"): void {
+        // Get anchor of child if child is a builder.
+        const lRealChildNode: Node = (pChild instanceof BaseBuilder) ? pChild.anchor : pChild;
 
-        const lSlotableNode: Node = this.contentToNode(pChild);
-        if (!pTarget) {
-            // No target means prepend.
-            lParent.prepend(lSlotableNode);
-        } else {
-            let lTargetNode: Node;
-            if (pTarget instanceof BaseBuilder) {
-                lTargetNode = pTarget.boundary.end;
-            } else {
-                lTargetNode = pTarget;
+        // Get real parent element. 
+        let lRealParent: Element | ShadowRoot;
+        if (pMode === 'Append' || pMode === "Prepend") {
+            lRealParent = <Element>pTarget;
+            if (!lRealParent) {
+                // Parent is null, because element should be append to builder root.
+                // Builder parent is builder anchor parent. If anchor parent is null, builder parent is the component shadow root.
+                lRealParent = this.mContentAnchor.parentElement ?? <ShadowRoot>this.mContentAnchor.getRootNode();
             }
+        } else { // pMode === 'After'
+            lRealParent = (pTarget instanceof BaseBuilder) ? pTarget.anchor.parentElement : pTarget.parentElement;
 
-            // Insert before targets next sibling. If nextSibling is null, lSlotableNode is append to target nodes parent.
-            lParent.insertBefore(lSlotableNode, lTargetNode.nextSibling);
+            // Parent is null, because direct parent is the component shadow root.
+            // When parent element is null "this.mContentAnchor.parentElement" is also null. So this check would be unnessessary. 
+            lRealParent = lRealParent ?? <ShadowRoot>this.mContentAnchor.getRootNode();
         }
 
-        // Register element.
-        if (pChild instanceof Text && pChild !== lSlotableNode) {
-            // Register span wrapped text.
-            this.registerContent(lSlotableNode, !pParentElement, pTarget);
+        // If child gets append to builder root. Is is root if real parent is this builders parent element or component shadow root.
+        let lIsRoot: boolean = (lRealParent === this.mContentAnchor.parentElement || lRealParent === this.mContentAnchor.getRootNode());
+
+        // Get node the child gets insert AFTER.
+        let lRealTarget: Node | null;
+        if (pMode === 'Append') {
+            const lParent: Element = <Element>pTarget;
+            // Last element of parent.
+            if (lParent) {
+                // Parent is element. Get last child of element.
+                const lParentChildNodes: NodeListOf<ChildNode> = lParent.childNodes;
+                lRealTarget = lParentChildNodes[lParentChildNodes.length - 1];
+            } else {
+                // "Parent" is this builder. Get last element boundary.
+                lRealTarget = this.getBoundary().end;
+            }
+        } else if (pMode === "Prepend") {
+            // When parent is set, parent is an element, therefore there is no target before the first element.
+            if (pTarget) {
+                lRealTarget = null;
+            } else {
+                // "Parent" is this builder. Get first element, that is always this builders anchor.
+                lRealTarget = this.getBoundary().start;
+            }
+        } else { // pMode === "After"
+            lRealTarget = (pTarget instanceof BaseBuilder) ? pTarget.boundary.end : pTarget;
+        }
+
+        // Get previous sibling content onyl if added on root.
+        let lTargetContent: Content
+        if(lIsRoot){
+            if(pMode === "Prepend"){
+                // Sibling before first element => null.
+                lTargetContent = null;
+            } else if(pMode === "Append"){
+                // Last content of builder.
+                lTargetContent = this.mRootChildList[this.mRootChildList.length -1];
+            } else { // pMode === "After"
+                lTargetContent = pTarget;
+            }
+        }
+
+        // Insert element.
+        if (lRealTarget) {
+            // When there is a target. Get next sibling and append element after that sibling.
+            // Like: parent.insertAfter(child, target);
+            // If nextSibling is null, insertBefore is called as appendChild(child).
+            lRealParent.insertBefore(lRealChildNode, lRealTarget.nextSibling);
         } else {
-            this.registerContent(pChild, !pParentElement, pTarget);
+            // No target means prepend to parent. Parent is allways an element and never a builder.
+            lRealParent.prepend(lRealChildNode);
+        }
+
+        // Register content.
+        if (lIsRoot) {
+            this.registerContent(pChild, lIsRoot, lTargetContent);
+        } else {
+            this.registerContent(pChild, lIsRoot);
         }
     }
 
@@ -342,18 +376,6 @@ export class ContentManager {
             }
 
             this.mRootChildList.remove(pChild);
-        }
-    }
-
-    /**
-     * Parse content to node.
-     * @param pContent - Node that should be added.
-     */
-    private contentToNode(pContent: Content): Node {
-        if (pContent instanceof BaseBuilder) {
-            return pContent.anchor;
-        } else {
-            return pContent;
         }
     }
 }
