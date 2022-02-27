@@ -79,7 +79,7 @@ export class Injection {
                     // Get injectable parameter.
                     lCreatedParameter = Injection.createObject(lParameterType, lLocalInjections);
                 } catch (pException) {
-                    throw new Exception(`Parameter "${lParameterType.name}" of ${lConstructor.name} is not injectable.\n` + pException.message, Injection);
+                    throw new Exception(`Parameter "${lParameterType?.name}" of ${lConstructor?.name} is not injectable.\n` + pException.message, Injection);
                 }
             }
 

@@ -7,9 +7,11 @@ import { ModuleAccessType } from '../../enum/module-access-type';
 import { ModuleType } from '../../enum/module-type';
 import { IPwbModuleClass, IPwbModuleObject, ModuleDefinition } from '../../interface/module';
 import { AttributeReference } from './injection/attribute-reference';
+import { ComponentManagerReference } from './injection/component-manager-reference';
 import { TargetReference } from './injection/target-reference';
 import { TemplateReference } from './injection/template-reference';
-import { ValueReference } from './injection/value-reference';
+import { ExpressionReference } from './injection/expression-reference';
+import { LayerValuesReference } from './injection/layer-values-reference';
 
 export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
     private readonly mModuleObjectList: Array<IPwbModuleObject<TModuleObjectResult>>;
@@ -72,7 +74,7 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
         lTemplateClone.parent = pParameter.targetTemplate.parent;
 
         // Remove target atribute.
-        if(lTemplateClone instanceof XmlElement && pParameter.targetAttribute){
+        if (lTemplateClone instanceof XmlElement && pParameter.targetAttribute) {
             lTemplateClone.removeAttribute(pParameter.targetAttribute.qualifiedName);
         }
 
@@ -85,8 +87,8 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
 
         // Create injection mapping.
         this.mInjections = new Dictionary<InjectionConstructor, any>();
-        this.mInjections.set(LayerValues, pParameter.values);
-        this.mInjections.set(ComponentManager, pParameter.componentManager);
+        this.mInjections.set(LayerValuesReference, new LayerValuesReference(pParameter.values));
+        this.mInjections.set(ComponentManagerReference, new ComponentManagerReference(pParameter.componentManager));
         this.mInjections.set(AttributeReference, new AttributeReference(pParameter.targetAttribute));
         this.mInjections.set(TemplateReference, new TemplateReference(lTemplateClone));
         this.mInjections.set(TargetReference, new TargetReference(pParameter.targetNode));
@@ -113,7 +115,7 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
     protected createModuleObject(pValue: string) {
         // Clone injections and extend by value reference.
         const lInjections = new Dictionary<InjectionConstructor, any>(this.mInjections);
-        lInjections.set(ValueReference, new ValueReference(pValue));
+        lInjections.set(ExpressionReference, new ExpressionReference(pValue));
 
         // Create module object with local injections.
         const lModuleObject: IPwbModuleObject<TModuleObjectResult> = Injection.createObject(this.mModuleClass, this.mInjections);;

@@ -3,6 +3,7 @@ import { LayerValues } from '../../../component/values/layer-values';
 import { MultiplicatorAttributeModule } from '../../../decorator/module/multiplicator-attribute-module';
 import { IPwbMultiplicatorModuleOnUpdate } from '../../../interface/module';
 import { AttributeReference } from '../../base/injection/attribute-reference';
+import { LayerValuesReference } from '../../base/injection/layer-values-reference';
 import { TemplateReference } from '../../base/injection/template-reference';
 import { MultiplicatorResult } from '../../base/result/multiplicator-result';
 
@@ -21,9 +22,9 @@ export class SlotAttributeModule implements IPwbMultiplicatorModuleOnUpdate {
      * @param pValueHandler - Values of component.
      * @param pAttribute - Attribute of module.
      */
-    public constructor(pValueHandler: LayerValues, pAttributeReference: AttributeReference, pTemplateReference: TemplateReference) {
+    public constructor(pValueReference: LayerValuesReference, pAttributeReference: AttributeReference, pTemplateReference: TemplateReference) {
         this.mTemplateReference = pTemplateReference;
-        this.mValueHandler = pValueHandler;
+        this.mValueHandler = pValueReference.value;
         this.mAttributeReference = pAttributeReference;
     }
 

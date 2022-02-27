@@ -5,6 +5,7 @@ import { StaticAttributeModule } from '../../../decorator/module/static-attribut
 import { ModuleAccessType } from '../../../enum/module-access-type';
 import { IPwbStaticModuleOnUpdate } from '../../../interface/module';
 import { AttributeReference } from '../../base/injection/attribute-reference';
+import { LayerValuesReference } from '../../base/injection/layer-values-reference';
 import { TargetReference } from '../../base/injection/target-reference';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
 
@@ -25,12 +26,12 @@ export class TwoWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
     /**
      * Constructor.
      * @param pTargetReference - Target element.
-     * @param pValueHandler - Values of component.
+     * @param pValueReference - Values of component.
      * @param pAttribute - Attribute of module.
      */
-    public constructor(pTargetReference: TargetReference, pValueHandler: LayerValues, pAttributeReference: AttributeReference) {
+    public constructor(pTargetReference: TargetReference, pValueReference: LayerValuesReference, pAttributeReference: AttributeReference) {
         this.mTargetReference = pTargetReference;
-        this.mValueHandler = pValueHandler;
+        this.mValueHandler = pValueReference.value;
         this.mAttributeReference = pAttributeReference;
 
         // Get property name.

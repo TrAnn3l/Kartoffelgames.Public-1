@@ -1,5 +1,4 @@
 import { LayerValues, TextNode, XmlAttribute, XmlElement } from '..';
-import { ComponentManager } from './component-manager';
 import { ModuleType } from '../enum/module-type';
 import { IPwbExpressionModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass } from '../interface/module';
 import { ExpressionModule } from '../module/base/expression-module';
@@ -15,6 +14,7 @@ import '../module/default/attribute_module/slot-attribute-module';
 import '../module/default/attribute_module/two-way-binding-attribute-module';
 import { MustacheExpressionModule } from '../module/default/mustache-expression-module';
 import { Modules } from '../module/modules';
+import { ComponentManager } from './component-manager';
 
 
 export class ComponentModules {

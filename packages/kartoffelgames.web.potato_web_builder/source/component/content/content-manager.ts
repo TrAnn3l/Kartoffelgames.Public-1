@@ -230,8 +230,12 @@ export class ContentManager {
             lComponentManager?.deconstruct();
 
             // Remove from parent.
-            pChild.parentElement?.removeChild(pChild);
-
+            if(pChild.parentElement){
+                pChild.parentElement.removeChild(pChild);
+            } else {
+                pChild.getRootNode().removeChild(pChild);
+            }
+            
             // Unlink modules.
             const lModuleList: Array<BaseModule<boolean, any>> = this.mLinkedModules.get(pChild);
             if (lModuleList) {

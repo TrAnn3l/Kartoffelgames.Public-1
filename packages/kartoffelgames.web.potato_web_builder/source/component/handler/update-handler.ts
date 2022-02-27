@@ -139,8 +139,18 @@ export class UpdateHandler {
     private dispatchUpdateListener(pReason: ChangeDetectionReason): void {
         // Trigger all update listener.
         for (const lListener of this.mUpdateListener) {
-            lListener.bind(this)(pReason);
+            lListener.call(this, pReason);
         }
+    }
+
+    /**
+     * Release all update waiter.
+     */
+    private releaseWaiter(): void {
+        for (const lUpdateWaiter of this.mUpdateWaiter) {
+            lUpdateWaiter();
+        }
+        this.mUpdateWaiter.clear();
     }
 
     /**
@@ -148,6 +158,7 @@ export class UpdateHandler {
      */
     private sheduleUpdate(pReason: ChangeDetectionReason): void {
         if (!this.enabled) {
+            this.releaseWaiter();
             return;
         }
 
@@ -164,10 +175,7 @@ export class UpdateHandler {
 
                 // Release all update waiter when no update is sheduled.
                 if (!this.mUpdateSheduled) {
-                    for (const lUpdateWaiter of this.mUpdateWaiter) {
-                        lUpdateWaiter();
-                    }
-                    this.mUpdateWaiter.clear();
+                    this.releaseWaiter();
                 }
             });
         }, pReason);

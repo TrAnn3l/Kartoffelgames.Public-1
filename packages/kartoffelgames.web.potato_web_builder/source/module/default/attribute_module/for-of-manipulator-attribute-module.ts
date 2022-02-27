@@ -5,6 +5,7 @@ import { LayerValues } from '../../../component/values/layer-values';
 import { MultiplicatorAttributeModule } from '../../../decorator/module/multiplicator-attribute-module';
 import { IPwbMultiplicatorModuleOnUpdate } from '../../../interface/module';
 import { AttributeReference } from '../../base/injection/attribute-reference';
+import { LayerValuesReference } from '../../base/injection/layer-values-reference';
 import { TemplateReference } from '../../base/injection/template-reference';
 import { MultiplicatorResult } from '../../base/result/multiplicator-result';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
@@ -26,12 +27,12 @@ export class ForOfManipulatorAttributeModule implements IPwbMultiplicatorModuleO
     /**
      * Constructor.
      * @param pTemplateReference - Target templat.
-     * @param pValueHandler - Values of component.
+     * @param pValueReferece - Values of component.
      * @param pAttributeReference - Attribute of module.
      */
-    public constructor(pTemplateReference: TemplateReference, pValueHandler: LayerValues, pAttributeReference: AttributeReference) {
+    public constructor(pTemplateReference: TemplateReference, pValueReferece: LayerValuesReference, pAttributeReference: AttributeReference) {
         this.mTemplateReference = pTemplateReference;
-        this.mValueHandler = pValueHandler;
+        this.mValueHandler = pValueReferece.value;
         this.mAttributeReference = pAttributeReference;
         this.mCompareHandler = new CompareHandler(Symbol('Uncompareable'), 4);
     }
