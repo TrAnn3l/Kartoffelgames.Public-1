@@ -67,11 +67,12 @@ export class Patcher {
                 continue;
             }
 
-            const lMemberValue: unknown = lPrototype[lClassMemberName];
+            const lDescriptor: PropertyDescriptor = Object.getOwnPropertyDescriptor(lPrototype, lClassMemberName);
+            const lValue: any = lDescriptor.value;
 
             // Only try to patch methods.
-            if (typeof lMemberValue === 'function') {
-                lPrototype[lClassMemberName] = this.patchFunctionParameter(<any>lMemberValue);
+            if (typeof lValue === 'function') {
+                lPrototype[lClassMemberName] = this.patchFunctionParameter(<any>lValue);
             }
         }
 
