@@ -118,7 +118,7 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
         lInjections.set(ExpressionReference, new ExpressionReference(pValue));
 
         // Create module object with local injections.
-        const lModuleObject: IPwbModuleObject<TModuleObjectResult> = Injection.createObject(this.mModuleClass, this.mInjections);;
+        const lModuleObject: IPwbModuleObject<TModuleObjectResult> = Injection.createObject(this.mModuleClass, lInjections);
         this.mModuleObjectList.push(lModuleObject);
 
         return lModuleObject;

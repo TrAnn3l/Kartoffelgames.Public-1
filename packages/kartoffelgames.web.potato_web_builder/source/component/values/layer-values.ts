@@ -107,7 +107,7 @@ export class LayerValues {
         let lValue: any = this.mTemporaryValues.get(pValueName);
 
         // If value was not found and parent exists, search in parent values.
-        if (!lValue && this.mParentLayer) {
+        if (typeof lValue === 'undefined' && this.mParentLayer) {
             lValue = this.mParentLayer.getValue(pValueName);
         }
 

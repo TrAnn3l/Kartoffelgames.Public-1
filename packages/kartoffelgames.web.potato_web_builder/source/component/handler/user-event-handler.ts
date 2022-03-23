@@ -29,10 +29,7 @@ export class UserEventHandler {
             if (typeof lEventProperty === 'string') {
                 const lEventEmitter: ComponentEventEmitter<any> = Reflect.get(this.mUserObjectHandler.userObject, lEventProperty);
 
-                // When event is event emitter.
-                if (lEventEmitter instanceof ComponentEventEmitter) {
-                    return lEventEmitter;
-                }
+                return lEventEmitter;
             }
         }
 

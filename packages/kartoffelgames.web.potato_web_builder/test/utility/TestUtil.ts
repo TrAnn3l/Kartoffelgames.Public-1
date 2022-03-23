@@ -63,6 +63,13 @@ export class TestUtil {
     }
 
     /**
+     * Deconstruct the component.
+     */
+    public static deconstructComponent(pComponent: HTMLElement): void {
+        ComponentConnection.componentManagerOf(pComponent).deconstruct();
+    }
+
+    /**
      * Wait for component to update.
      * @param pComponent - Component.
      */

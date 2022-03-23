@@ -1,9 +1,9 @@
 import { expect } from 'chai';
-import { HtmlComponent } from '../../../source/decorator/component/html-component';
-import { Export } from '../../../source/index';
-import '../../mock/request-animation-frame-mock-session';
-import '../../utility/ChaiHelper';
-import { TestUtil } from '../../utility/TestUtil';
+import { HtmlComponent } from '../../../../../source/decorator/component/html-component';
+import { Export } from '../../../../../source/index';
+import '../../../../mock/request-animation-frame-mock-session';
+import '../../../../utility/ChaiHelper';
+import { TestUtil } from '../../../../utility/TestUtil';
 
 describe('IfManipulatorAttributeModule', () => {
     it('Initial false', async () => {
@@ -23,7 +23,10 @@ describe('IfManipulatorAttributeModule', () => {
         const lComponent: HTMLElement & TestComponent = await <any>TestUtil.createComponent(TestComponent);
 
         // Evaluation. Two Anchors. Static-Root => Manipulator => No Childs, no anchors.
-        expect(lComponent.shadowRoot.childNodes).has.lengthOf(2);
+        expect(lComponent).to.have.componentStructure([
+            Comment, // Component Anchor
+            Comment, // - Manipulator Anchor
+        ], true);
     });
 
     it('Initial true', async () => {
@@ -71,7 +74,10 @@ describe('IfManipulatorAttributeModule', () => {
         await TestUtil.waitForUpdate(lComponent);
 
         // Evaluation. Two Anchors. Static-Root => Manipulator => No Childs, no anchors.
-        expect(lComponent.shadowRoot.childNodes).has.lengthOf(2);
+        expect(lComponent).to.have.componentStructure([
+            Comment, // Component Anchor
+            Comment, // - Manipulator Anchor
+        ], true);
     });
 
     it('Updated true', async () => {
@@ -119,7 +125,10 @@ describe('IfManipulatorAttributeModule', () => {
         const lComponent: HTMLElement & TestComponent = await <any>TestUtil.createComponent(TestComponent);
 
         // Evaluation. Two Anchors. Static-Root => Manipulator => No Childs, no anchors.
-        expect(lComponent.shadowRoot.childNodes).has.lengthOf(2);
+        expect(lComponent).to.have.componentStructure([
+            Comment, // Component Anchor
+            Comment, // - Manipulator Anchor
+        ], true);
     });
 
     it('None boolean true value', async () => {

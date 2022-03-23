@@ -13,7 +13,7 @@ import { ComponentScopeExecutor } from '../../execution/component-scope-executor
 /**
  * For of.
  * Doublicates html element for each item in object or array.
- * Syntax: "[CustomName] of [List] (;[CustomIndexName] = index)?"
+ * Syntax: "[CustomName] of [List] (;[CustomIndexName] = $index)?"
  */
 @MultiplicatorAttributeModule({
     selector: /^\*pwbFor$/
@@ -70,10 +70,13 @@ export class ForOfManipulatorAttributeModule implements IPwbMultiplicatorModuleO
 
             // Only proceed if value is added to html element.
             if (typeof lListObject === 'object' && lListObject !== null || Array.isArray(lListObject)) {
-                // For array loop for arrays and for-in for objects.
-                if (Array.isArray(lListObject)) {
-                    for (let lIndex: number = 0; lIndex < lListObject.length; lIndex++) {
-                        this.addTempateForElement(lModuleResult, lExpression, lListObject[lIndex], lIndex);
+                // Iterator iterator and
+                if(Symbol.iterator in lListObject){
+                    const lIterator: Generator<any, any> = <Generator<any, any>>lListObject;
+                    let lIndex: number = 0;
+                    for(const lValue of lIterator){
+                        // Add new template item and count index.
+                        this.addTempateForElement(lModuleResult, lExpression, lValue, lIndex++);
                     }
                 } else {
                     for (const lListObjectKey in lListObject) {
@@ -87,7 +90,7 @@ export class ForOfManipulatorAttributeModule implements IPwbMultiplicatorModuleO
                 return null;
             }
         } else {
-            throw new Exception(`pwbFor-Paramater value has wrong format: ${this.mAttributeReference.value.toString()}`, this);
+            throw new Exception(`pwbFor-Paramater value has wrong format: ${this.mAttributeReference.value.value.toString()}`, this);
         }
     }
 

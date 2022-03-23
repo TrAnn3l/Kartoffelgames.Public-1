@@ -1,9 +1,9 @@
 import { InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
 import { expect } from 'chai';
-import { HtmlComponent } from '../../../source/decorator/component/html-component';
-import '../../mock/request-animation-frame-mock-session';
-import '../../utility/ChaiHelper';
-import { TestUtil } from '../../utility/TestUtil';
+import { HtmlComponent } from '../../../../../source/decorator/component/html-component';
+import '../../../../mock/request-animation-frame-mock-session';
+import '../../../../utility/ChaiHelper';
+import { TestUtil } from '../../../../utility/TestUtil';
 
 const HTMLSlotElement: InjectionConstructor = <any>document.createElement('slot').constructor;
 

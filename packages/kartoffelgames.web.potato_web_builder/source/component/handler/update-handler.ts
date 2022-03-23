@@ -12,7 +12,7 @@ export class UpdateHandler {
     private readonly mUpdateListener: List<UpdateListener>;
     private readonly mUpdateScope: UpdateScope;
     private mUpdateSheduled: boolean;
-    private readonly mUpdateWaiter: List<() => void>;
+    private readonly mUpdateWaiter: List<UpdateWaiter>;
 
     /**
      * Get enabled state of update handler.
@@ -38,7 +38,7 @@ export class UpdateHandler {
         this.mUpdateScope = pUpdateScope;
         this.mUpdateListener = new List<UpdateListener>();
         this.mEnabled = false;
-        this.mUpdateWaiter = new List<() => void>();
+        this.mUpdateWaiter = new List<UpdateWaiter>();
         this.mLoopDetectionHandler = new LoopDetectionHandler(10);
 
         // Create new change detection if component is not inside change detection or mode is capsuled.
@@ -122,10 +122,15 @@ export class UpdateHandler {
     public async waitForUpdate(): Promise<boolean> {
         if (this.mUpdateSheduled) {
             // Add new callback to waiter line.
-            return new Promise<boolean>((pResolve: (pValue: boolean) => void) => {
-                this.mUpdateWaiter.push(() => {
-                    // Is resolved when all data were updated.
-                    pResolve(true);
+            return new Promise<boolean>((pResolve: (pValue: boolean) => void, pReject: (pError: any) => void) => {
+                this.mUpdateWaiter.push((pError: any) => {
+                    if (pError) {
+                        // Reject if any error exist.
+                        pReject(pError);
+                    } else {
+                        // Is resolved when all data were updated.
+                        pResolve(true);
+                    }
                 });
             });
         } else {
@@ -146,9 +151,9 @@ export class UpdateHandler {
     /**
      * Release all update waiter.
      */
-    private releaseWaiter(): void {
+    private releaseWaiter(pError?: any): void {
         for (const lUpdateWaiter of this.mUpdateWaiter) {
-            lUpdateWaiter();
+            lUpdateWaiter(pError);
         }
         this.mUpdateWaiter.clear();
     }
@@ -171,15 +176,21 @@ export class UpdateHandler {
                 this.mUpdateSheduled = false;
 
                 // Update component and get if any update was made.
-                this.dispatchUpdateListener(pReason);
-
-                // Release all update waiter when no update is sheduled.
-                if (!this.mUpdateSheduled) {
-                    this.releaseWaiter();
+                let lError: any = null;
+                try {
+                    this.dispatchUpdateListener(pReason);
+                } catch (pError) {
+                    lError = pError;
+                } finally {
+                    // Release all update waiter when no update is sheduled or an error occurred.
+                    if (!this.mUpdateSheduled || lError) {
+                        this.releaseWaiter(lError);
+                    }
                 }
             });
         }, pReason);
     }
 }
 
+type UpdateWaiter = (pError?: any) => void;
 export type UpdateListener = (pReason: ChangeDetectionReason) => void;

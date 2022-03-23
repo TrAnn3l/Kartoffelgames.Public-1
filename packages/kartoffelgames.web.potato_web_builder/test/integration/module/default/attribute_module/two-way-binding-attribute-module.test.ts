@@ -1,11 +1,11 @@
 import { expect } from 'chai';
-import { HtmlComponent } from '../../../source/decorator/component/html-component';
-import { Export } from '../../../source/index';
-import '../../mock/request-animation-frame-mock-session';
-import '../../utility/ChaiHelper';
-import { TestUtil } from '../../utility/TestUtil';
+import { HtmlComponent } from '../../../../../source/decorator/component/html-component';
+import { Export } from '../../../../../source/index';
+import '../../../../mock/request-animation-frame-mock-session';
+import '../../../../utility/ChaiHelper';
+import { TestUtil } from '../../../../utility/TestUtil';
 
-describe('OneWayBindingAttribute', () => {
+describe('TwoWayBindingAttributeModule', () => {
     it('-- Initial value', async () => {
         // Setup. Define values.
         const lInitialValue: string = 'INITIAL__VALUE';
@@ -13,7 +13,7 @@ describe('OneWayBindingAttribute', () => {
         // Setup. Define component.
         @HtmlComponent({
             selector: TestUtil.randomSelector(),
-            template: '<input [value]="this.userValue"/>'
+            template: '<input [(value)]="this.userValue"/>'
         })
         class TestComponent {
             @Export
@@ -30,6 +30,33 @@ describe('OneWayBindingAttribute', () => {
         expect(lInputValue).to.equal(lInitialValue);
     });
 
+    it('-- Change view value', async () => {
+        // Setup. Define values.
+        const lNewValue: string = 'NEW__VALUE';
+
+        // Setup. Define component.
+        @HtmlComponent({
+            selector: TestUtil.randomSelector(),
+            template: '<input [(value)]="this.userValue"/>'
+        })
+        class TestComponent {
+            @Export
+            public userValue: string = 'INITIAL__VALUE';
+        }
+
+        // Setup. Create element.
+        const lComponent: HTMLElement & TestComponent = await <any>TestUtil.createComponent(TestComponent);
+
+        // Process. Get input value.
+        TestUtil.getComponentNode<HTMLInputElement>(lComponent, 'input').value = lNewValue;
+        TestUtil.manualUpdate(lComponent); // Manual element value set does not trigger change detection.  
+        await TestUtil.waitForUpdate(lComponent);
+        const lComponentValue: string = lComponent.userValue;
+
+        // Evaluation.
+        expect(lComponentValue).to.equal(lNewValue);
+    });
+
     it('-- Change component value', async () => {
         // Setup. Define values.
         const lNewValue: string = 'NEW__VALUE';
@@ -37,7 +64,7 @@ describe('OneWayBindingAttribute', () => {
         // Setup. Define component.
         @HtmlComponent({
             selector: TestUtil.randomSelector(),
-            template: '<input [value]="this.userValue"/>'
+            template: '<input [(value)]="this.userValue"/>'
         })
         class TestComponent {
             @Export

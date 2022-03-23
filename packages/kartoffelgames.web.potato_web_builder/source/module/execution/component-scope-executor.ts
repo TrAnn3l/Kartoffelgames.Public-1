@@ -58,7 +58,7 @@ export class ComponentScopeExecutor {
             if (_pExtenedValue.has(lReferenceName)) {
                 lString += `const ${lReferenceName} = _pExtenedValue.get('${lReferenceName}');`;
             } else {
-                lString += `const ${lReferenceName} = _pReferencedValues.getTemporaryValue('${lReferenceName}');`;
+                lString += `const ${lReferenceName} = _pReferencedValues.getValue('${lReferenceName}');`;
             }
         }
 

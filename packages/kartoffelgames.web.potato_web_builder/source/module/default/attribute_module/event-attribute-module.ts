@@ -12,7 +12,7 @@ import { TargetReference } from '../../base/injection/target-reference';
 import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
 
 @StaticAttributeModule({
-    selector: /^\([[\w$]+\)$/,
+    selector: /^\([[\w\-$]+\)$/,
     access: ModuleAccessType.Write,
     forbiddenInManipulatorScopes: false
 })
@@ -35,7 +35,7 @@ export class EventAttributeModule implements IPwbModuleOnDeconstruct {
         this.mEventName = pAttributeReference.value.name.substr(1, pAttributeReference.value.name.length - 2);
 
         // Try to get user class event from target element component manager..
-        const lTargetComponentManager: ComponentManager = ComponentConnection.componentManagerOf(this.mTargetReference);
+        const lTargetComponentManager: ComponentManager = ComponentConnection.componentManagerOf(this.mTargetReference.value);
         if (lTargetComponentManager) {
             this.mEmitter = lTargetComponentManager.userEventHandler.getEventEmitter(this.mEventName);
         }
@@ -51,11 +51,11 @@ export class EventAttributeModule implements IPwbModuleOnDeconstruct {
         };
 
         // Add native element or user class event listener.
-        if (this.mEmitter) {
+        if (typeof this.mEmitter !== 'undefined') {
             if (this.mEmitter instanceof ComponentEventEmitter) {
                 this.mEmitter.addListener(this.mListener);
             } else {
-                throw new Exception('Event emmiter musst be of type ComponentEventEmitter', this);
+                throw new Exception('Event emmiter must be of type ComponentEventEmitter', this);
             }
         } else {
             this.mTargetReference.value.addEventListener(this.mEventName, this.mListener);

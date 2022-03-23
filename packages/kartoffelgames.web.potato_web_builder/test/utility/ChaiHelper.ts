@@ -56,6 +56,11 @@ Assertion.addMethod('componentStructure', function (pChilds: ComponentStructure,
                 }
             }
 
+            // Recreate text content.
+            if('textContent' in lExpectedStructure){
+                lNewStructure.textContent = pActualNode.textContent;
+            }
+
             return <T>lNewStructure;
         }
     };
@@ -100,6 +105,7 @@ export type ChildNodeStructure = {
     useShadowRoot?: boolean;
     childs?: ComponentStructure;
     attributes?: Array<{ name: string, value: string; }>;
+    textContent?: string;
 };
 
 declare global {
