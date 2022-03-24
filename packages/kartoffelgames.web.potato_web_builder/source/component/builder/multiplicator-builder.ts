@@ -102,7 +102,7 @@ export class MultiplicatorBuilder extends BaseBuilder {
                 lLastContent = lHistoryItem.item;
             } else if (lHistoryItem.changeState === ChangeState.Remove) {
                 this.contentManager.remove(lHistoryItem.item);
-            } else if (lHistoryItem.changeState === ChangeState.Insert) {
+            } else { // if (lHistoryItem.changeState === ChangeState.Insert)
                 // Create new static builder, insert after last content.
                 lLastContent = this.insertNewContent(lHistoryItem.item, lLastContent);
             }

@@ -8,12 +8,12 @@ export enum ModuleAccessType {
     Read = 1,
 
     /**
-     * Module writes into value object.
+     * Module writes into view.
      */
     Write = 2,
 
     /**
-     * Module read into view and writes into value object.
+     * Module read from view and writes into view.
      */
-    ReadWrite = 4
+    ReadWrite = 3
 }

@@ -71,13 +71,6 @@ export abstract class BaseBuilder {
     }
 
     /**
-     * Get component handler.
-     */
-    protected get componentManager(): ComponentManager {
-        return this.mComponentValues.componentManager;
-    }
-
-    /**
      * Constructor.
      * Builder helper that builds and updates content of component.
      * @param pComponentContent - Component content.

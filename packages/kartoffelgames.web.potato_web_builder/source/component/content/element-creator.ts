@@ -40,11 +40,6 @@ export class ElementCreator {
      * @returns text node with specified text.
      */
     public static createText(pText: string): Text {
-        // Decode html encoded text.
-        const lDecodedText: string = pText.replace(/&#(\d+);/g, (_pFullMatch, pCharAsDecimal) => {
-            return String.fromCharCode(pCharAsDecimal);
-        });
-
-        return document.createTextNode(lDecodedText);
+        return document.createTextNode(pText);
     }
 }

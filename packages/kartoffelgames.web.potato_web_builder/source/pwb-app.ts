@@ -1,6 +1,5 @@
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { Exception } from '@kartoffelgames/core.data';
-import { UserClass } from './interface/user-class';
 import { ElementCreator } from './component/content/element-creator';
 import { InjectionConstructor, Metadata } from '@kartoffelgames/core.dependency-injection';
 import { MetadataKey } from './metadata-key';
@@ -9,17 +8,22 @@ import { XmlElement } from '.';
 export class PwbApp {
     public static readonly PUBLIC_APP_KEY: string = '_PWB_APP';
 
-    private readonly mAppName: string;
     private readonly mChangeDetection: ChangeDetection;
     private readonly mAppComponent: Element;
     private readonly mShadowRoot: ShadowRoot;
+
+    /**
+     * Get app underlying content.
+     */
+    public get content(): Element {
+        return this.mAppComponent;
+    }
 
     /**
      * Constructor.
      * @param pAppName - name of app zone.
      */
     public constructor(pAppName: string) {
-        this.mAppName = pAppName;
         this.mChangeDetection = new ChangeDetection(pAppName);
 
         // Create app wrapper template.
@@ -93,24 +97,3 @@ export class PwbApp {
         this.mShadowRoot.prepend(lStyleElement);
     }
 }
-
-type PwbAppConfig = {
-    /**
-     * Constructor or constructor array of components.
-     * Default: null.
-     */
-    content?: any | Array<any>;
-    /**
-     * Target selector for inserting or appending content.
-     * Default: null.
-     */
-    targetSelector?: string;
-    /**
-     * Styles only valid inside app root. 
-     */
-    style?: string;
-    /**
-     * Styles get append to head.
-     */
-    globalStyle?: string;
-};

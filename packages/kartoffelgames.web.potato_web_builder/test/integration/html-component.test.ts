@@ -61,4 +61,28 @@ describe('HtmlComponent', () => {
             }
         ], true);
     });
+
+    it('-- Ignore comments', async() => {
+        // Setup. Define component.
+        @HtmlComponent({
+            selector: TestUtil.randomSelector(),
+            template: '<div><!-- Comment --></div>'
+        })
+        class TestComponent { }
+
+
+        // Process. Create element.
+        const lComponent: HTMLElement = await TestUtil.createComponent(TestComponent);
+
+        // Evaluation
+        // 2 => StaticAnchor, Div.
+        expect(lComponent.shadowRoot.childNodes).to.have.lengthOf(2);
+        expect(lComponent).to.have.componentStructure([
+            Comment,
+            {
+                node: HTMLDivElement,
+                childs: []
+            }
+        ], true);
+    });
 });

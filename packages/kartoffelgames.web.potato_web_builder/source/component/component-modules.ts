@@ -18,9 +18,9 @@ import { ComponentManager } from './component-manager';
 
 
 export class ComponentModules {
-    private readonly mExpressionModule: IPwbExpressionModuleClass;
     private readonly mComponentManager: ComponentManager;
-
+    private readonly mExpressionModule: IPwbExpressionModuleClass;
+    
     /**
      * Constructor.
      * @param pExpressionModule - default expression module for this component. 
@@ -79,8 +79,6 @@ export class ComponentModules {
                 }
             }
         }
-
-        return null;
     }
 
     /**

@@ -1,6 +1,5 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { BaseXmlNode, TextNode, XmlAttribute, XmlDocument, XmlElement } from '@kartoffelgames/core.xml';
-import { ModuleType } from '../../enum/module-type';
 import { BaseModule } from '../../module/base/base-module';
 import { ExpressionModule } from '../../module/base/expression-module';
 import { StaticModule } from '../../module/base/static-module';
@@ -56,10 +55,10 @@ export class StaticBuilder extends BaseBuilder {
                     lCompareValueA = 4;
                 } else if (pModuleA.isWriting && pModuleA.isReading) {
                     lCompareValueA = 3;
-                } else if (!pModuleA.isWriting && pModuleA.isReading) {
+                } else { // if (!pModuleA.isWriting && pModuleA.isReading) {
                     lCompareValueA = 2;
                 }
-            } else {
+            } else { // Expression
                 lCompareValueA = 1;
             }
 
@@ -70,7 +69,7 @@ export class StaticBuilder extends BaseBuilder {
                     lCompareValueB = 4;
                 } else if (pModuleB.isWriting && pModuleB.isReading) {
                     lCompareValueB = 3;
-                } else if (!pModuleB.isWriting && pModuleB.isReading) {
+                } else { // if (!pModuleB.isWriting && pModuleB.isReading) 
                     lCompareValueB = 2;
                 }
             } else {
@@ -103,6 +102,7 @@ export class StaticBuilder extends BaseBuilder {
 
         // Create each template.
         for (const lTemplateNode of pTemplateNodeList) {
+            /* istanbul ignore else */
             if (lTemplateNode instanceof XmlDocument) {
                 // Ignore documents just process body.
                 this.buildTemplate(lTemplateNode.body, pParentElement, lTemplateNode);
