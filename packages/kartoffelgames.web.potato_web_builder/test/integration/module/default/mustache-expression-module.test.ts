@@ -13,10 +13,10 @@ describe('MustacheExpressionModule', () => {
         // Setup. Define component.
         @HtmlComponent({
             selector: TestUtil.randomSelector(),
-            template: `<div>{{this.text}}</div>`
+            template: `<div>{{this.mText}}</div>`
         })
         class TestComponent {
-            private text: string = lTextContent;
+            public readonly mText: string = lTextContent;
         }
 
         // Setup. Create element.

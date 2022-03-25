@@ -41,7 +41,7 @@ describe('EventAttributeModule', () => {
         })
         class EventComponent {
             @HtmlComponentEvent('custom-event')
-            private mEvent: ComponentEventEmitter<string> = new ComponentEventEmitter<string>();
+            private readonly mEvent: ComponentEventEmitter<string> = new ComponentEventEmitter<string>();
 
             @Export
             public callEvent(): void {
@@ -78,6 +78,7 @@ describe('EventAttributeModule', () => {
         @HtmlComponent({
             selector: lEventComponentSelector,
         })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         class EventComponent {
             @HtmlComponentEvent('custom-event')
             public mEvent: string = ''; // Wrong type.
@@ -89,7 +90,7 @@ describe('EventAttributeModule', () => {
             template: `<${lEventComponentSelector} (custom-event)="this.handler($event)"/>`
         })
         class TestComponent {
-            public handler(pEvent: string): void { }
+            public handler(pEvent: string): void { /* Empty */}
         }
 
         // Setup. Create element.
@@ -114,7 +115,7 @@ describe('EventAttributeModule', () => {
         })
         class EventComponent {
             @HtmlComponentEvent('custom-event')
-            private mEvent: ComponentEventEmitter<string> = new ComponentEventEmitter<string>();
+            private readonly mEvent: ComponentEventEmitter<string> = new ComponentEventEmitter<string>();
 
             @Export
             public callEvent(): void {

@@ -1,5 +1,4 @@
 import { BaseXmlNode } from '@kartoffelgames/core.xml';
-import { ComponentManager } from '../component-manager';
 
 export class PwbTemplateReference {
     private readonly mTemplate: BaseXmlNode;

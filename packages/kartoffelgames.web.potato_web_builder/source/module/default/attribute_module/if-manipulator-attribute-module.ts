@@ -16,8 +16,8 @@ import { ComponentScopeExecutor } from '../../execution/component-scope-executor
 })
 export class IfManipulatorAttributeModule implements IPwbMultiplicatorModuleOnUpdate {
     private readonly mAttributeReference: AttributeReference;
-    private readonly mTemplateReference: TemplateReference;
     private mLastBoolean: boolean;
+    private readonly mTemplateReference: TemplateReference;
     private readonly mValueHandler: LayerValues;
 
     /**

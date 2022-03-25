@@ -18,7 +18,7 @@ describe('Metadata', () => {
     describe('-- Static Method: get', () => {
         it('-- Create New Metadata', () => {
             // Setup.
-            class TestA { };
+            class TestA { }
 
             // Process.
             const lConstructorMetadata = Metadata.get(TestA);
@@ -29,7 +29,7 @@ describe('Metadata', () => {
 
         it('-- Get Existing Metadata ', () => {
             // Setup.
-            class TestA { };
+            class TestA { }
 
             // Process.
             const lOldConstructorMetadata = Metadata.get(TestA);
@@ -42,14 +42,14 @@ describe('Metadata', () => {
         it('-- Get With Decoration History', () => {
             // Setup.
             @gPlaceholderDecorator
-            class TestA {}
+            class Test {}
 
             // Setup. Get base class.
-            const TestAParent = DecorationHistory.getRootOf(TestA);
+            const lTestParent = DecorationHistory.getRootOf(Test);
 
             // Process.
-            const lChildConstructorMetadata = Metadata.get(TestA);
-            const lParentConstructorMetadata = Metadata.get(TestAParent);
+            const lChildConstructorMetadata = Metadata.get(Test);
+            const lParentConstructorMetadata = Metadata.get(lTestParent);
 
             // Evaluation.
             expect(lChildConstructorMetadata).to.equal(lParentConstructorMetadata);

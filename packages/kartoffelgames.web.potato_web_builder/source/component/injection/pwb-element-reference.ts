@@ -1,5 +1,3 @@
-import { ComponentManager } from '../component-manager';
-
 export class PwbElementReference {
     private readonly mNode: Node;
 

@@ -28,6 +28,64 @@ export class StaticBuilder extends BaseBuilder {
     }
 
     /**
+     * Build template with multiplicator module.
+     * Creates a new multiplicator builder and append to content.
+     * @param pMultiplicatorTemplate - Template with multiplicator module.
+     * @param pParentHtmlElement - Build parent element of template.
+     * @param pShadowParent - Parent template element that is loosly linked as parent.
+     */
+    public buildMultiplicatorTemplate(pMultiplicatorTemplate: XmlElement, pMultiplicatorAttribute: XmlAttribute, pParentHtmlElement: Element, pShadowParent: BaseXmlNode): void {
+        // Create new component builder and add to content.
+        const lMultiplicatorBuilder: MultiplicatorBuilder = new MultiplicatorBuilder(pMultiplicatorTemplate, pShadowParent, this.contentManager.modules, this.values, this);
+        this.contentManager.append(lMultiplicatorBuilder, pParentHtmlElement);
+    }
+
+    /**
+     * Build static template.
+     * Create and link all modules.
+     * @param pElementTemplate - Element template.
+     * @param pParentHtmlElement - Parent of template.
+     */
+    public buildStaticTemplate(pElementTemplate: XmlElement, pParentHtmlElement: Element): void {
+        // Build element.
+        const lHtmlNode: Element = ElementCreator.createElement(pElementTemplate);
+
+        // Every attribute is a module. Even text attributes without any any expression.
+        for (const lModule of this.contentManager.modules.getElementStaticModules(pElementTemplate, lHtmlNode, this.values)) {
+            // Check if module is allowd in current scope.
+            if (this.inManipulatorScope && lModule.moduleDefinition.forbiddenInManipulatorScopes) {
+                throw new Exception(`Module ${lModule.moduleDefinition.selector.source} is forbidden inside manipulator scopes.`, this);
+            }
+
+            // Link modules.
+            this.contentManager.linkModule(lModule, lHtmlNode);
+        }
+
+        // Append element to parent.
+        this.contentManager.append(lHtmlNode, pParentHtmlElement);
+
+        // Build childs.
+        this.buildTemplate(pElementTemplate.childList, lHtmlNode, pElementTemplate);
+    }
+
+    /**
+     * Build text template and append to parent.
+     * @param pTextTemplate - Text template.
+     * @param pParentHtmlElement - Build parent element of template. 
+     */
+    public buildTextTemplate(pTextTemplate: TextNode, pParentHtmlElement: Element): void {
+        // Create and process expression module, append text node to content.
+        const lHtmlNode: Text = ElementCreator.createText('');
+
+        // Create and link expression module, link only if text has any expression.
+        const lExpressionModule: ExpressionModule = this.contentManager.modules.getTextExpressionModule(pTextTemplate, lHtmlNode, this.values);
+        this.contentManager.linkModule(lExpressionModule, lHtmlNode);
+
+        // Append text to parent.
+        this.contentManager.append(lHtmlNode, pParentHtmlElement);
+    }
+
+    /**
      * If builder is multiplicator.
      */
     protected isMultiplicator(): boolean {
@@ -120,63 +178,5 @@ export class StaticBuilder extends BaseBuilder {
 
             // Ignore comments.
         }
-    };
-
-    /**
-     * Build text template and append to parent.
-     * @param pTextTemplate - Text template.
-     * @param pParentHtmlElement - Build parent element of template. 
-     */
-    public buildTextTemplate(pTextTemplate: TextNode, pParentHtmlElement: Element): void {
-        // Create and process expression module, append text node to content.
-        const lHtmlNode: Text = ElementCreator.createText('');
-
-        // Create and link expression module, link only if text has any expression.
-        const lExpressionModule: ExpressionModule = this.contentManager.modules.getTextExpressionModule(pTextTemplate, lHtmlNode, this.values);
-        this.contentManager.linkModule(lExpressionModule, lHtmlNode);
-
-        // Append text to parent.
-        this.contentManager.append(lHtmlNode, pParentHtmlElement);
-    }
-
-    /**
-     * Build static template.
-     * Create and link all modules.
-     * @param pElementTemplate - Element template.
-     * @param pParentHtmlElement - Parent of template.
-     */
-    public buildStaticTemplate(pElementTemplate: XmlElement, pParentHtmlElement: Element) {
-        // Build element.
-        const lHtmlNode: Element = ElementCreator.createElement(pElementTemplate);
-
-        // Every attribute is a module. Even text attributes without any any expression.
-        for (const lModule of this.contentManager.modules.getElementStaticModules(pElementTemplate, lHtmlNode, this.values)) {
-            // Check if module is allowd in current scope.
-            if (this.inManipulatorScope && lModule.moduleDefinition.forbiddenInManipulatorScopes) {
-                throw new Exception(`Module ${lModule.moduleDefinition.selector.source} is forbidden inside manipulator scopes.`, this);
-            }
-
-            // Link modules.
-            this.contentManager.linkModule(lModule, lHtmlNode);
-        }
-
-        // Append element to parent.
-        this.contentManager.append(lHtmlNode, pParentHtmlElement);
-
-        // Build childs.
-        this.buildTemplate(pElementTemplate.childList, lHtmlNode, pElementTemplate);
-    }
-
-    /**
-     * Build template with multiplicator module.
-     * Creates a new multiplicator builder and append to content.
-     * @param pMultiplicatorTemplate - Template with multiplicator module.
-     * @param pParentHtmlElement - Build parent element of template.
-     * @param pShadowParent - Parent template element that is loosly linked as parent.
-     */
-    public buildMultiplicatorTemplate(pMultiplicatorTemplate: XmlElement, pMultiplicatorAttribute: XmlAttribute, pParentHtmlElement: Element, pShadowParent: BaseXmlNode) {
-        // Create new component builder and add to content.
-        const lMultiplicatorBuilder: MultiplicatorBuilder = new MultiplicatorBuilder(pMultiplicatorTemplate, pShadowParent, this.contentManager.modules, this.values, this);
-        this.contentManager.append(lMultiplicatorBuilder, pParentHtmlElement);
     }
 }

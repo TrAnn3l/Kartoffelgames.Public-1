@@ -20,7 +20,7 @@ import { ComponentManager } from './component-manager';
 export class ComponentModules {
     private readonly mComponentManager: ComponentManager;
     private readonly mExpressionModule: IPwbExpressionModuleClass;
-    
+
     /**
      * Constructor.
      * @param pExpressionModule - default expression module for this component. 
@@ -30,26 +30,6 @@ export class ComponentModules {
         // Get expression module.
         this.mExpressionModule = pExpressionModule ?? <IPwbExpressionModuleClass><any>MustacheExpressionModule;
         this.mComponentManager = pComponentManager;
-    }
-
-    /**
-     * Check if template uses any manipulator modules.
-     * @param pTemplate - Key list for possible multiplicator modules.
-     */
-    public getMultiplicatorAttribute(pTemplate: XmlElement): XmlAttribute {
-        // Find manipulator module inside attributes.
-        for (const lDefinition of Modules.moduleDefinitions) {
-            // Only manipulator modules.
-            if (lDefinition.type === ModuleType.Manipulator) {
-                for (const lAttribute of pTemplate.attributeList) {
-                    if (lDefinition.selector.test(lAttribute.qualifiedName)) {
-                        return lAttribute;
-                    }
-                }
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -131,6 +111,26 @@ export class ComponentModules {
         }
 
         return lModules;
+    }
+
+    /**
+     * Check if template uses any manipulator modules.
+     * @param pTemplate - Key list for possible multiplicator modules.
+     */
+    public getMultiplicatorAttribute(pTemplate: XmlElement): XmlAttribute {
+        // Find manipulator module inside attributes.
+        for (const lDefinition of Modules.moduleDefinitions) {
+            // Only manipulator modules.
+            if (lDefinition.type === ModuleType.Manipulator) {
+                for (const lAttribute of pTemplate.attributeList) {
+                    if (lDefinition.selector.test(lAttribute.qualifiedName)) {
+                        return lAttribute;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     /**

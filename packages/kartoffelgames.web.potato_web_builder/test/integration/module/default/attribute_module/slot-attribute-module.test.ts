@@ -5,6 +5,7 @@ import '../../../../mock/request-animation-frame-mock-session';
 import '../../../../utility/ChaiHelper';
 import { TestUtil } from '../../../../utility/TestUtil';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const HTMLSlotElement: InjectionConstructor = <any>document.createElement('slot').constructor;
 
 describe('SlotAttribute', () => {

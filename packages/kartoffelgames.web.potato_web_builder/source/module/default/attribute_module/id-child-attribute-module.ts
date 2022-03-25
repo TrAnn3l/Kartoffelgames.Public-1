@@ -1,4 +1,3 @@
-import { LayerValues } from '../../../component/values/layer-values';
 import { StaticAttributeModule } from '../../../decorator/module/static-attribute-module';
 import { ModuleAccessType } from '../../../enum/module-access-type';
 import { AttributeReference } from '../../base/injection/attribute-reference';

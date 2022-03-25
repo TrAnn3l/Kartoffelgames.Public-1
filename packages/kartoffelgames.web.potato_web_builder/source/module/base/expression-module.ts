@@ -5,8 +5,8 @@ import { IPwbExpressionModuleClass, IPwbExpressionModuleObject, ModuleDefinition
 import { BaseModule } from './base-module';
 
 export class ExpressionModule extends BaseModule<boolean, string> {
-    private readonly mProcessList: Array<string | IPwbExpressionModuleObject>;
     private mLastResult: string;
+    private readonly mProcessList: Array<string | IPwbExpressionModuleObject>;
 
     /**
      * Constructor.

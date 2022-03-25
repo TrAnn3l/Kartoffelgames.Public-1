@@ -1,4 +1,4 @@
-import { BaseXmlNode, XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
+import { BaseXmlNode, XmlElement } from '@kartoffelgames/core.xml';
 import { ChangeState, DifferenceSearch, HistoryItem } from '@kartoffelgames/web.change-detection';
 import { MultiplicatorModule } from '../../module/base/multiplicator-module';
 import { ManipulatorElement, MultiplicatorResult } from '../../module/base/result/multiplicator-result';

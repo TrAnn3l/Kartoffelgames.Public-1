@@ -1,4 +1,3 @@
-import { Dictionary } from '@kartoffelgames/core.data';
 import { XmlElement } from '@kartoffelgames/core.xml';
 
 export class ElementCreator {
@@ -31,7 +30,7 @@ export class ElementCreator {
             }
         }
 
-        return document.createElementNS(lNamespace, lTagname);;
+        return document.createElementNS(lNamespace, lTagname);
     }
 
     /**

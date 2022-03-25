@@ -1,7 +1,6 @@
 import { InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
 import { Assertion } from 'chai';
 
-
 Assertion.addMethod('componentStructure', function (pChilds: ComponentStructure, pUseShadowRoot: boolean) {
     const lRecreateElementStructure = <T extends InjectionConstructor | ChildNodeStructure>(pExpectedStructure: T, pActualNode: Node): T => {
         // Check if structure or constructor.
@@ -109,6 +108,7 @@ export type ChildNodeStructure = {
 };
 
 declare global {
+    // eslint-disable-next-line @typescript-eslint/no-namespace
     export namespace Chai {
         interface Assertion {
             componentStructure(pChilds: ComponentStructure, pUseShadowRoot: boolean): void;

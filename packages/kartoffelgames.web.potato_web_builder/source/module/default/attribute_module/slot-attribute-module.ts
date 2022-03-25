@@ -12,10 +12,10 @@ import { MultiplicatorResult } from '../../base/result/multiplicator-result';
 })
 export class SlotAttributeModule implements IPwbMultiplicatorModuleOnUpdate {
     private readonly mAttributeReference: AttributeReference;
+    private mCalled: boolean;
     private readonly mTemplateReference: TemplateReference;
     private readonly mValueHandler: LayerValues;
-    private mCalled: boolean;
-
+    
     /**
      * Constructor.
      * @param pTargetTemplate - Target templat.

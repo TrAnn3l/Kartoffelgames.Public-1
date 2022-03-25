@@ -17,9 +17,9 @@ import { ComponentScopeExecutor } from '../../execution/component-scope-executor
     forbiddenInManipulatorScopes: false
 })
 export class EventAttributeModule implements IPwbModuleOnDeconstruct {
-    private mEmitter: ComponentEventEmitter<any>;
-    private mEventName: string;
-    private mListener: (this: null, pEvent: any) => void;
+    private readonly mEmitter: ComponentEventEmitter<any>;
+    private readonly mEventName: string;
+    private readonly mListener: (this: null, pEvent: any) => void;
     private readonly mTargetReference: TargetReference;
     private readonly mValueHandler: LayerValues;
 

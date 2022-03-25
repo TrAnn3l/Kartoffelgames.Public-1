@@ -5,8 +5,8 @@ import { UserClass, UserObject } from '../../interface/user-class';
 import { UpdateHandler } from './update-handler';
 
 export class UserObjectHandler {
-    private readonly mUserObject: UserObject;
     private readonly mUserClass: UserClass;
+    private readonly mUserObject: UserObject;
 
     /**
      * Untracked user class instance.

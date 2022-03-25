@@ -20,10 +20,10 @@ describe('PwbApp', () => {
             [(readwriteDouble)]="this.value" />`
         })
         class TestComponent {
-            public value: string = "";
+            public value: string = '';
         }
 
-        const lComponent: HTMLElement & TestComponent = await <any>TestUtil.createComponent(TestComponent);
+        await <any>TestUtil.createComponent(TestComponent);
 
         // TODO: Test update order?
     });
@@ -37,7 +37,7 @@ describe('PwbApp', () => {
             </div>`
         })
         class TestComponent {
-            public value: string = "";
+            public value: string = '';
         }
 
         // Process.

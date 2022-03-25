@@ -19,8 +19,8 @@ import { ComponentScopeExecutor } from '../../execution/component-scope-executor
 })
 export class OneWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
     private readonly mExecutionString: string;
-    private readonly mTargetReference: TargetReference;
     private readonly mTargetProperty: string;
+    private readonly mTargetReference: TargetReference;
     private readonly mValueCompare: CompareHandler<any>;
     private readonly mValueHandler: LayerValues;
 

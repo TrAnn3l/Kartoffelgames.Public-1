@@ -8,8 +8,8 @@ import { XmlElement } from '.';
 export class PwbApp {
     public static readonly PUBLIC_APP_KEY: string = '_PWB_APP';
 
-    private readonly mChangeDetection: ChangeDetection;
     private readonly mAppComponent: Element;
+    private readonly mChangeDetection: ChangeDetection;
     private readonly mShadowRoot: ShadowRoot;
 
     /**
@@ -68,14 +68,6 @@ export class PwbApp {
     }
 
     /**
-     * Append app to element.
-     * @param pElement - Element.
-     */
-    public appendTo(pElement: Element): void {
-        pElement.appendChild(this.mAppComponent);
-    }
-
-    /**
      * Add error listener that listens for any uncatched error.
      * @param pListener - Error listener.
      */
@@ -95,5 +87,13 @@ export class PwbApp {
         const lStyleElement: Element = ElementCreator.createElement(lStyleTemplate);
         lStyleElement.innerHTML = pStyle;
         this.mShadowRoot.prepend(lStyleElement);
+    }
+
+    /**
+     * Append app to element.
+     * @param pElement - Element.
+     */
+    public appendTo(pElement: Element): void {
+        pElement.appendChild(this.mAppComponent);
     }
 }

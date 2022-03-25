@@ -119,8 +119,8 @@ describe('ConstructorMetadata', () => {
             const lMetadata: ConstructorMetadata = new ConstructorMetadata();
 
             // Process.
-            const lOldConstructorMetadata = lMetadata.getProperty('SomeProperty');
-            const lNewConstructorMetadata = lMetadata.getProperty('SomeProperty');
+            const lOldConstructorMetadata = lMetadata.getProperty(lPropertyName);
+            const lNewConstructorMetadata = lMetadata.getProperty(lPropertyName);
 
             // Evaluation.
             expect(lOldConstructorMetadata).to.equal(lNewConstructorMetadata);

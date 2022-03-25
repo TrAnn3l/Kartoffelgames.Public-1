@@ -2,7 +2,6 @@ import { List } from '@kartoffelgames/core.data';
 import { ChangeDetection, ChangeDetectionReason } from '@kartoffelgames/web.change-detection';
 import { UpdateScope } from '../../enum/update-scope';
 import { LoopDetectionHandler } from './loop-detection-handler';
-import { UserObjectHandler } from './user-object-handler';
 
 export class UpdateHandler {
     private readonly mChangeDetection: ChangeDetection;

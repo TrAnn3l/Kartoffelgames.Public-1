@@ -13,8 +13,8 @@ import { ComponentScopeExecutor } from '../execution/component-scope-executor';
     selector: /{{.*?}}/
 })
 export class MustacheExpressionModule implements IPwbExpressionModuleOnUpdate {
-    private readonly mValueHandler: LayerValues;
     private readonly mExpressionReference: ExpressionReference;
+    private readonly mValueHandler: LayerValues;
 
     /**
      * Constructor.

@@ -4,23 +4,22 @@ import { BaseXmlNode, XmlAttribute, XmlElement } from '@kartoffelgames/core.xml'
 import { ComponentManager } from '../../component/component-manager';
 import { LayerValues } from '../../component/values/layer-values';
 import { ModuleAccessType } from '../../enum/module-access-type';
-import { ModuleType } from '../../enum/module-type';
 import { IPwbModuleClass, IPwbModuleObject, ModuleDefinition } from '../../interface/module';
 import { AttributeReference } from './injection/attribute-reference';
 import { ComponentManagerReference } from './injection/component-manager-reference';
-import { TargetReference } from './injection/target-reference';
-import { TemplateReference } from './injection/template-reference';
 import { ExpressionReference } from './injection/expression-reference';
 import { LayerValuesReference } from './injection/layer-values-reference';
+import { TargetReference } from './injection/target-reference';
+import { TemplateReference } from './injection/template-reference';
 
 export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
-    private readonly mModuleObjectList: Array<IPwbModuleObject<TModuleObjectResult>>;
     private readonly mInjections: Dictionary<InjectionConstructor, any>;
-    private readonly mModuleDefinition: ModuleDefinition;
     private readonly mModuleClass: IPwbModuleClass<TModuleObjectResult>;
-    private readonly mTargetTemplate: BaseXmlNode;
-    private readonly mTargetNode: Node;
+    private readonly mModuleDefinition: ModuleDefinition;
+    private readonly mModuleObjectList: Array<IPwbModuleObject<TModuleObjectResult>>;
     private readonly mTargetAttribute: XmlAttribute;
+    private readonly mTargetNode: Node;
+    private readonly mTargetTemplate: BaseXmlNode;
 
     /**
      * Get module definition.
@@ -104,15 +103,10 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
     }
 
     /**
-     * Update module.
-     */
-    public abstract update(): TModuleResult;
-
-    /**
-     * Create module object.
-     * @param pValue - Value for module object.
-     */
-    protected createModuleObject(pValue: string) {
+      * Create module object.
+      * @param pValue - Value for module object.
+      */
+    protected createModuleObject(pValue: string): IPwbModuleObject<TModuleObjectResult> {
         // Clone injections and extend by value reference.
         const lInjections = new Dictionary<InjectionConstructor, any>(this.mInjections);
         lInjections.set(ExpressionReference, new ExpressionReference(pValue));
@@ -123,6 +117,11 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
 
         return lModuleObject;
     }
+
+    /**
+     * Update module.
+     */
+    public abstract update(): TModuleResult;
 }
 
 export type BaseModuleConstructorParameter<TModuleObjectResult> = {

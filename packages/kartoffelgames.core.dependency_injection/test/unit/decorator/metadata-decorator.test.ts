@@ -1,9 +1,6 @@
 import { expect } from 'chai';
-import { Metadata } from '../../../source/metadata/metadata';
-import { InjectableDecorator } from '../../../source/decorator/injectable-decorator';
 import { MetadataDecorator } from '../../../source/decorator/metadata-decorator';
-import { Injection } from '../../../source/injection/injection';
-
+import { Metadata } from '../../../source/metadata/metadata';
 
 describe('MetadataDecorator', () => {
     describe('Decorator: Metadata', () => {

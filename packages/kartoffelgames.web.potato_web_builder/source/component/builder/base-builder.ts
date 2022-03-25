@@ -1,6 +1,5 @@
 import { BaseXmlNode } from '@kartoffelgames/core.xml';
 import { ComponentModules } from '../component-modules';
-import { ComponentManager } from '../component-manager';
 import { Boundary, ContentManager } from '../content/content-manager';
 import { LayerValues } from '../values/layer-values';
 
@@ -89,7 +88,7 @@ export abstract class BaseBuilder {
         // Create new layer of values.
         this.mComponentValues = new LayerValues(pParentLayerValues);
 
-        let lPrefix: string = this.isMultiplicator() ? 'MULTIPLICATE' : 'STATIC';
+        const lPrefix: string = this.isMultiplicator() ? 'MULTIPLICATE' : 'STATIC';
         this.mContentManager = new ContentManager(pModules, lPrefix);
     }
 

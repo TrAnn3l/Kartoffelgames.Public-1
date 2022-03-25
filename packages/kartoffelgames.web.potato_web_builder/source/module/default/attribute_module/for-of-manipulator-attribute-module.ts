@@ -20,9 +20,9 @@ import { ComponentScopeExecutor } from '../../execution/component-scope-executor
 })
 export class ForOfManipulatorAttributeModule implements IPwbMultiplicatorModuleOnUpdate {
     private readonly mAttributeReference: AttributeReference;
+    private readonly mCompareHandler: CompareHandler<any>;
     private readonly mTemplateReference: TemplateReference;
     private readonly mValueHandler: LayerValues;
-    private readonly mCompareHandler: CompareHandler<any>;
 
     /**
      * Constructor.
@@ -101,7 +101,7 @@ export class ForOfManipulatorAttributeModule implements IPwbMultiplicatorModuleO
      * @param pObjectValue - value.
      * @param pObjectKey - value key.
      */
-    private addTempateForElement = (pModuleResult: MultiplicatorResult, pExpression: ForOfExpression, pObjectValue: any, pObjectKey: number | string) => {
+    private readonly addTempateForElement = (pModuleResult: MultiplicatorResult, pExpression: ForOfExpression, pObjectValue: any, pObjectKey: number | string) => {
         const lClonedTemplate: XmlElement = <XmlElement>this.mTemplateReference.value.clone();
         const lComponentValues: LayerValues = new LayerValues(this.mValueHandler);
         lComponentValues.setLayerValue(pExpression.variable, pObjectValue);

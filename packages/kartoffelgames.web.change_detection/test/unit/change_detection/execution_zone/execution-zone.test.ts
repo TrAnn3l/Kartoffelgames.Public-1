@@ -350,7 +350,7 @@ describe('ExecutionZone', () => {
    it('Funcionality: ChangeDetection.Silent', () => {
       // Setup.
       const lChangeDetection = new ChangeDetection('Name', null, true);
-      const lZone: ExecutionZone = (<any>lChangeDetection).mExecutionZone
+      const lZone: ExecutionZone = (<any>lChangeDetection).mExecutionZone;
 
       // Setup. Interaction callback
       let lInteractionCallbackCalled: boolean = false;

@@ -1,4 +1,3 @@
-import { ComponentManager } from '../component-manager';
 import { UpdateHandler } from '../handler/update-handler';
 
 export class PwbUpdateReference {

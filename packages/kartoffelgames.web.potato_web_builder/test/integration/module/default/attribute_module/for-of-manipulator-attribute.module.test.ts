@@ -64,7 +64,7 @@ describe('ForOfManipulatorAttributeModule', () => {
 
     it('Custom iterator', async () => {
         // Setup. Custom iterator.
-        function* customIterator(pStart = 0, pEnd = 100) {
+        function* lCustomIterator(pStart = 0, pEnd = 100) {
             let lIterationCount = 0;
             for (let lIndex = pStart; lIndex < pEnd; lIndex++) {
                 lIterationCount++;
@@ -79,7 +79,7 @@ describe('ForOfManipulatorAttributeModule', () => {
             template: `<div *pwbFor="item of this.list"/>`
         })
         class TestComponent {
-            public list: Generator<number, number> = customIterator(1, 4);
+            public list: Generator<number, number> = lCustomIterator(1, 4);
         }
 
         // Setup. Create element.

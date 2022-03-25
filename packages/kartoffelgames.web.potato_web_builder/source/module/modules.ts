@@ -17,7 +17,7 @@ export class Modules {
      * @param pModuleClass - User module class.
      * @param pModuleDefinition - Module definition.
      */
-    public static add(pModuleClass: IPwbModuleClass<unknown>, pModuleDefinition: ModuleDefinition) {
+    public static add(pModuleClass: IPwbModuleClass<unknown>, pModuleDefinition: ModuleDefinition): void {
         Modules.mModuleClasses.set(pModuleDefinition, pModuleClass);
         Modules.mModuleDefinition.set(pModuleClass, pModuleDefinition);
     }
@@ -26,15 +26,15 @@ export class Modules {
      * Get module definition for module class.
      * @param pModuleClass - Module class.
      */
-    public static getModuleDefinition(pModuleClass: IPwbModuleClass<unknown>): ModuleDefinition {
-        return Modules.mModuleDefinition.get(pModuleClass);
+    public static getModuleClass(pModuleDefinition: ModuleDefinition): IPwbModuleClass<unknown> {
+        return Modules.mModuleClasses.get(pModuleDefinition);
     }
 
     /**
      * Get module definition for module class.
      * @param pModuleClass - Module class.
      */
-    public static getModuleClass(pModuleDefinition: ModuleDefinition): IPwbModuleClass<unknown> {
-        return Modules.mModuleClasses.get(pModuleDefinition);
+    public static getModuleDefinition(pModuleClass: IPwbModuleClass<unknown>): ModuleDefinition {
+        return Modules.mModuleDefinition.get(pModuleClass);
     }
 }

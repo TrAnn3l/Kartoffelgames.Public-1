@@ -18,11 +18,11 @@ import { ComponentScopeExecutor } from '../../execution/component-scope-executor
 export class TwoWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
     private readonly mAttributeReference: AttributeReference;
     private readonly mTargetReference: TargetReference;
-    private mViewCompareHandler: CompareHandler<any>;
-    private mViewProperty: string;
-    private mUserObjectCompareHandler: CompareHandler<any>;
-    private mThisProperty: string;
+    private readonly mThisProperty: string;
+    private readonly mUserObjectCompareHandler: CompareHandler<any>;
     private readonly mValueHandler: LayerValues;
+    private readonly mViewCompareHandler: CompareHandler<any>;
+    private readonly mViewProperty: string;
 
     /**
      * Constructor.
