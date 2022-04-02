@@ -24,7 +24,7 @@ export class LayerValues {
      * Get root value of component.
      */
     public get rootValue(): LayerValues {
-        if (this.mParentLayer !== null) {
+        if (this.mParentLayer === null) {
             return this;
         } else {
             return this.mParentLayer.rootValue;
@@ -67,31 +67,24 @@ export class LayerValues {
      * @param pHandler - Handler two.
      */
     public equal(pHandler: LayerValues): boolean {
-        const lTemporaryValuesOne: Array<string> = this.temporaryValuesList;
-        const lTemporaryValuesTwo: Array<string> = pHandler.temporaryValuesList;
-
         // Compare if it has the same user class object.
         if (this.componentManager.userObjectHandler.userObject !== pHandler.componentManager.userObjectHandler.userObject) {
             return false;
         }
 
-        // Compare length of temporary values.
-        if (lTemporaryValuesOne.length !== lTemporaryValuesTwo.length) {
+        // Get temporary value keys and sort. 
+        const lSortedTemporaryValueKeyListOne: Array<string> = this.temporaryValuesList.sort();
+        const lSortedTemporaryValueKeyListTwo: Array<string> = pHandler.temporaryValuesList.sort();
+
+        // Compare temporary value keys.
+        if (lSortedTemporaryValueKeyListOne.join() !== lSortedTemporaryValueKeyListTwo.join()) {
             return false;
         }
 
         // Check for temporary values differences from one to two.
-        for (const lTemporaryValueOneKey of lTemporaryValuesOne) {
+        for (const lTemporaryValueOneKey of lSortedTemporaryValueKeyListOne) {
             // Check for difference.
             if (this.getValue(lTemporaryValueOneKey) !== pHandler.getValue(lTemporaryValueOneKey)) {
-                return false;
-            }
-        }
-
-        // Check for temporary values differences from two to one.
-        for (const lTemporaryValueTwoKey of lTemporaryValuesTwo) {
-            // Check for difference.
-            if (pHandler.getValue(lTemporaryValueTwoKey) !== this.getValue(lTemporaryValueTwoKey)) {
                 return false;
             }
         }

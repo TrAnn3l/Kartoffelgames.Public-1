@@ -10,7 +10,6 @@ export class UpdateHandler {
     private readonly mLoopDetectionHandler: LoopDetectionHandler;
     private readonly mUpdateListener: List<UpdateListener>;
     private readonly mUpdateScope: UpdateScope;
-    private mUpdateSheduled: boolean;
     private readonly mUpdateWaiter: List<UpdateWaiter>;
 
     /**
@@ -41,11 +40,11 @@ export class UpdateHandler {
         this.mLoopDetectionHandler = new LoopDetectionHandler(10);
 
         // Create new change detection if component is not inside change detection or mode is capsuled.
-        if (!ChangeDetection.current || this.mUpdateScope === UpdateScope.Capsuled) {
-            this.mChangeDetection = new ChangeDetection('DefaultComponentZone');
-        } else if (this.mUpdateScope === UpdateScope.Manual) {
+        if (this.mUpdateScope === UpdateScope.Manual) {
             // Manual zone outside every other zone.
             this.mChangeDetection = new ChangeDetection('Manual Zone', null, true);
+        } else if (!ChangeDetection.current || this.mUpdateScope === UpdateScope.Capsuled) {
+            this.mChangeDetection = new ChangeDetection('DefaultComponentZone');
         } else {
             this.mChangeDetection = ChangeDetection.currentNoneSilent;
         }
@@ -55,6 +54,11 @@ export class UpdateHandler {
             this.mChangeDetectionListener = (pReason: ChangeDetectionReason) => { this.sheduleUpdate(pReason); };
             this.mChangeDetection.addChangeListener(this.mChangeDetectionListener);
         }
+
+        // Define error handler.
+        this.mLoopDetectionHandler.onError = (pError: any) => {
+            this.releaseWaiter(pError);
+        };
     }
 
     /**
@@ -83,8 +87,16 @@ export class UpdateHandler {
      * Execute function inside update detection scope.
      * @param pFunction - Function.
      */
-    public execute(pFunction: () => void): void {
+    public executeInZone(pFunction: () => void): void {
         this.mChangeDetection.execute(pFunction);
+    }
+
+    /**
+     * Execute function outside update detection scope.
+     * @param pFunction - Function.
+     */
+    public executeOutZone(pFunction: () => void): void {
+        this.mChangeDetection.silentExecution(pFunction);
     }
 
     /**
@@ -119,7 +131,7 @@ export class UpdateHandler {
      * Returns Promise<false> if there is currently no update cycle.
      */
     public async waitForUpdate(): Promise<boolean> {
-        if (this.mUpdateSheduled) {
+        if (this.mLoopDetectionHandler.activeChain) {
             // Add new callback to waiter line.
             return new Promise<boolean>((pResolve: (pValue: boolean) => void, pReject: (pError: any) => void) => {
                 this.mUpdateWaiter.push((pError: any) => {
@@ -166,25 +178,14 @@ export class UpdateHandler {
             return;
         }
 
-        // Set update handler into update sheduled mode.
-        this.mUpdateSheduled = true;
-
         this.mLoopDetectionHandler.callAsynchron(() => {
             this.mChangeDetection.execute(() => {
-                // Outside update before actual update happens.
-                this.mUpdateSheduled = false;
+                // Call every update listener.
+                this.dispatchUpdateListener(pReason);
 
-                // Update component and get if any update was made.
-                let lError: any = null;
-                try {
-                    this.dispatchUpdateListener(pReason);
-                } catch (pError) {
-                    lError = pError;
-                } finally {
-                    // Release all update waiter when no update is sheduled or an error occurred.
-                    if (!this.mUpdateSheduled || lError) {
-                        this.releaseWaiter(lError);
-                    }
+                // Check if any changes where made during the listener calls. If not, release all waiter.
+                if (!this.mLoopDetectionHandler.activeChain) {
+                    this.releaseWaiter();
                 }
             });
         }, pReason);

@@ -24,7 +24,7 @@ export class UserEventHandler {
         const lEventPropertyList: Dictionary<string, string> = Metadata.get(this.mUserObjectHandler.userClass).getMetadata(MetadataKey.METADATA_USER_EVENT_PROPERIES);
 
         if (lEventPropertyList) {
-            // When event was set. 
+            // When event was set.
             const lEventProperty: string = lEventPropertyList.get(pEventName);
             if (typeof lEventProperty === 'string') {
                 const lEventEmitter: ComponentEventEmitter<any> = Reflect.get(this.mUserObjectHandler.userObject, lEventProperty);

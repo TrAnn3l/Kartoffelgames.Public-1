@@ -1,3 +1,4 @@
+import { Exception } from '@kartoffelgames/core.data';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { expect } from 'chai';
 import { HtmlComponent } from '../../../../../source/decorator/component/html-component';
@@ -7,7 +8,7 @@ import '../../../../utility/ChaiHelper';
 import { TestUtil } from '../../../../utility/TestUtil';
 
 describe('IdChildAttributeModule', () => {
-    it('Read id child', async () => {
+    it('-- Read id child', async () => {
         // Setup. Values.
         const lIdName: string = 'IdChildId';
 
@@ -18,7 +19,7 @@ describe('IdChildAttributeModule', () => {
         })
         class TestComponent {
             @Export
-            @IdChild(lIdName)      
+            @IdChild(lIdName)
             public idChild: HTMLDivElement;
         }
 
@@ -29,5 +30,47 @@ describe('IdChildAttributeModule', () => {
 
         // Evaluation. Two Anchors. Static-Root => Manipulator => No Childs, no anchors.
         expect(lComponentIdChild).to.equal(lRealIdChild);
+    });
+
+    it('-- Forbidden static property use', () => {
+        // Process.
+        const lErrorFunction = () => {
+            @HtmlComponent({
+                selector: TestUtil.randomSelector()
+            })
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            class TestComponent {
+                @IdChild('Name')
+                public static idChild: HTMLDivElement;
+            }
+        };
+
+        // Evaluation.
+        expect(lErrorFunction).to.throw(Exception, 'Event target is not for a static property.');
+    });
+
+    it('-- Read with wrong id child name', async () => {
+        // Setup.
+        const lWrongName: string = 'WrongName';
+
+        // Setup. Define component.
+        @HtmlComponent({
+            selector: TestUtil.randomSelector(),
+            template: `<div #Name/>`
+        })
+        class TestComponent {
+            @Export
+            @IdChild(lWrongName)
+            public idChild: HTMLDivElement;
+        }
+
+        // Setup. Create element.
+        const lComponent: HTMLElement & TestComponent = await <any>TestUtil.createComponent(TestComponent);
+        const lErrorFunction = () => {
+            lComponent.idChild;
+        };
+
+        // Evaluation. Two Anchors. Static-Root => Manipulator => No Childs, no anchors.
+        expect(lErrorFunction).to.throw(Exception, `Can't find IdChild "${lWrongName}".`);
     });
 });

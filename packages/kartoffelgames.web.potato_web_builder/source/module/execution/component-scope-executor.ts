@@ -31,7 +31,7 @@ export class ComponentScopeExecutor {
      * @param pExtenedData - Extended data that are only exist for this execution.
      */
     public static executeSilent(pExpression: string, pValues: LayerValues, pExtenedData?: Dictionary<string, any>): any {
-        const lCurrentChangeDetection: ChangeDetection = ChangeDetection.currentNoneSilent ?? ChangeDetection.current;
+        const lCurrentChangeDetection: ChangeDetection = ChangeDetection.current;
 
         return lCurrentChangeDetection.silentExecution(() => {
             return ComponentScopeExecutor.execute(pExpression, pValues, pExtenedData);

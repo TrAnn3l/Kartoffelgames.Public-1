@@ -45,7 +45,7 @@ export class UserObjectHandler {
         // Create user object inside update zone.
         // Constructor needs to be called inside zone.
         let lUntrackedUserObject: UserObject;
-        pUpdateHandler.execute(() => {
+        pUpdateHandler.executeInZone(() => {
             lUntrackedUserObject = Injection.createObject(pUserClass, lLocalInjections);
         });
         this.mUserObject = pUpdateHandler.registerObject(lUntrackedUserObject);
@@ -105,7 +105,6 @@ export class UserObjectHandler {
             (<(...pArguments: Array<any>) => void>this.mUserObject[pCallbackKey])(...pArguments);
         }
     }
-
 }
 
 type UserObjectCallbacks = keyof UserObject;

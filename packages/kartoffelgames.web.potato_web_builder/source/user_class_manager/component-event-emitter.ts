@@ -20,10 +20,7 @@ export class ComponentEventEmitter<T> {
      * @param pCallback - Event callback.
      */
     public addListener(pCallback: (this: null, pEvent: T) => void): void {
-        // Add callback to listener if not already included.
-        if (!this.mListener.includes(pCallback)) {
-            this.mListener.push(pCallback);
-        }
+        this.mListener.push(pCallback);
     }
 
     /**

@@ -34,7 +34,7 @@ export class EventAttributeModule implements IPwbModuleOnDeconstruct {
         this.mValueHandler = pValueReference.value;
         this.mEventName = pAttributeReference.value.name.substr(1, pAttributeReference.value.name.length - 2);
 
-        // Try to get user class event from target element component manager..
+        // Try to get user class event from target element component manager.
         const lTargetComponentManager: ComponentManager = ComponentConnection.componentManagerOf(this.mTargetReference.value);
         if (lTargetComponentManager) {
             this.mEmitter = lTargetComponentManager.userEventHandler.getEventEmitter(this.mEventName);

@@ -29,11 +29,8 @@ export class AttributeHandler {
     private exportPropertyAsAttribute(pExportedProperties: Array<string | symbol>): void {
         // Each exported property.
         for (const lExportProperty of pExportedProperties) {
-            // Get property descriptor.
-            let lDescriptor: PropertyDescriptor = Object.getOwnPropertyDescriptor(this.mHtmlElement, lExportProperty);
-            if (!lDescriptor) {
-                lDescriptor = {};
-            }
+            // Get property descriptor. HTMLElement has no descriptors -,-
+            const lDescriptor: PropertyDescriptor = {}; //Object.getOwnPropertyDescriptor(this.mHtmlElement, lExportProperty);
 
             lDescriptor.enumerable = true;
             lDescriptor.configurable = true;

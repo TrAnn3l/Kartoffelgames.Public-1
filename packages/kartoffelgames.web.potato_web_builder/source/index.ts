@@ -9,9 +9,9 @@ export { PwbUpdateReference } from './component/injection/pwb-update-reference';
 // Modules
 export { ComponentScopeExecutor } from './module/execution/component-scope-executor';
 export { IPwbExpressionModuleOnUpdate, IPwbStaticModuleOnUpdate, IPwbMultiplicatorModuleOnUpdate, IPwbModuleOnDeconstruct } from './interface/module';
-export { ModuleAccessType as AttributeModuleAccessType } from './enum/module-access-type';
+export { ModuleAccessType } from './enum/module-access-type';
 export { LayerValues } from './component/values/layer-values';
-export { MultiplicatorResult as ModuleManipulatorResult } from './module/base/result/multiplicator-result';
+export { MultiplicatorResult } from './module/base/result/multiplicator-result';
 
 // Xml
 export { TemplateParser } from './parser/template-parser';

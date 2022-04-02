@@ -307,7 +307,7 @@ describe('ForOfManipulatorAttributeModule', () => {
         })
         class TestComponent { }
 
-        // Setup. Create element.
+        // Process. Create element.
         let lErrorMessage: string;
         try {
             await <any>TestUtil.createComponent(TestComponent);

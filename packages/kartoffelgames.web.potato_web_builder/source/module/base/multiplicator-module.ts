@@ -1,3 +1,4 @@
+import { Exception } from '@kartoffelgames/core.data';
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { ComponentManager } from '../../component/component-manager';
 import { LayerValues } from '../../component/values/layer-values';
@@ -24,7 +25,11 @@ export class MultiplicatorModule extends BaseModule<MultiplicatorResult, Multipl
      * Update module.
      */
     public update(): MultiplicatorResult {
-        return this.mModuleObject.onUpdate?.() ?? null;
+        if (!this.mModuleObject.onUpdate) {
+            throw new Exception('Multiplicator modules need to implement IPwbMultiplicatorModuleOnUpdate', this);   
+        } 
+
+        return this.mModuleObject.onUpdate();
     }
 }
 

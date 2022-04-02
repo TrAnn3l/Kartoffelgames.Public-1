@@ -4,18 +4,17 @@ import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { UpdateScope } from '../enum/update-scope';
 import { IPwbExpressionModuleClass } from '../interface/module';
 import { UserClass } from '../interface/user-class';
-import { ComponentModules } from './component-modules';
 import { TemplateParser } from '../parser/template-parser';
 import { PwbApp } from '../pwb-app';
 import { StaticBuilder } from './builder/static-builder';
 import { ComponentConnection } from './component-connection';
+import { ComponentModules } from './component-modules';
 import { ElementCreator } from './content/element-creator';
 import { ElementHandler } from './handler/element-handler';
 import { UpdateHandler } from './handler/update-handler';
 import { UserEventHandler } from './handler/user-event-handler';
 import { UserObjectHandler } from './handler/user-object-handler';
 import { PwbElementReference } from './injection/pwb-element-reference';
-import { PwbTemplateReference } from './injection/pwb-template-reference';
 import { PwbUpdateReference } from './injection/pwb-update-reference';
 import { LayerValues } from './values/layer-values';
 
@@ -68,20 +67,21 @@ export class ComponentManager {
     }
 
     /**
-     * 
+     * Constructor.
      * @param pUserClass - User class constructor.
-     * @param pTemplate - Template as xml string.
+     * @param pTemplateString - Template as xml string.
      * @param pExpressionModule - Expression module constructor.
      * @param pHtmlComponent - HTMLElement of component.
      * @param pUpdateScope - Update scope of component.
      */
-    public constructor(pUserClass: UserClass, pTemplate: string, pExpressionModule: IPwbExpressionModuleClass, pHtmlComponent: HTMLElement, pUpdateScope: UpdateScope) {
+    public constructor(pUserClass: UserClass, pTemplateString: string, pExpressionModule: IPwbExpressionModuleClass, pHtmlComponent: HTMLElement, pUpdateScope: UpdateScope) {
         // Load cached or create new module handler and template.
         const lCache: [ComponentModules, XmlDocument] = ComponentManager.mComponentCache.get(pUserClass);
         let lModules: ComponentModules;
         let lTemplate: XmlDocument;
         if (!lCache) {
-            lTemplate = ComponentManager.mXmlParser.parse(pTemplate);
+            const lTemplateString = pTemplateString ?? '';
+            lTemplate = ComponentManager.mXmlParser.parse(lTemplateString);
             lModules = new ComponentModules(this, pExpressionModule);
             ComponentManager.mComponentCache.set(pUserClass, [lModules, lTemplate]);
         } else {
@@ -93,7 +93,9 @@ export class ComponentManager {
         this.mUpdateHandler = new UpdateHandler(lUpdateScope);
         this.mUpdateHandler.addUpdateListener(() => {
             // Call user class on update function.
-            this.mUserObjectHandler.callOnPwbUpdate();
+            this.mUpdateHandler.executeOutZone(() => {
+                this.mUserObjectHandler.callOnPwbUpdate();
+            });
 
             // Update and callback after update.
             if (this.mRootBuilder.update()) {
@@ -105,7 +107,6 @@ export class ComponentManager {
         const lLocalInjections: Array<object> = new Array<object>();
         lLocalInjections.push(new PwbElementReference(pHtmlComponent));
         lLocalInjections.push(new PwbUpdateReference(this.mUpdateHandler));
-        lLocalInjections.push(new PwbTemplateReference(lTemplate));
         lLocalInjections.push(ChangeDetection.current?.getZoneData(PwbApp.PUBLIC_APP_KEY));
         this.mUserObjectHandler = new UserObjectHandler(pUserClass, this.updateHandler, lLocalInjections);
 

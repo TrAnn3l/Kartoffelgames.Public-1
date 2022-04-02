@@ -43,13 +43,6 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
     }
 
     /**
-     * Get target template.
-     */
-    protected get template(): BaseXmlNode {
-        return this.mTargetTemplate;
-    }
-
-    /**
      * Get target node.
      */
     protected get node(): Node {
