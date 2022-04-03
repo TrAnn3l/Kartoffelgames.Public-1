@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import { HtmlComponent } from '../../../../source/decorator/component/html-component';
 import '../../../mock/request-animation-frame-mock-session';
-import '../../../utility/ChaiHelper';
-import { TestUtil } from '../../../utility/TestUtil';
+import '../../../utility/chai-helper';
+import { TestUtil } from '../../../utility/test-util';
 
 describe('PwbApp', () => {
     it('-- Multiple module update order', async () => {

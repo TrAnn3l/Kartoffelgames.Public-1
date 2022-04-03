@@ -78,7 +78,7 @@ export class ContentManager {
     /**
      * Constructor.
      */
-    public constructor(pModules: ComponentModules, pAnchorPrefix: string = '') {
+    public constructor(pModules: ComponentModules, pAnchorPrefix: string) {
         this.mModules = pModules;
         this.mRootChildList = new List<Content>();
         this.mChildBuilderList = new List<BaseBuilder>();
@@ -106,9 +106,7 @@ export class ContentManager {
      * @param pChild - Child node.
      * @param pParentElement - Parent element of child.
      */
-    public append(pChild: Content): void;
-    public append(pChild: Content, pParentElement: Element): void;
-    public append(pChild: Content, pParentElement: Element = null): void {
+    public append(pChild: Content, pParentElement: Element): void {
         this.insertContent(pChild, pParentElement, 'Append');
     }
 
@@ -153,7 +151,9 @@ export class ContentManager {
         // Get last element of builder if bottom element is a builder 
         // or use node as bottom element.  
         let lBottom: Node;
+        /* istanbul ignore if */
         if (this.mBoundaryDescription.end instanceof BaseBuilder) {
+            // Not used but good to have.
             lBottom = this.mBoundaryDescription.end.boundary.end;
         } else {
             lBottom = this.mBoundaryDescription.end;
@@ -186,12 +186,9 @@ export class ContentManager {
      * Prepend child element to parent.
      * Prepends to root if no parent is specified. 
      * @param pChild - Child node.
-     * @param pParentElement - Parent element of child.
      */
-    public prepend(pChild: Content): void;
-    public prepend(pChild: Content, pParentElement: Element): void;
-    public prepend(pChild: Content, pParentElement: Element = null): void {
-        this.insertContent(pChild, pParentElement, 'Prepend');
+    public prepend(pChild: Content): void {
+        this.insertContent(pChild, null, 'Prepend');
     }
 
     /**
@@ -252,6 +249,8 @@ export class ContentManager {
                 lRealParent = this.mContentAnchor.parentElement ?? <ShadowRoot>this.mContentAnchor.getRootNode();
             }
         } else { // pMode === 'After'
+            // Native elements currently not used. But good to have.
+            /* istanbul ignore next */
             lRealParent = (pTarget instanceof BaseBuilder) ? pTarget.anchor.parentElement : pTarget.parentElement;
 
             // Parent is null, because direct parent is the component shadow root.
@@ -277,13 +276,17 @@ export class ContentManager {
             }
         } else if (pMode === 'Prepend') {
             // When parent is set, parent is an element, therefore there is no target before the first element.
+            /* istanbul ignore if */
             if (pTarget) {
+                // Not used but good to have.
                 lRealTarget = null;
             } else {
                 // "Parent" is this builder. Get first element, that is always this builders anchor.
                 lRealTarget = this.getBoundary().start;
             }
         } else { // pMode === "After"
+            // Native elements currently not used. But good to have.
+            /* istanbul ignore next */
             lRealTarget = (pTarget instanceof BaseBuilder) ? pTarget.boundary.end : pTarget;
         }
 
@@ -365,19 +368,18 @@ export class ContentManager {
 
         // Remove from root childs and shrink boundary.
         const lChildRootIndex: number = this.mRootChildList.indexOf(pChild);
-        if (lChildRootIndex > -1) {
-            // Check for boundary shrink.
-            if ((lChildRootIndex + 1) === this.mRootChildList.length) {
-                // Check if one root child remains otherwise use anchor as end boundary.
-                if (this.mRootChildList.length > 1) {
-                    this.mBoundaryDescription.end = this.mRootChildList[lChildRootIndex - 1];
-                } else {
-                    this.mBoundaryDescription.end = this.mContentAnchor;
-                }
-            }
 
-            this.mRootChildList.remove(pChild);
+        // Check for boundary shrink.
+        if ((lChildRootIndex + 1) === this.mRootChildList.length) {
+            // Check if one root child remains otherwise use anchor as end boundary.
+            if (this.mRootChildList.length > 1) {
+                this.mBoundaryDescription.end = this.mRootChildList[lChildRootIndex - 1];
+            } else {
+                this.mBoundaryDescription.end = this.mContentAnchor;
+            }
         }
+
+        this.mRootChildList.remove(pChild);
     }
 }
 

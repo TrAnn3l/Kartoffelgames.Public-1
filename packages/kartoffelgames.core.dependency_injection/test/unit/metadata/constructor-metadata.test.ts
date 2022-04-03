@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import { InjectionConstructor } from '../../../source';
 import { ConstructorMetadata } from '../../../source/metadata/constructor-metadata';
 import { PropertyMetadata } from '../../../source/metadata/property-metadata';
+import { InjectionConstructor } from '../../../source/type';
 
 describe('ConstructorMetadata', () => {
     describe('Property: parameterTypes', () => {

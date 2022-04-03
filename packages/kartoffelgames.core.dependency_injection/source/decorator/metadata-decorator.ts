@@ -1,6 +1,6 @@
-import { InjectionConstructor } from '..';
 import { Metadata } from '../metadata/metadata';
 import { ReflectInitializer } from '../reflect/reflect-initializer';
+import { InjectionConstructor } from '../type';
 
 ReflectInitializer.initialize();
 

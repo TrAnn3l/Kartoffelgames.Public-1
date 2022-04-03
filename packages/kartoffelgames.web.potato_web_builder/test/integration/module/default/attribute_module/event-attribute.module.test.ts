@@ -1,10 +1,12 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { expect } from 'chai';
+import { Export } from '../../../../../source/decorator/component/export';
 import { HtmlComponent } from '../../../../../source/decorator/component/html-component';
-import { ComponentEventEmitter, Export, HtmlComponentEvent } from '../../../../../source/index';
+import { HtmlComponentEvent } from '../../../../../source/decorator/component/html-component-event';
+import { ComponentEventEmitter } from '../../../../../source/user_class_manager/component-event-emitter';
 import '../../../../mock/request-animation-frame-mock-session';
-import '../../../../utility/ChaiHelper';
-import { TestUtil } from '../../../../utility/TestUtil';
+import '../../../../utility/chai-helper';
+import { TestUtil } from '../../../../utility/test-util';
 
 describe('EventAttributeModule', () => {
     it('-- Basic click event', async () => {

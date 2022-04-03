@@ -1,4 +1,4 @@
-import { LayerValues, TextNode, XmlAttribute, XmlElement } from '..';
+import { TextNode, XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { ModuleType } from '../enum/module-type';
 import { IPwbExpressionModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass } from '../interface/module';
 import { ExpressionModule } from '../module/base/expression-module';
@@ -15,6 +15,7 @@ import '../module/default/attribute_module/two-way-binding-attribute-module';
 import { MustacheExpressionModule } from '../module/default/mustache-expression-module';
 import { Modules } from '../module/modules';
 import { ComponentManager } from './component-manager';
+import { LayerValues } from './values/layer-values';
 
 
 export class ComponentModules {

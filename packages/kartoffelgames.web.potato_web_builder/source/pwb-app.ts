@@ -3,7 +3,7 @@ import { Exception } from '@kartoffelgames/core.data';
 import { ElementCreator } from './component/content/element-creator';
 import { InjectionConstructor, Metadata } from '@kartoffelgames/core.dependency-injection';
 import { MetadataKey } from './metadata-key';
-import { XmlElement } from '.';
+import { XmlElement } from '@kartoffelgames/core.xml';
 
 export class PwbApp {
     public static readonly PUBLIC_APP_KEY: string = '_PWB_APP';

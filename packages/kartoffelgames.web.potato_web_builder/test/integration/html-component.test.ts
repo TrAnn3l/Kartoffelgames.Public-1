@@ -1,12 +1,17 @@
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { expect } from 'chai';
-import { Export, ExpressionModule, IPwbAfterInit, IPwbAfterUpdate, IPwbExpressionModuleOnUpdate, IPwbOnAttributeChange, IPwbOnDeconstruct, IPwbOnInit, IPwbOnUpdate, PwbElementReference, PwbUpdateReference } from '../../source';
 import { LoopError } from '../../source/component/handler/loop-detection-handler';
+import { PwbElementReference } from '../../source/component/injection/pwb-element-reference';
+import { PwbUpdateReference } from '../../source/component/injection/pwb-update-reference';
+import { Export } from '../../source/decorator/component/export';
 import { HtmlComponent } from '../../source/decorator/component/html-component';
+import { ExpressionModule } from '../../source/decorator/module/expression-module';
 import { UpdateScope } from '../../source/enum/update-scope';
+import { IPwbExpressionModuleOnUpdate } from '../../source/interface/module';
+import { IPwbAfterInit, IPwbAfterUpdate, IPwbOnAttributeChange, IPwbOnDeconstruct, IPwbOnInit, IPwbOnUpdate } from '../../source/interface/user-class';
 import '../mock/request-animation-frame-mock-session';
-import '../utility/ChaiHelper';
-import { TestUtil } from '../utility/TestUtil';
+import '../utility/chai-helper';
+import { TestUtil } from '../utility/test-util';
 
 describe('HtmlComponent', () => {
     it('-- Single element', async () => {

@@ -1,8 +1,9 @@
 import { expect } from 'chai';
-import { HtmlComponent, PwbApp } from '../../source';
+import { HtmlComponent } from '../../source/decorator/component/html-component';
+import { PwbApp } from '../../source/pwb-app';
 import '../mock/request-animation-frame-mock-session';
-import '../utility/ChaiHelper';
-import { TestUtil } from '../utility/TestUtil';
+import '../utility/chai-helper';
+import { TestUtil } from '../utility/test-util';
 
 describe('PwbApp', () => {
     it('Property: content', () => {

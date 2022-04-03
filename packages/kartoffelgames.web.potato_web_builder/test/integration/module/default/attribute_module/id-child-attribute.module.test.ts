@@ -1,11 +1,12 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { expect } from 'chai';
+import { Export } from '../../../../../source/decorator/component/export';
 import { HtmlComponent } from '../../../../../source/decorator/component/html-component';
-import { Export, IdChild } from '../../../../../source/index';
+import { IdChild } from '../../../../../source/decorator/component/id-child';
 import '../../../../mock/request-animation-frame-mock-session';
-import '../../../../utility/ChaiHelper';
-import { TestUtil } from '../../../../utility/TestUtil';
+import '../../../../utility/chai-helper';
+import { TestUtil } from '../../../../utility/test-util';
 
 describe('IdChildAttributeModule', () => {
     it('-- Read id child', async () => {

@@ -1,6 +1,6 @@
 import { TextNode, XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
-import { LayerValues } from '../..';
 import { ComponentManager } from '../../component/component-manager';
+import { LayerValues } from '../../component/values/layer-values';
 import { IPwbExpressionModuleClass, IPwbExpressionModuleObject, ModuleDefinition } from '../../interface/module';
 import { BaseModule } from './base-module';
 

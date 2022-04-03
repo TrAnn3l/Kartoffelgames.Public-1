@@ -1,15 +1,21 @@
+import { XmlElement } from '@kartoffelgames/core.xml';
 import { expect } from 'chai';
-import { HtmlComponent, IPwbMultiplicatorModuleOnUpdate, LayerValues, ManipulatorAttributeModule, ModuleAccessType, StaticAttributeModule, XmlElement } from '../../../source';
+import { LayerValues } from '../../../source/component/values/layer-values';
+import { HtmlComponent } from '../../../source/decorator/component/html-component';
+import { MultiplicatorAttributeModule } from '../../../source/decorator/module/multiplicator-attribute-module';
+import { StaticAttributeModule } from '../../../source/decorator/module/static-attribute-module';
+import { ModuleAccessType } from '../../../source/enum/module-access-type';
+import { IPwbMultiplicatorModuleOnUpdate } from '../../../source/interface/module';
 import { LayerValuesReference } from '../../../source/module/base/injection/layer-values-reference';
 import { MultiplicatorResult } from '../../../source/module/base/result/multiplicator-result';
 import '../../mock/request-animation-frame-mock-session';
-import '../../utility/ChaiHelper';
-import { TestUtil } from '../../utility/TestUtil';
+import '../../utility/chai-helper';
+import { TestUtil } from '../../utility/test-util';
 
 describe('Custom Module', () => {
     it('-- Same result, twice', async () => {
         // Setup. Define module.
-        @ManipulatorAttributeModule({
+        @MultiplicatorAttributeModule({
             selector: /^\*multiresult$/
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -51,7 +57,7 @@ describe('Custom Module', () => {
 
     it('-- Manupulator without update method', async () => {
         // Setup. Define module.
-        @ManipulatorAttributeModule({
+        @MultiplicatorAttributeModule({
             selector: /^\*noupdatemethod$/
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

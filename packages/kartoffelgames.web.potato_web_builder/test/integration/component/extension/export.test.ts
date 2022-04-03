@@ -1,10 +1,10 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { expect } from 'chai';
-import { Export } from '../../../../source';
 import { HtmlComponent } from '../../../../source/decorator/component/html-component';
-import { TestUtil } from '../../../utility/TestUtil';
+import { TestUtil } from '../../../utility/test-util';
 import '../../../mock/request-animation-frame-mock-session';
-import '../../../utility/ChaiHelper';
+import '../../../utility/chai-helper';
+import { Export } from '../../../../source/decorator/component/export';
 
 describe('Export', () => {
     it('-- Default export get', async () => {

@@ -1,11 +1,11 @@
 import { expect } from 'chai';
-import { LayerValues } from '../../../../source';
 import { ComponentConnection } from '../../../../source/component/component-connection';
 import { ComponentManager } from '../../../../source/component/component-manager';
 import { HtmlComponent } from '../../../../source/decorator/component/html-component';
-import { TestUtil } from '../../../utility/TestUtil';
+import { TestUtil } from '../../../utility/test-util';
 import '../../../mock/request-animation-frame-mock-session';
-import '../../../utility/ChaiHelper';
+import '../../../utility/chai-helper';
+import { LayerValues } from '../../../../source/component/values/layer-values';
 
 describe('LayerValues', () => {
     it('-- Underlying component values', async () => {
