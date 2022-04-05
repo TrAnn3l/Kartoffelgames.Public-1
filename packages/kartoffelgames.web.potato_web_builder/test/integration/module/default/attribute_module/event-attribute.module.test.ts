@@ -1,8 +1,8 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { expect } from 'chai';
-import { Export } from '../../../../../source/decorator/component/export';
-import { HtmlComponent } from '../../../../../source/decorator/component/html-component';
-import { HtmlComponentEvent } from '../../../../../source/decorator/component/html-component-event';
+import { Export } from '../../../../../source/component/decorator/export';
+import { HtmlComponent } from '../../../../../source/component/decorator/html-component';
+import { HtmlComponentEvent } from '../../../../../source/component/decorator/html-component-event';
 import { ComponentEventEmitter } from '../../../../../source/user_class_manager/component-event-emitter';
 import '../../../../mock/request-animation-frame-mock-session';
 import '../../../../utility/chai-helper';

@@ -1,10 +1,10 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { XmlDocument, XmlElement } from '@kartoffelgames/core.xml';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
-import { UpdateScope } from '../enum/update-scope';
-import { IPwbExpressionModuleClass } from '../interface/module';
-import { UserClass } from '../interface/user-class';
-import { TemplateParser } from '../parser/template-parser';
+import { UpdateScope } from './enum/update-scope';
+import { IPwbExpressionModuleClass } from '../module/interface/module';
+import { UserClass } from './interface/user-class';
+import { TemplateParser } from './parser/template-parser';
 import { PwbApp } from '../pwb-app';
 import { StaticBuilder } from './builder/static-builder';
 import { ComponentConnection } from './component-connection';

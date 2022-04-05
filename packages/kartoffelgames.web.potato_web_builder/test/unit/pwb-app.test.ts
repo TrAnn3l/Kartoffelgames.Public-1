@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { HtmlComponent } from '../../source/decorator/component/html-component';
+import { HtmlComponent } from '../../source/component/decorator/html-component';
 import { PwbApp } from '../../source/pwb-app';
 import '../mock/request-animation-frame-mock-session';
 import '../utility/chai-helper';

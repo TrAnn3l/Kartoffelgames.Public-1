@@ -1,6 +1,6 @@
 import { Exception } from '@kartoffelgames/core.data';
-import { ComponentConnection } from '../../component/component-connection';
-import { UserObject } from '../../interface/user-class';
+import { ComponentConnection } from '../component-connection';
+import { UserObject } from '../interface/user-class';
 
 /**
  * AtScript. Id child 

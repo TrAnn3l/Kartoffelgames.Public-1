@@ -1,7 +1,7 @@
 import { TextNode, XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { ComponentManager } from '../../component/component-manager';
 import { LayerValues } from '../../component/values/layer-values';
-import { IPwbExpressionModuleClass, IPwbExpressionModuleObject, ModuleDefinition } from '../../interface/module';
+import { IPwbExpressionModuleClass, IPwbExpressionModuleObject, ModuleDefinition } from '../interface/module';
 import { BaseModule } from './base-module';
 
 export class ExpressionModule extends BaseModule<boolean, string> {

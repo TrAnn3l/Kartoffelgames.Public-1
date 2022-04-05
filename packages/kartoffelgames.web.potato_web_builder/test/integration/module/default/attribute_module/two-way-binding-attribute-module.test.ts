@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { Export } from '../../../../../source/decorator/component/export';
-import { HtmlComponent } from '../../../../../source/decorator/component/html-component';
+import { Export } from '../../../../../source/component/decorator/export';
+import { HtmlComponent } from '../../../../../source/component/decorator/html-component';
 import '../../../../mock/request-animation-frame-mock-session';
 import '../../../../utility/chai-helper';
 import { TestUtil } from '../../../../utility/test-util';

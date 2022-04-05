@@ -1,6 +1,6 @@
 import { LayerValues } from '../../component/values/layer-values';
-import { ExpressionModule } from '../../decorator/module/expression-module';
-import { IPwbExpressionModuleOnUpdate } from '../../interface/module';
+import { ExpressionModule } from '../decorator/expression-module';
+import { IPwbExpressionModuleOnUpdate } from '../interface/module';
 import { ExpressionReference } from '../base/injection/expression-reference';
 import { LayerValuesReference } from '../base/injection/layer-values-reference';
 import { ComponentScopeExecutor } from '../execution/component-scope-executor';

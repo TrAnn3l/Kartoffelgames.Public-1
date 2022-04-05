@@ -1,9 +1,9 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { expect } from 'chai';
-import { Export } from '../../../../../source/decorator/component/export';
-import { HtmlComponent } from '../../../../../source/decorator/component/html-component';
-import { IdChild } from '../../../../../source/decorator/component/id-child';
+import { Export } from '../../../../../source/component/decorator/export';
+import { HtmlComponent } from '../../../../../source/component/decorator/html-component';
+import { IdChild } from '../../../../../source/component/decorator/id-child';
 import '../../../../mock/request-animation-frame-mock-session';
 import '../../../../utility/chai-helper';
 import { TestUtil } from '../../../../utility/test-util';

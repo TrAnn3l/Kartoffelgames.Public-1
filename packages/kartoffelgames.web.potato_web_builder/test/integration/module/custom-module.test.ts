@@ -1,11 +1,11 @@
 import { XmlElement } from '@kartoffelgames/core.xml';
 import { expect } from 'chai';
 import { LayerValues } from '../../../source/component/values/layer-values';
-import { HtmlComponent } from '../../../source/decorator/component/html-component';
-import { MultiplicatorAttributeModule } from '../../../source/decorator/module/multiplicator-attribute-module';
-import { StaticAttributeModule } from '../../../source/decorator/module/static-attribute-module';
-import { ModuleAccessType } from '../../../source/enum/module-access-type';
-import { IPwbMultiplicatorModuleOnUpdate } from '../../../source/interface/module';
+import { HtmlComponent } from '../../../source/component/decorator/html-component';
+import { MultiplicatorAttributeModule } from '../../../source/module/decorator/multiplicator-attribute-module';
+import { StaticAttributeModule } from '../../../source/module/decorator/static-attribute-module';
+import { ModuleAccessType } from '../../../source/module/enum/module-access-type';
+import { IPwbMultiplicatorModuleOnUpdate } from '../../../source/module/interface/module';
 import { LayerValuesReference } from '../../../source/module/base/injection/layer-values-reference';
 import { MultiplicatorResult } from '../../../source/module/base/result/multiplicator-result';
 import '../../mock/request-animation-frame-mock-session';

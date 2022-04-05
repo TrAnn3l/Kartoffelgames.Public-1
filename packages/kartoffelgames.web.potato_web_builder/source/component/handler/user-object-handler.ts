@@ -1,7 +1,7 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { Injection, InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
-import { UserClass, UserObject } from '../../interface/user-class';
+import { UserClass, UserObject } from '../interface/user-class';
 import { UpdateHandler } from './update-handler';
 
 export class UserObjectHandler {

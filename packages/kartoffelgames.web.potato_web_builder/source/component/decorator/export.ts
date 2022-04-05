@@ -1,7 +1,7 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
 import { MetadataKey } from '../../metadata-key';
-import { UserClass } from '../../interface/user-class';
+import { UserClass } from '../interface/user-class';
 
 /**
  * AtScript.

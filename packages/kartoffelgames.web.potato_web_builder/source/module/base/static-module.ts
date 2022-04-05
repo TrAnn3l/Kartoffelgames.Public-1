@@ -1,7 +1,7 @@
 import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { ComponentManager } from '../../component/component-manager';
 import { LayerValues } from '../../component/values/layer-values';
-import { IPwbStaticModuleClass, IPwbStaticModuleObject, ModuleDefinition } from '../../interface/module';
+import { IPwbStaticModuleClass, IPwbStaticModuleObject, ModuleDefinition } from '../interface/module';
 import { BaseModule } from './base-module';
 
 export class StaticModule extends BaseModule<boolean, boolean> {

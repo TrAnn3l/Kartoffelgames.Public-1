@@ -1,7 +1,7 @@
 import { Dictionary, List } from '@kartoffelgames/core.data';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { LayerValues } from '../../component/values/layer-values';
-import { UserObject } from '../../interface/user-class';
+import { UserObject } from '../../component/interface/user-class';
 
 /**
  * Executes string in set component values scope.

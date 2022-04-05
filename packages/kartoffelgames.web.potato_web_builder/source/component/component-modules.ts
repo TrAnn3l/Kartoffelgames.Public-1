@@ -1,6 +1,6 @@
 import { TextNode, XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
-import { ModuleType } from '../enum/module-type';
-import { IPwbExpressionModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass } from '../interface/module';
+import { ModuleType } from '../module/enum/module-type';
+import { IPwbExpressionModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass } from '../module/interface/module';
 import { ExpressionModule } from '../module/base/expression-module';
 import { MultiplicatorModule } from '../module/base/multiplicator-module';
 import { StaticModule } from '../module/base/static-module';

@@ -1,5 +1,5 @@
-import { StaticAttributeModule } from '../../../decorator/module/static-attribute-module';
-import { ModuleAccessType } from '../../../enum/module-access-type';
+import { StaticAttributeModule } from '../../decorator/static-attribute-module';
+import { ModuleAccessType } from '../../enum/module-access-type';
 import { AttributeReference } from '../../base/injection/attribute-reference';
 import { ComponentManagerReference } from '../../base/injection/component-manager-reference';
 import { LayerValuesReference } from '../../base/injection/layer-values-reference';

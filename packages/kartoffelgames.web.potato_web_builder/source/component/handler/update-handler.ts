@@ -1,6 +1,6 @@
 import { List } from '@kartoffelgames/core.data';
 import { ChangeDetection, ChangeDetectionReason } from '@kartoffelgames/web.change-detection';
-import { UpdateScope } from '../../enum/update-scope';
+import { UpdateScope } from '../enum/update-scope';
 import { LoopDetectionHandler } from './loop-detection-handler';
 
 export class UpdateHandler {

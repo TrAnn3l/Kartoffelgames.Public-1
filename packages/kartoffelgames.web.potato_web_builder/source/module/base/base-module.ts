@@ -3,8 +3,8 @@ import { Injection, InjectionConstructor } from '@kartoffelgames/core.dependency
 import { BaseXmlNode, XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { ComponentManager } from '../../component/component-manager';
 import { LayerValues } from '../../component/values/layer-values';
-import { ModuleAccessType } from '../../enum/module-access-type';
-import { IPwbModuleClass, IPwbModuleObject, ModuleDefinition } from '../../interface/module';
+import { ModuleAccessType } from '../enum/module-access-type';
+import { IPwbModuleClass, IPwbModuleObject, ModuleDefinition } from '../interface/module';
 import { AttributeReference } from './injection/attribute-reference';
 import { ComponentManagerReference } from './injection/component-manager-reference';
 import { ExpressionReference } from './injection/expression-reference';
