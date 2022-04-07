@@ -6,7 +6,7 @@ import { MultiplicatorAttributeModule } from '../../../source/module/base/decora
 import { StaticAttributeModule } from '../../../source/module/base/decorator/static-attribute-module';
 import { ModuleAccessType } from '../../../source/module/base/enum/module-access-type';
 import { IPwbMultiplicatorModuleOnUpdate } from '../../../source/module/base/interface/module';
-import { LayerValuesReference } from '../../../source/module/base/injection/layer-values-reference';
+import { ModuleLayerValuesReference } from '../../../source/injection/module-layer-values-reference';
 import { MultiplicatorResult } from '../../../source/module/base/result/multiplicator-result';
 import '../../mock/request-animation-frame-mock-session';
 import '../../utility/chai-helper';
@@ -22,7 +22,7 @@ describe('Custom Module', () => {
         class WrongModule implements IPwbMultiplicatorModuleOnUpdate {
             private readonly mValueHandler: LayerValues;
 
-            public constructor(pValueReference: LayerValuesReference) {
+            public constructor(pValueReference: ModuleLayerValuesReference) {
                 this.mValueHandler = pValueReference.value;
             }
 

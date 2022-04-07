@@ -1,9 +1,9 @@
 import { LayerValues } from '../../../component/values/layer-values';
 import { MultiplicatorAttributeModule } from '../../base/decorator/multiplicator-attribute-module';
 import { IPwbMultiplicatorModuleOnUpdate } from '../../base/interface/module';
-import { AttributeReference } from '../../base/injection/attribute-reference';
-import { LayerValuesReference } from '../../base/injection/layer-values-reference';
-import { TemplateReference } from '../../base/injection/template-reference';
+import { ModuleAttributeReference } from '../../../injection/module-attribute-reference';
+import { ModuleLayerValuesReference } from '../../../injection/module-layer-values-reference';
+import { ModuleTemplateReference } from '../../../injection/module-template-reference';
 import { MultiplicatorResult } from '../../base/result/multiplicator-result';
 import { ComponentScopeExecutor } from '../../base/execution/component-scope-executor';
 
@@ -15,9 +15,9 @@ import { ComponentScopeExecutor } from '../../base/execution/component-scope-exe
     selector: /^\*pwbIf$/
 })
 export class IfManipulatorAttributeModule implements IPwbMultiplicatorModuleOnUpdate {
-    private readonly mAttributeReference: AttributeReference;
+    private readonly mAttributeReference: ModuleAttributeReference;
     private mLastBoolean: boolean;
-    private readonly mTemplateReference: TemplateReference;
+    private readonly mTemplateReference: ModuleTemplateReference;
     private readonly mValueHandler: LayerValues;
 
     /**
@@ -26,7 +26,7 @@ export class IfManipulatorAttributeModule implements IPwbMultiplicatorModuleOnUp
      * @param pValueReference - Values of component.
      * @param pAttributeReference - Attribute of module.
      */
-    public constructor(pTemplateReference: TemplateReference, pValueReference: LayerValuesReference, pAttributeReference: AttributeReference) {
+    public constructor(pTemplateReference: ModuleTemplateReference, pValueReference: ModuleLayerValuesReference, pAttributeReference: ModuleAttributeReference) {
         this.mTemplateReference = pTemplateReference;
         this.mValueHandler = pValueReference.value;
         this.mAttributeReference = pAttributeReference;

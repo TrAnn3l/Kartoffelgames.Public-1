@@ -14,8 +14,8 @@ import { ElementHandler } from './handler/element-handler';
 import { UpdateHandler } from './handler/update-handler';
 import { UserEventHandler } from './handler/user-event-handler';
 import { UserObjectHandler } from './handler/user-object-handler';
-import { PwbElementReference } from '../injection/pwb-element-reference';
-import { PwbUpdateReference } from '../injection/pwb-update-reference';
+import { ComponentElementReference } from '../injection/component-element-reference';
+import { ComponentUpdateReference } from '../injection/component-update-reference';
 import { LayerValues } from './values/layer-values';
 
 /**
@@ -105,8 +105,8 @@ export class ComponentManager {
 
         // Create user object handler.
         const lLocalInjections: Array<object> = new Array<object>();
-        lLocalInjections.push(new PwbElementReference(pHtmlComponent));
-        lLocalInjections.push(new PwbUpdateReference(this.mUpdateHandler));
+        lLocalInjections.push(new ComponentElementReference(pHtmlComponent));
+        lLocalInjections.push(new ComponentUpdateReference(this.mUpdateHandler));
         lLocalInjections.push(ChangeDetection.current?.getZoneData(PwbApp.PUBLIC_APP_KEY));
         this.mUserObjectHandler = new UserObjectHandler(pUserClass, this.updateHandler, lLocalInjections);
 

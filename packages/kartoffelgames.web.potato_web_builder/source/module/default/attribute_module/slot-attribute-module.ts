@@ -2,18 +2,18 @@ import { XmlElement } from '@kartoffelgames/core.xml';
 import { LayerValues } from '../../../component/values/layer-values';
 import { MultiplicatorAttributeModule } from '../../base/decorator/multiplicator-attribute-module';
 import { IPwbMultiplicatorModuleOnUpdate } from '../../base/interface/module';
-import { AttributeReference } from '../../base/injection/attribute-reference';
-import { LayerValuesReference } from '../../base/injection/layer-values-reference';
-import { TemplateReference } from '../../base/injection/template-reference';
+import { ModuleAttributeReference } from '../../../injection/module-attribute-reference';
+import { ModuleLayerValuesReference } from '../../../injection/module-layer-values-reference';
+import { ModuleTemplateReference } from '../../../injection/module-template-reference';
 import { MultiplicatorResult } from '../../base/result/multiplicator-result';
 
 @MultiplicatorAttributeModule({
     selector: /^\$[\w]+$/
 })
 export class SlotAttributeModule implements IPwbMultiplicatorModuleOnUpdate {
-    private readonly mAttributeReference: AttributeReference;
+    private readonly mAttributeReference: ModuleAttributeReference;
     private mCalled: boolean;
-    private readonly mTemplateReference: TemplateReference;
+    private readonly mTemplateReference: ModuleTemplateReference;
     private readonly mValueHandler: LayerValues;
     
     /**
@@ -22,7 +22,7 @@ export class SlotAttributeModule implements IPwbMultiplicatorModuleOnUpdate {
      * @param pValueHandler - Values of component.
      * @param pAttribute - Attribute of module.
      */
-    public constructor(pValueReference: LayerValuesReference, pAttributeReference: AttributeReference, pTemplateReference: TemplateReference) {
+    public constructor(pValueReference: ModuleLayerValuesReference, pAttributeReference: ModuleAttributeReference, pTemplateReference: ModuleTemplateReference) {
         this.mTemplateReference = pTemplateReference;
         this.mValueHandler = pValueReference.value;
         this.mAttributeReference = pAttributeReference;

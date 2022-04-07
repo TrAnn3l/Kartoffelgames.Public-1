@@ -4,10 +4,10 @@ import { LayerValues } from '../../../component/values/layer-values';
 import { StaticAttributeModule } from '../../base/decorator/static-attribute-module';
 import { ModuleAccessType } from '../../base/enum/module-access-type';
 import { IPwbStaticModuleOnUpdate } from '../../base/interface/module';
-import { AttributeReference } from '../../base/injection/attribute-reference';
-import { ComponentManagerReference } from '../../base/injection/component-manager-reference';
-import { LayerValuesReference } from '../../base/injection/layer-values-reference';
-import { TargetReference } from '../../base/injection/target-reference';
+import { ModuleAttributeReference } from '../../../injection/module-attribute-reference';
+import { ComponentManagerReference } from '../../../injection/component-manager-reference';
+import { ModuleLayerValuesReference } from '../../../injection/module-layer-values-reference';
+import { ModuleTargetReference } from '../../../injection/module-target-reference';
 import { ComponentScopeExecutor } from '../../base/execution/component-scope-executor';
 
 @StaticAttributeModule({
@@ -16,8 +16,8 @@ import { ComponentScopeExecutor } from '../../base/execution/component-scope-exe
     forbiddenInManipulatorScopes: false
 })
 export class TwoWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
-    private readonly mAttributeReference: AttributeReference;
-    private readonly mTargetReference: TargetReference;
+    private readonly mAttributeReference: ModuleAttributeReference;
+    private readonly mTargetReference: ModuleTargetReference;
     private readonly mThisProperty: string;
     private readonly mUserObjectCompareHandler: CompareHandler<any>;
     private readonly mValueHandler: LayerValues;
@@ -30,7 +30,7 @@ export class TwoWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
      * @param pValueReference - Values of component.
      * @param pAttribute - Attribute of module.
      */
-    public constructor(pTargetReference: TargetReference, pValueReference: LayerValuesReference, pAttributeReference: AttributeReference, pComponentManagerReference: ComponentManagerReference) {
+    public constructor(pTargetReference: ModuleTargetReference, pValueReference: ModuleLayerValuesReference, pAttributeReference: ModuleAttributeReference, pComponentManagerReference: ComponentManagerReference) {
         this.mTargetReference = pTargetReference;
         this.mValueHandler = pValueReference.value;
         this.mAttributeReference = pAttributeReference;

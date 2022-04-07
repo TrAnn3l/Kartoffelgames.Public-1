@@ -5,8 +5,8 @@ export { PwbApp } from './pwb-app';
 export { IPwbOnInit, IPwbAfterInit, IPwbOnDeconstruct, IPwbSlotAssign, IPwbAfterUpdate, IPwbOnUpdate, IPwbOnAttributeChange } from './component/interface/user-class';
 
 // Injections
-export { PwbElementReference } from './injection/pwb-element-reference';
-export { PwbUpdateReference } from './injection/pwb-update-reference';
+export { ComponentElementReference as PwbElementReference } from './injection/component-element-reference';
+export { ComponentUpdateReference as PwbUpdateReference } from './injection/component-update-reference';
 
 // Modules
 export { ComponentScopeExecutor } from './module/base/execution/component-scope-executor';

@@ -1,9 +1,9 @@
 import { StaticAttributeModule } from '../../base/decorator/static-attribute-module';
 import { ModuleAccessType } from '../../base/enum/module-access-type';
-import { AttributeReference } from '../../base/injection/attribute-reference';
-import { ComponentManagerReference } from '../../base/injection/component-manager-reference';
-import { LayerValuesReference } from '../../base/injection/layer-values-reference';
-import { TargetReference } from '../../base/injection/target-reference';
+import { ModuleAttributeReference } from '../../../injection/module-attribute-reference';
+import { ComponentManagerReference } from '../../../injection/component-manager-reference';
+import { ModuleLayerValuesReference } from '../../../injection/module-layer-values-reference';
+import { ModuleTargetReference } from '../../../injection/module-target-reference';
 
 /**
  * Used with "#IdChildName" like => #PasswordInput.
@@ -20,7 +20,7 @@ export class IdChildAttributeModule {
      * @param pLayerValues - Values of component.
      * @param pAttributeReference - Attribute of module.
      */
-    public constructor(pTargetReference: TargetReference, pValueReference: LayerValuesReference, pAttributeReference: AttributeReference, pComponentManager: ComponentManagerReference) {
+    public constructor(pTargetReference: ModuleTargetReference, pValueReference: ModuleLayerValuesReference, pAttributeReference: ModuleAttributeReference, pComponentManager: ComponentManagerReference) {
         const lRegistedElement: Node = pComponentManager.value.updateHandler.registerObject(pTargetReference.value);
 
         // Add current html element to temporary root values. Delete starting #.

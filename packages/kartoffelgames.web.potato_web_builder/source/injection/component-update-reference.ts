@@ -1,6 +1,6 @@
 import { UpdateHandler } from '../component/handler/update-handler';
 
-export class PwbUpdateReference {
+export class ComponentUpdateReference {
     private readonly mUpdateHandler: UpdateHandler;
 
     /**

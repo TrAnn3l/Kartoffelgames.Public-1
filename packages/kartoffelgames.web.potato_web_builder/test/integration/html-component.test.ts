@@ -1,8 +1,8 @@
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { expect } from 'chai';
 import { LoopError } from '../../source/component/handler/loop-detection-handler';
-import { PwbElementReference } from '../../source/injection/pwb-element-reference';
-import { PwbUpdateReference } from '../../source/injection/pwb-update-reference';
+import { ComponentElementReference } from '../../source/injection/component-element-reference';
+import { ComponentUpdateReference } from '../../source/injection/component-update-reference';
 import { Export } from '../../source/component/decorator/export';
 import { HtmlComponent } from '../../source/component/decorator/html-component';
 import { ExpressionModule } from '../../source/module/base/decorator/expression-module';
@@ -184,8 +184,8 @@ describe('HtmlComponent', () => {
             updateScope: UpdateScope.Manual
         })
         class TestComponent {
-            private readonly mUpdateReference: PwbUpdateReference;
-            public constructor(pUpdateReference: PwbUpdateReference) {
+            private readonly mUpdateReference: ComponentUpdateReference;
+            public constructor(pUpdateReference: ComponentUpdateReference) {
                 this.mUpdateReference = pUpdateReference;
             }
 
@@ -283,8 +283,8 @@ describe('HtmlComponent', () => {
             selector: TestUtil.randomSelector(),
         })
         class TestComponent {
-            private readonly mElementReference: PwbElementReference;
-            public constructor(pElementReference: PwbElementReference) {
+            private readonly mElementReference: ComponentElementReference;
+            public constructor(pElementReference: ComponentElementReference) {
                 this.mElementReference = pElementReference;
             }
 
@@ -389,8 +389,8 @@ describe('HtmlComponent', () => {
         class TestComponent implements IPwbAfterUpdate {
             public innerValue: number = 1;
 
-            private readonly mUpdateReference: PwbUpdateReference;
-            public constructor(pUpdateReference: PwbUpdateReference) {
+            private readonly mUpdateReference: ComponentUpdateReference;
+            public constructor(pUpdateReference: ComponentUpdateReference) {
                 this.mUpdateReference = pUpdateReference;
             }
 

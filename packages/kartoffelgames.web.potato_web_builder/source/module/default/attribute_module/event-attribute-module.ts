@@ -6,9 +6,9 @@ import { StaticAttributeModule } from '../../base/decorator/static-attribute-mod
 import { ModuleAccessType } from '../../base/enum/module-access-type';
 import { IPwbModuleOnDeconstruct } from '../../base/interface/module';
 import { ComponentEventEmitter } from '../../../user_class_manager/component-event-emitter';
-import { AttributeReference } from '../../base/injection/attribute-reference';
-import { LayerValuesReference } from '../../base/injection/layer-values-reference';
-import { TargetReference } from '../../base/injection/target-reference';
+import { ModuleAttributeReference } from '../../../injection/module-attribute-reference';
+import { ModuleLayerValuesReference } from '../../../injection/module-layer-values-reference';
+import { ModuleTargetReference } from '../../../injection/module-target-reference';
 import { ComponentScopeExecutor } from '../../base/execution/component-scope-executor';
 
 @StaticAttributeModule({
@@ -20,7 +20,7 @@ export class EventAttributeModule implements IPwbModuleOnDeconstruct {
     private readonly mEmitter: ComponentEventEmitter<any>;
     private readonly mEventName: string;
     private readonly mListener: (this: null, pEvent: any) => void;
-    private readonly mTargetReference: TargetReference;
+    private readonly mTargetReference: ModuleTargetReference;
     private readonly mValueHandler: LayerValues;
 
     /**
@@ -29,7 +29,7 @@ export class EventAttributeModule implements IPwbModuleOnDeconstruct {
      * @param pValueReference - Values of component.
      * @param pAttributeReference - Attribute of module.
      */
-    public constructor(pTargetReference: TargetReference, pValueReference: LayerValuesReference, pAttributeReference: AttributeReference) {
+    public constructor(pTargetReference: ModuleTargetReference, pValueReference: ModuleLayerValuesReference, pAttributeReference: ModuleAttributeReference) {
         this.mTargetReference = pTargetReference;
         this.mValueHandler = pValueReference.value;
         this.mEventName = pAttributeReference.value.name.substr(1, pAttributeReference.value.name.length - 2);
