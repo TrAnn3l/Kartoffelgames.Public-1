@@ -1,9 +1,12 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { Injection, InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
 import { ComponentManager } from '../../component/component-manager';
+import { ComponentManagerReference } from '../../injection/component-manager-reference';
+import { ExtensionTargetClassReference } from '../../injection/extension-target-class-reference';
+import { ExtensionTargetObjectReference } from '../../injection/extension-target-object-reference';
 import { IPwbExtensionClass, IPwbExtensionObject } from '../base/interface/extension';
 
-export class Base {
+export class BaseExtension {
     private readonly mExtensionClass: IPwbExtensionClass;
     private readonly mExtensionObjectList: Array<IPwbExtensionObject>;
     private readonly mInjections: Dictionary<InjectionConstructor, any>;
@@ -17,14 +20,9 @@ export class Base {
 
         // Create injection mapping.
         this.mInjections = new Dictionary<InjectionConstructor, any>();
-        //this.mInjections.set(LayerValuesReference, new LayerValuesReference(pParameter.values));
-        //this.mInjections.set(ComponentManagerReference, new ComponentManagerReference(pParameter.componentManager));
-        //this.mInjections.set(AttributeReference, new AttributeReference(pParameter.targetAttribute));
-        //this.mInjections.set(TemplateReference, new TemplateReference(lTemplateClone));
-        //this.mInjections.set(TargetReference, new TargetReference(pParameter.targetNode));
-
-
-
+        this.mInjections.set(ComponentManagerReference, new ComponentManagerReference(pParameter.componentManager));
+        this.mInjections.set(ExtensionTargetClassReference, new ExtensionTargetClassReference(pParameter.targetClass));
+        this.mInjections.set(ExtensionTargetObjectReference, new ExtensionTargetObjectReference(pParameter.targetObject));
     }
 
     /**
@@ -57,17 +55,9 @@ export class Base {
     }
 }
 
-export type BaseExtensionConstructorParameter = {
-    extensionClass: IPwbExtensionClass,
-    componentManager: ComponentManager,
-
-    // Component
-    //targetNode: HTMLElement,
-   // rootValues: LayerValues;
-
-    // Module
-    //targetTemplate: BaseXmlNode,
-    //targetAttribute: XmlAttribute,
-    //values: LayerValues,
-
+type BaseExtensionConstructorParameter = {
+    extensionClass: IPwbExtensionClass;
+    componentManager: ComponentManager;
+    targetClass: InjectionConstructor;
+    targetObject: object;
 };

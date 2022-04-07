@@ -1,21 +1,22 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { XmlDocument, XmlElement } from '@kartoffelgames/core.xml';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
-import { UpdateScope } from './enum/update-scope';
+import { ComponentElementReference } from '../injection/component-element-reference';
+import { ComponentUpdateReference } from '../injection/component-update-reference';
 import { IPwbExpressionModuleClass } from '../module/base/interface/module';
-import { UserClass } from './interface/user-class';
-import { TemplateParser } from './parser/template-parser';
 import { PwbApp } from '../pwb-app';
 import { StaticBuilder } from './builder/static-builder';
 import { ComponentConnection } from './component-connection';
+import { ComponentExtensions } from './component-extensions';
 import { ComponentModules } from './component-modules';
 import { ElementCreator } from './content/element-creator';
+import { UpdateScope } from './enum/update-scope';
 import { ElementHandler } from './handler/element-handler';
 import { UpdateHandler } from './handler/update-handler';
 import { UserEventHandler } from './handler/user-event-handler';
 import { UserObjectHandler } from './handler/user-object-handler';
-import { ComponentElementReference } from '../injection/component-element-reference';
-import { ComponentUpdateReference } from '../injection/component-update-reference';
+import { UserClass } from './interface/user-class';
+import { TemplateParser } from './parser/template-parser';
 import { LayerValues } from './values/layer-values';
 
 /**
@@ -26,6 +27,7 @@ export class ComponentManager {
     private static readonly mXmlParser: TemplateParser = new TemplateParser();
 
     private readonly mElementHandler: ElementHandler;
+    private readonly mExtensions: ComponentExtensions;
     private readonly mRootBuilder: StaticBuilder;
     private readonly mUpdateHandler: UpdateHandler;
     private readonly mUserEventHandler: UserEventHandler;
@@ -124,6 +126,13 @@ export class ComponentManager {
         // Create user event handler.
         this.mUserEventHandler = new UserEventHandler(this.userObjectHandler);
 
+        this.mExtensions = new ComponentExtensions({
+            componentManager: this,
+            componentElement: pHtmlComponent,
+            targetClass: this.mUserObjectHandler.userClass,
+            targetObject: this.mUserObjectHandler.userObject
+        });
+
         // Create component builder.
         this.mRootBuilder = new StaticBuilder(lTemplate, lTemplate, lModules, new LayerValues(this), null);
         this.elementHandler.shadowRoot.appendChild(this.mRootBuilder.anchor);
@@ -168,6 +177,9 @@ export class ComponentManager {
 
         // User callback.
         this.userObjectHandler.callOnPwbDeconstruct();
+
+        // Deconstruct all extensions.
+        this.mExtensions.deconstruct();
 
         // Remove change listener from app.
         this.updateHandler.deconstruct();
