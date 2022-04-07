@@ -2,14 +2,14 @@ import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { ComponentConnection } from '../../../component/component-connection';
 import { ComponentManager } from '../../../component/component-manager';
 import { LayerValues } from '../../../component/values/layer-values';
-import { StaticAttributeModule } from '../../decorator/static-attribute-module';
-import { ModuleAccessType } from '../../enum/module-access-type';
-import { IPwbModuleOnDeconstruct } from '../../interface/module';
+import { StaticAttributeModule } from '../../base/decorator/static-attribute-module';
+import { ModuleAccessType } from '../../base/enum/module-access-type';
+import { IPwbModuleOnDeconstruct } from '../../base/interface/module';
 import { ComponentEventEmitter } from '../../../user_class_manager/component-event-emitter';
 import { AttributeReference } from '../../base/injection/attribute-reference';
 import { LayerValuesReference } from '../../base/injection/layer-values-reference';
 import { TargetReference } from '../../base/injection/target-reference';
-import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
+import { ComponentScopeExecutor } from '../../base/execution/component-scope-executor';
 
 @StaticAttributeModule({
     selector: /^\([[\w\-$]+\)$/,

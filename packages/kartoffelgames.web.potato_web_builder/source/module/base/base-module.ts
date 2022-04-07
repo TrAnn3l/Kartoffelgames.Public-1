@@ -3,8 +3,8 @@ import { Injection, InjectionConstructor } from '@kartoffelgames/core.dependency
 import { BaseXmlNode, XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { ComponentManager } from '../../component/component-manager';
 import { LayerValues } from '../../component/values/layer-values';
-import { ModuleAccessType } from '../enum/module-access-type';
-import { IPwbModuleClass, IPwbModuleObject, ModuleDefinition } from '../interface/module';
+import { ModuleAccessType } from './enum/module-access-type';
+import { IPwbModuleClass, IPwbModuleObject, ModuleDefinition } from './interface/module';
 import { AttributeReference } from './injection/attribute-reference';
 import { ComponentManagerReference } from './injection/component-manager-reference';
 import { ExpressionReference } from './injection/expression-reference';
@@ -19,7 +19,6 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
     private readonly mModuleObjectList: Array<IPwbModuleObject<TModuleObjectResult>>;
     private readonly mTargetAttribute: XmlAttribute;
     private readonly mTargetNode: Node;
-    private readonly mTargetTemplate: BaseXmlNode;
 
     /**
      * Get module definition.
@@ -58,7 +57,7 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
 
     /**
      * Constructor.
-     * @param pModuleDefinition - Definition.
+     * @param pParameter - Parameter.
      */
     constructor(pParameter: BaseModuleConstructorParameter<TModuleObjectResult>) {
         // Clone template.
@@ -71,7 +70,6 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
         }
 
         this.mModuleDefinition = pParameter.moduleDefinition;
-        this.mTargetTemplate = lTemplateClone;
         this.mModuleClass = pParameter.moduleClass;
         this.mTargetNode = pParameter.targetNode;
         this.mTargetAttribute = pParameter.targetAttribute;

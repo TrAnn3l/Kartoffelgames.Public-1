@@ -1,16 +1,15 @@
 import { Injector } from '@kartoffelgames/core.dependency-injection';
+import { Modules } from '../../modules';
 import { ModuleAccessType } from '../enum/module-access-type';
 import { ModuleType } from '../enum/module-type';
 import { IPwbStaticModuleClass } from '../interface/module';
-import { Modules } from '../modules';
+
 
 /**
  * AtScript. PWB static attribute module.
  * @param pSettings - Module settings.
  */
 export function StaticAttributeModule(pSettings: AttributeModuleSettings): any {
-
-    // Needs constructor without argument.
     return (pStaticModuleConstructor: IPwbStaticModuleClass) => {
 
         // Set user class to be injectable

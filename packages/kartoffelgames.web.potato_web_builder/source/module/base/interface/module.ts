@@ -2,7 +2,7 @@
 
 import { ModuleAccessType } from '../enum/module-access-type';
 import { ModuleType } from '../enum/module-type';
-import { MultiplicatorResult } from '../base/result/multiplicator-result';
+import { MultiplicatorResult } from '../result/multiplicator-result';
 
 // Base.
 export interface IPwbModuleObject<TResult> extends IPwbModuleOnUpdate<TResult>, IPwbModuleOnDeconstruct { }

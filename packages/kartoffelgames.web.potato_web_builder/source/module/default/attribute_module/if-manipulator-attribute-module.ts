@@ -1,11 +1,11 @@
 import { LayerValues } from '../../../component/values/layer-values';
-import { MultiplicatorAttributeModule } from '../../decorator/multiplicator-attribute-module';
-import { IPwbMultiplicatorModuleOnUpdate } from '../../interface/module';
+import { MultiplicatorAttributeModule } from '../../base/decorator/multiplicator-attribute-module';
+import { IPwbMultiplicatorModuleOnUpdate } from '../../base/interface/module';
 import { AttributeReference } from '../../base/injection/attribute-reference';
 import { LayerValuesReference } from '../../base/injection/layer-values-reference';
 import { TemplateReference } from '../../base/injection/template-reference';
 import { MultiplicatorResult } from '../../base/result/multiplicator-result';
-import { ComponentScopeExecutor } from '../../execution/component-scope-executor';
+import { ComponentScopeExecutor } from '../../base/execution/component-scope-executor';
 
 /**
  * If expression.

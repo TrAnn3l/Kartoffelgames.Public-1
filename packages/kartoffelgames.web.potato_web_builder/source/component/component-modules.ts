@@ -1,6 +1,4 @@
 import { TextNode, XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
-import { ModuleType } from '../module/enum/module-type';
-import { IPwbExpressionModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass } from '../module/interface/module';
 import { ExpressionModule } from '../module/base/expression-module';
 import { MultiplicatorModule } from '../module/base/multiplicator-module';
 import { StaticModule } from '../module/base/static-module';
@@ -13,6 +11,8 @@ import '../module/default/attribute_module/one-way-binding-attribute-module';
 import '../module/default/attribute_module/slot-attribute-module';
 import '../module/default/attribute_module/two-way-binding-attribute-module';
 import { MustacheExpressionModule } from '../module/default/mustache-expression-module';
+import { ModuleType } from '../module/base/enum/module-type';
+import { IPwbExpressionModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass } from '../module/base/interface/module';
 import { Modules } from '../module/modules';
 import { ComponentManager } from './component-manager';
 import { LayerValues } from './values/layer-values';

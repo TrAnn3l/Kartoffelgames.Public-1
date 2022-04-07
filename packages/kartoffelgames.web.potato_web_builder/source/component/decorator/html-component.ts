@@ -3,7 +3,7 @@ import { InjectionConstructor, Injector, Metadata } from '@kartoffelgames/core.d
 import { UserClass } from '../interface/user-class';
 import { UpdateScope } from '../enum/update-scope';
 import { MetadataKey } from '../../metadata-key';
-import { IPwbExpressionModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass } from '../../module/interface/module';
+import { IPwbExpressionModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass } from '../../module/base/interface/module';
 
 /**
  * AtScript. PWB Component.

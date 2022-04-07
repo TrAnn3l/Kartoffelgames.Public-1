@@ -7,9 +7,9 @@ export { PwbElementReference } from './component/injection/pwb-element-reference
 export { PwbUpdateReference } from './component/injection/pwb-update-reference';
 
 // Modules
-export { ComponentScopeExecutor } from './module/execution/component-scope-executor';
-export { IPwbExpressionModuleOnUpdate, IPwbStaticModuleOnUpdate, IPwbMultiplicatorModuleOnUpdate, IPwbModuleOnDeconstruct } from './module/interface/module';
-export { ModuleAccessType } from './module/enum/module-access-type';
+export { ComponentScopeExecutor } from './module/base/execution/component-scope-executor';
+export { IPwbExpressionModuleOnUpdate, IPwbStaticModuleOnUpdate, IPwbMultiplicatorModuleOnUpdate, IPwbModuleOnDeconstruct } from './module/base/interface/module';
+export { ModuleAccessType } from './module/base/enum/module-access-type';
 export { LayerValues } from './component/values/layer-values';
 export { MultiplicatorResult } from './module/base/result/multiplicator-result';
 
@@ -22,6 +22,6 @@ export { HtmlComponentEvent } from './component/decorator/html-component-event';
 export { HtmlComponent } from './component/decorator/html-component';
 export { IdChild } from './component/decorator/id-child';
 export { Export } from './component/decorator/export';
-export { ExpressionModule } from './module/decorator/expression-module';
-export { MultiplicatorAttributeModule } from './module/decorator/multiplicator-attribute-module';
-export { StaticAttributeModule } from './module/decorator/static-attribute-module';
+export { ExpressionModule } from './module/base/decorator/expression-module';
+export { MultiplicatorAttributeModule } from './module/base/decorator/multiplicator-attribute-module';
+export { StaticAttributeModule } from './module/base/decorator/static-attribute-module';

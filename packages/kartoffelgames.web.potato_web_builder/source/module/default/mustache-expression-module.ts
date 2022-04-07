@@ -1,9 +1,9 @@
 import { LayerValues } from '../../component/values/layer-values';
-import { ExpressionModule } from '../decorator/expression-module';
-import { IPwbExpressionModuleOnUpdate } from '../interface/module';
+import { ExpressionModule } from '../base/decorator/expression-module';
+import { IPwbExpressionModuleOnUpdate } from '../base/interface/module';
 import { ExpressionReference } from '../base/injection/expression-reference';
 import { LayerValuesReference } from '../base/injection/layer-values-reference';
-import { ComponentScopeExecutor } from '../execution/component-scope-executor';
+import { ComponentScopeExecutor } from '../base/execution/component-scope-executor';
 
 /**
  * Wannabe Mustache expression executor.

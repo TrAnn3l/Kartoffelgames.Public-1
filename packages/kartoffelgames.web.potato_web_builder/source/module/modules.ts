@@ -1,5 +1,5 @@
 import { Dictionary, List } from '@kartoffelgames/core.data';
-import { IPwbModuleClass, ModuleDefinition } from './interface/module';
+import { IPwbModuleClass, ModuleDefinition } from './base/interface/module';
 
 export class Modules {
     private static readonly mModuleClasses: Dictionary<ModuleDefinition, IPwbModuleClass<unknown>> = new Dictionary<ModuleDefinition, IPwbModuleClass<unknown>>();

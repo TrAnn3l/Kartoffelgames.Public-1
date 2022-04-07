@@ -1,18 +1,3 @@
-export class PwbElementReference {
-    private readonly mNode: Node;
+import { BaseComponentReference } from './base-component-reference';
 
-    /**
-     * Get raw html element of component.
-     */
-    public get element(): Node {
-        return this.mNode;
-    }
-
-    /**
-     * Constructor.
-     * @param pNode - Referenced node.
-     */
-    public constructor(pNode: Node) {
-        this.mNode = pNode;
-    }
-}
+export class PwbElementReference extends BaseComponentReference<Node>{ }

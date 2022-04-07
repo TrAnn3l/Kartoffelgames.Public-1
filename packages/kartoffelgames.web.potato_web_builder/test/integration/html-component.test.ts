@@ -5,9 +5,9 @@ import { PwbElementReference } from '../../source/component/injection/pwb-elemen
 import { PwbUpdateReference } from '../../source/component/injection/pwb-update-reference';
 import { Export } from '../../source/component/decorator/export';
 import { HtmlComponent } from '../../source/component/decorator/html-component';
-import { ExpressionModule } from '../../source/module/decorator/expression-module';
+import { ExpressionModule } from '../../source/module/base/decorator/expression-module';
 import { UpdateScope } from '../../source/component/enum/update-scope';
-import { IPwbExpressionModuleOnUpdate } from '../../source/module/interface/module';
+import { IPwbExpressionModuleOnUpdate } from '../../source/module/base/interface/module';
 import { IPwbAfterInit, IPwbAfterUpdate, IPwbOnAttributeChange, IPwbOnDeconstruct, IPwbOnInit, IPwbOnUpdate } from '../../source/component/interface/user-class';
 import '../mock/request-animation-frame-mock-session';
 import '../utility/chai-helper';
@@ -290,7 +290,7 @@ describe('HtmlComponent', () => {
 
             @Export
             public element(): Node {
-                return this.mElementReference.element;
+                return this.mElementReference.value;
             }
         }
 
