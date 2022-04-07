@@ -3,8 +3,10 @@ export { UserObject, UserClass } from './component/interface/user-class';
 export { ComponentEventEmitter } from './user_class_manager/component-event-emitter';
 export { PwbApp } from './pwb-app';
 export { IPwbOnInit, IPwbAfterInit, IPwbOnDeconstruct, IPwbSlotAssign, IPwbAfterUpdate, IPwbOnUpdate, IPwbOnAttributeChange } from './component/interface/user-class';
-export { PwbElementReference } from './component/injection/pwb-element-reference';
-export { PwbUpdateReference } from './component/injection/pwb-update-reference';
+
+// Injections
+export { PwbElementReference } from './injection/pwb-element-reference';
+export { PwbUpdateReference } from './injection/pwb-update-reference';
 
 // Modules
 export { ComponentScopeExecutor } from './module/base/execution/component-scope-executor';

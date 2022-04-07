@@ -1,8 +1,8 @@
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { expect } from 'chai';
 import { LoopError } from '../../source/component/handler/loop-detection-handler';
-import { PwbElementReference } from '../../source/component/injection/pwb-element-reference';
-import { PwbUpdateReference } from '../../source/component/injection/pwb-update-reference';
+import { PwbElementReference } from '../../source/injection/pwb-element-reference';
+import { PwbUpdateReference } from '../../source/injection/pwb-update-reference';
 import { Export } from '../../source/component/decorator/export';
 import { HtmlComponent } from '../../source/component/decorator/html-component';
 import { ExpressionModule } from '../../source/module/base/decorator/expression-module';

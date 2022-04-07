@@ -14,8 +14,8 @@ import { ElementHandler } from './handler/element-handler';
 import { UpdateHandler } from './handler/update-handler';
 import { UserEventHandler } from './handler/user-event-handler';
 import { UserObjectHandler } from './handler/user-object-handler';
-import { PwbElementReference } from './injection/pwb-element-reference';
-import { PwbUpdateReference } from './injection/pwb-update-reference';
+import { PwbElementReference } from '../injection/pwb-element-reference';
+import { PwbUpdateReference } from '../injection/pwb-update-reference';
 import { LayerValues } from './values/layer-values';
 
 /**

@@ -1,4 +1,4 @@
-export class BaseComponentReference<TValue> {
+export class BaseReference<TValue> {
     private readonly mValue: TValue;
 
     /**
