@@ -2,14 +2,14 @@ import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { ComponentConnection } from '../../../component/component-connection';
 import { ComponentManager } from '../../../component/component-manager';
 import { LayerValues } from '../../../component/values/layer-values';
-import { StaticAttributeModule } from '../../base/decorator/static-attribute-module';
-import { ModuleAccessType } from '../../base/enum/module-access-type';
-import { IPwbModuleOnDeconstruct } from '../../base/interface/module';
+import { StaticAttributeModule } from '../../../module/decorator/static-attribute-module';
+import { ModuleAccessType } from '../../../module/enum/module-access-type';
+import { IPwbModuleOnDeconstruct } from '../../../module/interface/module';
 import { ComponentEventEmitter } from '../../../user_class_manager/component-event-emitter';
-import { ModuleAttributeReference } from '../../../injection/module-attribute-reference';
-import { ModuleLayerValuesReference } from '../../../injection/module-layer-values-reference';
-import { ModuleTargetReference } from '../../../injection/module-target-reference';
-import { ComponentScopeExecutor } from '../../base/execution/component-scope-executor';
+import { ModuleAttributeReference } from '../../../injection_reference/module-attribute-reference';
+import { ModuleLayerValuesReference } from '../../../injection_reference/module-layer-values-reference';
+import { ModuleTargetReference } from '../../../injection_reference/module-target-reference';
+import { ComponentScopeExecutor } from '../../../module/execution/component-scope-executor';
 
 @StaticAttributeModule({
     selector: /^\([[\w\-$]+\)$/,

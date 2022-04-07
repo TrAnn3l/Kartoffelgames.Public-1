@@ -1,5 +1,5 @@
 import { Injector } from '@kartoffelgames/core.dependency-injection';
-import { Modules } from '../../modules';
+import { Modules } from '../modules';
 import { ModuleAccessType } from '../enum/module-access-type';
 import { ModuleType } from '../enum/module-type';
 import { IPwbStaticModuleClass } from '../interface/module';

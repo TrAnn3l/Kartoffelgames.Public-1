@@ -1,5 +1,5 @@
 import { InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
-import { ComponentExtension } from '../extension/base/component-extension';
+import { ComponentExtension } from '../extension/component-extension';
 import { Extensions } from '../extension/extensions';
 import { ComponentManager } from './component-manager';
 

@@ -1,7 +1,7 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
-import { ComponentManager } from '../../component/component-manager';
-import { ComponentElementReference } from '../../injection/component-element-reference';
+import { ComponentManager } from '../component/component-manager';
+import { ComponentElementReference } from '../injection_reference/component-element-reference';
 import { BaseExtension } from './base-extension';
 import { IPwbExtensionClass } from './interface/extension';
 

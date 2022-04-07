@@ -1,13 +1,13 @@
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { expect } from 'chai';
 import { LoopError } from '../../source/component/handler/loop-detection-handler';
-import { ComponentElementReference } from '../../source/injection/component-element-reference';
-import { ComponentUpdateReference } from '../../source/injection/component-update-reference';
+import { ComponentElementReference } from '../../source/injection_reference/component-element-reference';
+import { ComponentUpdateReference } from '../../source/injection_reference/component-update-reference';
 import { Export } from '../../source/component/decorator/export';
 import { HtmlComponent } from '../../source/component/decorator/html-component';
-import { ExpressionModule } from '../../source/module/base/decorator/expression-module';
+import { ExpressionModule } from '../../source/module/decorator/expression-module';
 import { UpdateScope } from '../../source/component/enum/update-scope';
-import { IPwbExpressionModuleOnUpdate } from '../../source/module/base/interface/module';
+import { IPwbExpressionModuleOnUpdate } from '../../source/module/interface/module';
 import { IPwbAfterInit, IPwbAfterUpdate, IPwbOnAttributeChange, IPwbOnDeconstruct, IPwbOnInit, IPwbOnUpdate } from '../../source/component/interface/user-class';
 import '../mock/request-animation-frame-mock-session';
 import '../utility/chai-helper';

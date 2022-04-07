@@ -1,9 +1,9 @@
-import { StaticAttributeModule } from '../../base/decorator/static-attribute-module';
-import { ModuleAccessType } from '../../base/enum/module-access-type';
-import { ModuleAttributeReference } from '../../../injection/module-attribute-reference';
-import { ComponentManagerReference } from '../../../injection/component-manager-reference';
-import { ModuleLayerValuesReference } from '../../../injection/module-layer-values-reference';
-import { ModuleTargetReference } from '../../../injection/module-target-reference';
+import { StaticAttributeModule } from '../../../module/decorator/static-attribute-module';
+import { ModuleAccessType } from '../../../module/enum/module-access-type';
+import { ModuleAttributeReference } from '../../../injection_reference/module-attribute-reference';
+import { ComponentManagerReference } from '../../../injection_reference/component-manager-reference';
+import { ModuleLayerValuesReference } from '../../../injection_reference/module-layer-values-reference';
+import { ModuleTargetReference } from '../../../injection_reference/module-target-reference';
 
 /**
  * Used with "#IdChildName" like => #PasswordInput.

@@ -1,8 +1,8 @@
 import { Dictionary, List } from '@kartoffelgames/core.data';
-import { BaseModule } from '../../module/base/base-module';
-import { ExpressionModule } from '../../module/base/expression-module';
-import { MultiplicatorModule } from '../../module/base/multiplicator-module';
-import { StaticModule } from '../../module/base/static-module';
+import { BaseModule } from '../../module/base-module';
+import { ExpressionModule } from '../../module/expression-module';
+import { MultiplicatorModule } from '../../module/multiplicator-module';
+import { StaticModule } from '../../module/static-module';
 import { BaseBuilder } from '../builder/base-builder';
 import { ComponentConnection } from '../component-connection';
 import { ComponentManager } from '../component-manager';

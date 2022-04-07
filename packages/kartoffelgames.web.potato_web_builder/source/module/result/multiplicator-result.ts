@@ -1,6 +1,6 @@
 import { Exception, List } from '@kartoffelgames/core.data';
 import { BaseXmlNode } from '@kartoffelgames/core.xml';
-import { LayerValues } from '../../../component/values/layer-values';
+import { LayerValues } from '../../component/values/layer-values';
 
 /**
  * Results for html manipulator attribute module.

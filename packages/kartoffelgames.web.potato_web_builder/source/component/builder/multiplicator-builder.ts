@@ -1,7 +1,7 @@
 import { BaseXmlNode, XmlElement } from '@kartoffelgames/core.xml';
 import { ChangeState, DifferenceSearch, HistoryItem } from '@kartoffelgames/web.change-detection';
-import { MultiplicatorModule } from '../../module/base/multiplicator-module';
-import { ManipulatorElement, MultiplicatorResult } from '../../module/base/result/multiplicator-result';
+import { MultiplicatorModule } from '../../module/multiplicator-module';
+import { ManipulatorElement, MultiplicatorResult } from '../../module/result/multiplicator-result';
 import { ComponentModules } from '../component-modules';
 import { LayerValues } from '../values/layer-values';
 import { BaseBuilder } from './base-builder';

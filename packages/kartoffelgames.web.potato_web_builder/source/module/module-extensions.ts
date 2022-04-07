@@ -1,9 +1,9 @@
 import { InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
 import { BaseXmlNode, XmlAttribute } from '@kartoffelgames/core.xml';
-import { ComponentManager } from '../../component/component-manager';
-import { LayerValues } from '../../component/values/layer-values';
-import { ModuleExtension } from '../../extension/base/module-extension';
-import { Extensions } from '../../extension/extensions';
+import { ComponentManager } from '../component/component-manager';
+import { LayerValues } from '../component/values/layer-values';
+import { ModuleExtension } from '../extension/module-extension';
+import { Extensions } from '../extension/extensions';
 
 export class ModuleExtensions {
     private readonly mExtensionList: Array<ModuleExtension>;

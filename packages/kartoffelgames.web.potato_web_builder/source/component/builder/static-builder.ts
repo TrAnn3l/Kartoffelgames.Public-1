@@ -1,8 +1,8 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { BaseXmlNode, TextNode, XmlAttribute, XmlDocument, XmlElement } from '@kartoffelgames/core.xml';
-import { BaseModule } from '../../module/base/base-module';
-import { ExpressionModule } from '../../module/base/expression-module';
-import { StaticModule } from '../../module/base/static-module';
+import { BaseModule } from '../../module/base-module';
+import { ExpressionModule } from '../../module/expression-module';
+import { StaticModule } from '../../module/static-module';
 import { ComponentModules } from '../component-modules';
 import { ElementCreator } from '../content/element-creator';
 import { LayerValues } from '../values/layer-values';

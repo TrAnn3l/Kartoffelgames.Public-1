@@ -1,6 +1,6 @@
 import { List } from '@kartoffelgames/core.data';
-import { ExtensionType } from './base/enum/extension-type';
-import { IPwbExtensionClass } from './base/interface/extension';
+import { ExtensionType } from './enum/extension-type';
+import { IPwbExtensionClass } from './interface/extension';
 
 export class Extensions {
     private static readonly mComponentExtensions: Array<IPwbExtensionClass> = new Array<IPwbExtensionClass>();

@@ -1,9 +1,9 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { XmlDocument, XmlElement } from '@kartoffelgames/core.xml';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
-import { ComponentElementReference } from '../injection/component-element-reference';
-import { ComponentUpdateReference } from '../injection/component-update-reference';
-import { IPwbExpressionModuleClass } from '../module/base/interface/module';
+import { ComponentElementReference } from '../injection_reference/component-element-reference';
+import { ComponentUpdateReference } from '../injection_reference/component-update-reference';
+import { IPwbExpressionModuleClass } from '../module/interface/module';
 import { PwbApp } from '../pwb-app';
 import { StaticBuilder } from './builder/static-builder';
 import { ComponentConnection } from './component-connection';
