@@ -1,7 +1,7 @@
-import { Dictionary, Exception } from '@kartoffelgames/core.data';
+import { Exception } from '@kartoffelgames/core.data';
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
 import { UserClass } from '../../component/interface/user-class';
-import { EventListenerExtension } from './event-listener-extension';
+import { EventListenerComponentExtension } from './event-listener-component-extension';
 
 /**
  * Define event for external access.
@@ -15,14 +15,14 @@ export function PwbEventListener(pEventName: string): any {
 
         // Check if real prototype.
         if (typeof pTarget === 'function') {
-            throw new Exception('Event target is not for an instanced property.', PwbEventListener);
+            throw new Exception('Event listener is only valid on instanced property', PwbEventListener);
         }
 
         // Get property list from constructor metadata.
-        const lEventProperties: Dictionary<string, string> = Metadata.get(lUserClassConstructor).getMetadata(EventListenerExtension.METADATA_USER_EVENT_LISTENER_PROPERIES) ?? new Dictionary<string, string>();
-        lEventProperties.add(pEventName, pPropertyKey);
+        const lEventPropertyList: Array<[string, string]> = Metadata.get(lUserClassConstructor).getMetadata(EventListenerComponentExtension.METADATA_USER_EVENT_LISTENER_PROPERIES) ?? new Array<[string, string]>();
+        lEventPropertyList.push([pPropertyKey, pEventName]);
 
         // Set metadata.
-        Metadata.get(lUserClassConstructor).setMetadata(EventListenerExtension.METADATA_USER_EVENT_LISTENER_PROPERIES, lEventProperties);
+        Metadata.get(lUserClassConstructor).setMetadata(EventListenerComponentExtension.METADATA_USER_EVENT_LISTENER_PROPERIES, lEventPropertyList);
     };
 }

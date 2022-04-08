@@ -22,30 +22,32 @@ export class ComponentEventExtension {
      */
     public constructor(pTargetClassReference: ExtensionTargetClassReference, pTargetObjectReference: ExtensionTargetObjectReference, pElementReference: ComponentElementReference) {
         // Get event metadata.
-        const lEventProperties: Dictionary<string, string> = Metadata.get(pTargetClassReference.value).getMetadata(ComponentEventExtension.METADATA_USER_EVENT_PROPERIES) ?? new Dictionary<string, string>();
+        const lEventProperties: Dictionary<string, string> = Metadata.get(pTargetClassReference.value).getMetadata(ComponentEventExtension.METADATA_USER_EVENT_PROPERIES);
 
-        // Easy access target objects.
-        const lTargetObject: object = pTargetObjectReference.value;
-        const lTargetElement: HTMLElement = <HTMLElement>pElementReference.value;
+        if (lEventProperties !== null) {
+            // Easy access target objects.
+            const lTargetObject: object = pTargetObjectReference.value;
+            const lTargetElement: HTMLElement = <HTMLElement>pElementReference.value;
 
-        // Override each property with the corresponding component event emitter.
-        for (const lEventName of lEventProperties.keys()) {
-            const lPropertyKey: string = lEventProperties.get(lEventName);
+            // Override each property with the corresponding component event emitter.
+            for (const lEventName of lEventProperties.keys()) {
+                const lPropertyKey: string = lEventProperties.get(lEventName);
 
-            // Check property type.
-            if (Metadata.get(pTargetClassReference.value).getProperty(lPropertyKey).type !== ComponentEventEmitter) {
-                throw new Exception(`Event emiter property must be of type ${ComponentEventEmitter.name}`, this);
-            }
-
-            // Create component event emitter.
-            const lEventEmitter: ComponentEventEmitter<any> = new ComponentEventEmitter(lEventName, lTargetElement);
-
-            // Override property with created component event emmiter getter.
-            Object.defineProperty(lTargetObject, lPropertyKey, {
-                get: () => {
-                    return lEventEmitter;
+                // Check property type.
+                if (Metadata.get(pTargetClassReference.value).getProperty(lPropertyKey).type !== ComponentEventEmitter) {
+                    throw new Exception(`Event emiter property must be of type ${ComponentEventEmitter.name}`, this);
                 }
-            });
+
+                // Create component event emitter.
+                const lEventEmitter: ComponentEventEmitter<any> = new ComponentEventEmitter(lEventName, lTargetElement);
+
+                // Override property with created component event emmiter getter.
+                Object.defineProperty(lTargetObject, lPropertyKey, {
+                    get: () => {
+                        return lEventEmitter;
+                    }
+                });
+            }
         }
     }
 }

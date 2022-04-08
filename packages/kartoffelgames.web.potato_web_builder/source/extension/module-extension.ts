@@ -5,6 +5,7 @@ import { ComponentManager } from '../component/component-manager';
 import { LayerValues } from '../component/values/layer-values';
 import { ModuleAttributeReference } from '../injection_reference/module-attribute-reference';
 import { ModuleLayerValuesReference } from '../injection_reference/module-layer-values-reference';
+import { ModuleTargetReference } from '../injection_reference/module-target-reference';
 import { ModuleTemplateReference } from '../injection_reference/module-template-reference';
 import { BaseExtension } from './base-extension';
 import { IPwbExtensionClass } from './interface/extension';
@@ -22,6 +23,7 @@ export class ModuleExtension extends BaseExtension {
         lInjections.set(ModuleTemplateReference, new ModuleTemplateReference(pParameter.template));
         lInjections.set(ModuleAttributeReference, new ModuleAttributeReference(pParameter.attribute));
         lInjections.set(ModuleLayerValuesReference, new ModuleLayerValuesReference(pParameter.layerValues));
+        lInjections.set(ModuleTargetReference, new ModuleTargetReference(pParameter.element));
 
         // Create extension.
         this.createExtensionObject(lInjections);
@@ -39,4 +41,5 @@ type ModuleExtensionConstructorParameter = {
     template: BaseXmlNode,
     attribute: XmlAttribute,
     layerValues: LayerValues,
+    element: Node;
 };

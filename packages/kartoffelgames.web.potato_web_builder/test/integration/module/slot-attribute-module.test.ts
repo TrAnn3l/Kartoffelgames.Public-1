@@ -1,9 +1,9 @@
 import { InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
 import { expect } from 'chai';
-import { PwbComponent } from '../../../../../source/component/decorator/pwb-component.decorator';
-import '../../../../mock/request-animation-frame-mock-session';
-import '../../../../utility/chai-helper';
-import { TestUtil } from '../../../../utility/test-util';
+import { PwbComponent } from '../../../source/component/decorator/pwb-component.decorator';
+import '../../mock/request-animation-frame-mock-session';
+import '../../utility/chai-helper';
+import { TestUtil } from '../../utility/test-util';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const HTMLSlotElement: InjectionConstructor = <any>document.createElement('slot').constructor;

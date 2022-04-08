@@ -6,7 +6,7 @@ import { ModuleExtension } from '../extension/module-extension';
 import { Extensions } from '../extension/extensions';
 
 // Import default extensions.
-import '../default/event-listener/event-listener-extension';
+import '../default/event-listener/event-listener-module-extension';
 
 export class ModuleExtensions {
     private readonly mExtensionList: Array<ModuleExtension>;
@@ -26,7 +26,8 @@ export class ModuleExtensions {
                 attribute: pParameter.attribute,
                 layerValues: pParameter.layerValues,
                 targetClass: pParameter.targetClass,
-                targetObject: pParameter.targetObject
+                targetObject: pParameter.targetObject,
+                element: pParameter.element
             }));
         }
     }
@@ -48,4 +49,5 @@ type ModuleExtensionsConstructorParameter = {
     template: BaseXmlNode,
     attribute: XmlAttribute,
     layerValues: LayerValues,
+    element: Node;
 };

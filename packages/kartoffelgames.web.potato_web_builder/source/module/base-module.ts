@@ -126,7 +126,8 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
             targetObject: lModuleObject,
             template: this.mTemplateClone,
             attribute: this.mTargetAttribute,
-            layerValues: this.mLayerValues
+            layerValues: this.mLayerValues,
+            element: this.mTargetNode
         }));
 
         return lModuleObject;
