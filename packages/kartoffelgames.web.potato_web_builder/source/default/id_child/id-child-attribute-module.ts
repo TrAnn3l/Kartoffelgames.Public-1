@@ -1,4 +1,4 @@
-import { StaticAttributeModule } from '../../module/decorator/static-attribute-module';
+import { StaticAttributeModule } from '../../module/decorator/static-attribute-module.decorator';
 import { ModuleAccessType } from '../../module/enum/module-access-type';
 import { ModuleAttributeReference } from '../../injection_reference/module-attribute-reference';
 import { ComponentManagerReference } from '../../injection_reference/component-manager-reference';

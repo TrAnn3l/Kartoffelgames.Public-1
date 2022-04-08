@@ -1,6 +1,6 @@
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
 import { LayerValues } from '../../component/values/layer-values';
-import { StaticAttributeModule } from '../../module/decorator/static-attribute-module';
+import { StaticAttributeModule } from '../../module/decorator/static-attribute-module.decorator';
 import { ModuleAccessType } from '../../module/enum/module-access-type';
 import { IPwbStaticModuleOnUpdate } from '../../module/interface/module';
 import { ModuleAttributeReference } from '../../injection_reference/module-attribute-reference';

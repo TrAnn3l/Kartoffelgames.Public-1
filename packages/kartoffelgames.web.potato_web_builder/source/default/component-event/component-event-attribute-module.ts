@@ -2,7 +2,7 @@ import { Dictionary } from '@kartoffelgames/core.data';
 import { ModuleAttributeReference } from '../../injection_reference/module-attribute-reference';
 import { ModuleLayerValuesReference } from '../../injection_reference/module-layer-values-reference';
 import { ModuleTargetReference } from '../../injection_reference/module-target-reference';
-import { StaticAttributeModule } from '../../module/decorator/static-attribute-module';
+import { StaticAttributeModule } from '../../module/decorator/static-attribute-module.decorator';
 import { ModuleAccessType } from '../../module/enum/module-access-type';
 import { ComponentScopeExecutor } from '../../module/execution/component-scope-executor';
 import { IPwbModuleOnDeconstruct } from '../../module/interface/module';
