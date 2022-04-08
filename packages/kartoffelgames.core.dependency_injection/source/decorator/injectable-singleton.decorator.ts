@@ -10,6 +10,6 @@ ReflectInitializer.initialize();
  * Mark class to be injectable as an singleton object.
  * @param pConstructor - Constructor.
  */
-export function InjectableSingletonDecorator(pConstructor: InjectionConstructor): void {
+export function InjectableSingleton(pConstructor: InjectionConstructor): void {
     Injection.registerInjectable(pConstructor, InjectMode.Singleton);
 }

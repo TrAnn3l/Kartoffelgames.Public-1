@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { MetadataDecorator } from '../../../source/decorator/metadata-decorator';
+import { ExtendedMetadata } from '../../../source/decorator/extended-metadata.decorator';
 import { Metadata } from '../../../source/metadata/metadata';
 
-describe('MetadataDecorator', () => {
+describe('ExtendedMetadata', () => {
     describe('Decorator: Metadata', () => {
         it('-- Constructor Metadata', () => {
             // Setup.
@@ -10,7 +10,7 @@ describe('MetadataDecorator', () => {
             const lMetadataValue: object = {};
 
             // Process.
-            @MetadataDecorator(lMetadataKey, lMetadataValue)
+            @ExtendedMetadata(lMetadataKey, lMetadataValue)
             class TestA { }
 
             // Process. Read metadata.
@@ -28,7 +28,7 @@ describe('MetadataDecorator', () => {
 
             // Process.         
             class TestA {
-                @MetadataDecorator(lMetadataKey, lMetadataValue)
+                @ExtendedMetadata(lMetadataKey, lMetadataValue)
                 public [lPropertyName]: string;
             }
 
@@ -46,7 +46,7 @@ describe('MetadataDecorator', () => {
 
             // Process.         
             class TestA {
-                @MetadataDecorator(lMetadataKey, lMetadataValue)
+                @ExtendedMetadata(lMetadataKey, lMetadataValue)
                 public function(): string { return null; }
             }
 
@@ -65,7 +65,7 @@ describe('MetadataDecorator', () => {
 
             // Process.         
             class TestA {
-                @MetadataDecorator(lMetadataKey, lMetadataValue)
+                @ExtendedMetadata(lMetadataKey, lMetadataValue)
                 public get [lPropertyName](): string { return null; }
             }
 

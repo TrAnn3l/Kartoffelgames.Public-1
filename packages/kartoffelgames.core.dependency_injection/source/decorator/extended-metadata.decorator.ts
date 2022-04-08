@@ -10,7 +10,7 @@ ReflectInitializer.initialize();
  * @param pMetadataKey - Key of metadata.
  * @param pMetadataValue - Value of metadata.
  */
-export function MetadataDecorator<T>(pMetadataKey: string, pMetadataValue: T) {
+export function ExtendedMetadata<T>(pMetadataKey: string, pMetadataValue: T) {
     return (pTarget: object | InjectionConstructor, pProperty?: string | symbol): void => {
         // Get constructor from prototype if is an instanced member.
         let lConstructor: InjectionConstructor;

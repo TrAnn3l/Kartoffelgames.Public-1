@@ -10,6 +10,6 @@ ReflectInitializer.initialize();
  * Mark class to be injectable as an instanced object.
  * @param pConstructor - Constructor.
  */
-export function InjectableDecorator(pConstructor: InjectionConstructor): void {
+export function Injectable(pConstructor: InjectionConstructor): void {
     Injection.registerInjectable(pConstructor, InjectMode.Instanced);
 }

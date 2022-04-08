@@ -1,12 +1,12 @@
 import { expect } from 'chai';
-import { InjectableSingletonDecorator } from '../../../source/decorator/injectable-singleton-decorator';
+import { InjectableSingleton } from '../../../source/decorator/injectable-singleton.decorator';
 import { Injection } from '../../../source/injection/injection';
 
 
-describe('InjectableSingletonDecorator', () => {
+describe('InjectableSingleton', () => {
     it('Decorator: InjectableSingleton', () => {
         // Process.
-        @InjectableSingletonDecorator
+        @InjectableSingleton
         class TestA { }
 
         // Process. Create object.
