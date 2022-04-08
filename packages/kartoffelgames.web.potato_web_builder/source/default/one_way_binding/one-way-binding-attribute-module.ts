@@ -1,12 +1,12 @@
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
-import { LayerValues } from '../../../component/values/layer-values';
-import { StaticAttributeModule } from '../../../module/decorator/static-attribute-module';
-import { ModuleAccessType } from '../../../module/enum/module-access-type';
-import { IPwbStaticModuleOnUpdate } from '../../../module/interface/module';
-import { ModuleAttributeReference } from '../../../injection_reference/module-attribute-reference';
-import { ModuleLayerValuesReference } from '../../../injection_reference/module-layer-values-reference';
-import { ModuleTargetReference } from '../../../injection_reference/module-target-reference';
-import { ComponentScopeExecutor } from '../../../module/execution/component-scope-executor';
+import { LayerValues } from '../../component/values/layer-values';
+import { StaticAttributeModule } from '../../module/decorator/static-attribute-module';
+import { ModuleAccessType } from '../../module/enum/module-access-type';
+import { IPwbStaticModuleOnUpdate } from '../../module/interface/module';
+import { ModuleAttributeReference } from '../../injection_reference/module-attribute-reference';
+import { ModuleLayerValuesReference } from '../../injection_reference/module-layer-values-reference';
+import { ModuleTargetReference } from '../../injection_reference/module-target-reference';
+import { ComponentScopeExecutor } from '../../module/execution/component-scope-executor';
 
 /**
  * Bind value to view object.

@@ -2,11 +2,12 @@ import { Exception } from '@kartoffelgames/core.data';
 import { expect } from 'chai';
 import { Export } from '../../../../../source/component/decorator/export';
 import { HtmlComponent } from '../../../../../source/component/decorator/html-component';
-import { HtmlComponentEvent } from '../../../../../source/component/decorator/html-component-event';
-import { ComponentEventEmitter } from '../../../../../source/user_class_manager/component-event-emitter';
+import { HtmlComponentEvent } from '../../../../../source/default/component-event/html-component-event.decorator';
+import { ComponentEventEmitter } from '../../../../../source/default/component-event/component-event-emitter';
 import '../../../../mock/request-animation-frame-mock-session';
 import '../../../../utility/chai-helper';
 import { TestUtil } from '../../../../utility/test-util';
+import { ComponentEvent } from '../../../../../source/default/component-event/component-event';
 
 describe('EventAttributeModule', () => {
     it('-- Basic click event', async () => {
@@ -51,7 +52,7 @@ describe('EventAttributeModule', () => {
         })
         class EventComponent {
             @HtmlComponentEvent('custom-event')
-            private readonly mEvent: ComponentEventEmitter<string> = new ComponentEventEmitter<string>();
+            private readonly mEvent: ComponentEventEmitter<string>;
 
             @Export
             public callEvent(): void {
@@ -66,8 +67,8 @@ describe('EventAttributeModule', () => {
             template: `<${lEventComponentSelector} (custom-event)="this.handler($event)"/>`
         })
         class TestComponent {
-            public handler(pEvent: string): void {
-                lEventValueResult = pEvent;
+            public handler(pEvent: ComponentEvent<string>): void {
+                lEventValueResult = pEvent.value;
             }
         }
 
@@ -91,7 +92,7 @@ describe('EventAttributeModule', () => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         class EventComponent {
             @HtmlComponentEvent('custom-event')
-            public mEvent: string = ''; // Wrong type.
+            public mEvent: string; // Wrong type.
         }
 
         // Process. Define component and wait for update.
@@ -100,7 +101,7 @@ describe('EventAttributeModule', () => {
             template: `<${lEventComponentSelector} (custom-event)="this.handler($event)"/>`
         })
         class TestComponent {
-            public handler(pEvent: string): void { /* Empty */ }
+            public handler(_pEvent: ComponentEvent<string>): void { /* Empty */ }
         }
 
         // Setup. Create element.
@@ -112,7 +113,7 @@ describe('EventAttributeModule', () => {
         }
 
         // Evaluation.
-        expect(lErrorMessage).to.equal('Event emmiter must be of type ComponentEventEmitter');
+        expect(lErrorMessage).to.equal('Event emiter property must be of type ComponentEventEmitter');
     });
 
     it('-- Clear custom events on deconstruct', async () => {
@@ -125,7 +126,7 @@ describe('EventAttributeModule', () => {
         })
         class EventComponent {
             @HtmlComponentEvent('custom-event')
-            private readonly mEvent: ComponentEventEmitter<string> = new ComponentEventEmitter<string>();
+            private readonly mEvent: ComponentEventEmitter<string>;
 
             @Export
             public callEvent(): void {
@@ -140,7 +141,7 @@ describe('EventAttributeModule', () => {
             template: `<${lEventComponentSelector} (custom-event)="this.handler($event)"/>`
         })
         class TestComponent {
-            public handler(_pEvent: string): void {
+            public handler(_pEvent: ComponentEvent<string>): void {
                 lEventCalled = true;
             }
         }
@@ -189,7 +190,7 @@ describe('EventAttributeModule', () => {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             class EventComponent {
                 @HtmlComponentEvent('custom-event')
-                private static readonly mEvent: ComponentEventEmitter<string> = new ComponentEventEmitter<string>();
+                private static readonly mEvent: ComponentEventEmitter<string>;
             }
         };
 
@@ -209,9 +210,9 @@ describe('EventAttributeModule', () => {
         })
         class EventComponent {
             @HtmlComponentEvent('custom-event-one')
-            private readonly mEventOne: ComponentEventEmitter<string> = new ComponentEventEmitter<string>();
+            private readonly mEventOne: ComponentEventEmitter<string>;
             @HtmlComponentEvent('custom-event-two')
-            private readonly mEventTwo: ComponentEventEmitter<string> = new ComponentEventEmitter<string>();
+            private readonly mEventTwo: ComponentEventEmitter<string>;
 
             @Export
             public callEventOne(): void {
@@ -232,11 +233,11 @@ describe('EventAttributeModule', () => {
             template: `<${lEventComponentSelector} (custom-event-one)="this.handlerOne($event)" (custom-event-two)="this.handlerTwo($event)"/>`
         })
         class TestComponent {
-            public handlerOne(pEvent: string): void {
-                lEventValueResultOne = pEvent;
+            public handlerOne(pEvent: ComponentEvent<string>): void {
+                lEventValueResultOne = pEvent.value;
             }
-            public handlerTwo(pEvent: string): void {
-                lEventValueResultTwo = pEvent;
+            public handlerTwo(pEvent: ComponentEvent<string>): void {
+                lEventValueResultTwo = pEvent.value;
             }
         }
 
@@ -261,7 +262,7 @@ describe('EventAttributeModule', () => {
         })
         class EventComponent {
             @HtmlComponentEvent('custom-event')
-            private readonly mEvent: ComponentEventEmitter<void> = new ComponentEventEmitter<void>();
+            private readonly mEvent: ComponentEventEmitter<void>;
 
             @Export
             public callEvent(): void {
@@ -277,11 +278,11 @@ describe('EventAttributeModule', () => {
             template: `<${lEventComponentSelector} (custom-event)="this.customHandler($event)"  (click)="this.nativeHandler($event)"/>`
         })
         class TestComponent {
-            public customHandler(_pEvent: string): void {
+            public customHandler(_pEvent: ComponentEvent<string>): void {
                 lCustomCalled = true;
             }
 
-            public nativeHandler(_pEvent: string): void {
+            public nativeHandler(_pEvent: ComponentEvent<string>): void {
                 lNativeCalled = true;
             }
         }
@@ -308,7 +309,7 @@ describe('EventAttributeModule', () => {
         })
         class EventComponent {
             @HtmlComponentEvent('click')
-            private readonly mEvent: ComponentEventEmitter<string> = new ComponentEventEmitter<string>();
+            private readonly mEvent: ComponentEventEmitter<string>;
 
             @Export
             public callEvent(): void {
@@ -323,8 +324,8 @@ describe('EventAttributeModule', () => {
             template: `<${lEventComponentSelector} (click)="this.handler($event)"/>`
         })
         class TestComponent {
-            public handler(pEvent: string): void {
-                lEventValueResult = pEvent;
+            public handler(pEvent: ComponentEvent<string>): void {
+                lEventValueResult = pEvent.value;
             }
         }
 

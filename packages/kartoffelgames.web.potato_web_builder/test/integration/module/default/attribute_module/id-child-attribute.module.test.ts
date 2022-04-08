@@ -3,7 +3,7 @@ import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { expect } from 'chai';
 import { Export } from '../../../../../source/component/decorator/export';
 import { HtmlComponent } from '../../../../../source/component/decorator/html-component';
-import { IdChild } from '../../../../../source/component/decorator/id-child';
+import { IdChild } from '../../../../../source/default/id_child/id-child';
 import '../../../../mock/request-animation-frame-mock-session';
 import '../../../../utility/chai-helper';
 import { TestUtil } from '../../../../utility/test-util';

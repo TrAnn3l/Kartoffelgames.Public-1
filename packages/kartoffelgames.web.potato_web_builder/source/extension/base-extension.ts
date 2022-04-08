@@ -17,6 +17,7 @@ export class BaseExtension {
      */
     constructor(pParameter: BaseExtensionConstructorParameter) {
         this.mExtensionClass = pParameter.extensionClass;
+        this.mExtensionObjectList = new Array<IPwbExtensionObject>();
 
         // Create injection mapping.
         this.mInjections = new Dictionary<InjectionConstructor, any>();

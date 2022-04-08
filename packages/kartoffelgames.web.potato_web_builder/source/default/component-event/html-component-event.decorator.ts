@@ -1,7 +1,7 @@
 import { Dictionary, Exception } from '@kartoffelgames/core.data';
-import { UserClass } from '../interface/user-class';
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
-import { MetadataKey } from '../../metadata-key';
+import { UserClass } from '../../component/interface/user-class';
+import { ComponentEventExtension } from './component-event-extension';
 
 /**
  * Define event for external access.
@@ -19,10 +19,10 @@ export function HtmlComponentEvent(pEventName: string): any {
         }
 
         // Get property list from constructor metadata.
-        const lEventProperties: Dictionary<string, string> = Metadata.get(lUserClassConstructor).getMetadata(MetadataKey.METADATA_USER_EVENT_PROPERIES) ?? new Dictionary<string, string>();
+        const lEventProperties: Dictionary<string, string> = Metadata.get(lUserClassConstructor).getMetadata(ComponentEventExtension.METADATA_USER_EVENT_PROPERIES) ?? new Dictionary<string, string>();
         lEventProperties.add(pEventName, pPropertyKey);
 
         // Set metadata.
-        Metadata.get(lUserClassConstructor).setMetadata(MetadataKey.METADATA_USER_EVENT_PROPERIES, lEventProperties);
+        Metadata.get(lUserClassConstructor).setMetadata(ComponentEventExtension.METADATA_USER_EVENT_PROPERIES, lEventProperties);
     };
 }

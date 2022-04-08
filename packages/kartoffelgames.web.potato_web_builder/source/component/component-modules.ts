@@ -2,21 +2,21 @@ import { TextNode, XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { ExpressionModule } from '../module/expression-module';
 import { MultiplicatorModule } from '../module/multiplicator-module';
 import { StaticModule } from '../module/static-module';
-// Import default modules
-import '../default/module/attribute_module/event-attribute-module';
-import '../default/module/attribute_module/for-of-manipulator-attribute-module';
-import '../default/module/attribute_module/id-child-attribute-module';
-import '../default/module/attribute_module/if-manipulator-attribute-module';
-import '../default/module/attribute_module/one-way-binding-attribute-module';
-import '../default/module/attribute_module/slot-attribute-module';
-import '../default/module/attribute_module/two-way-binding-attribute-module';
-import { MustacheExpressionModule } from '../default/module/mustache-expression-module';
+import { MustacheExpressionModule } from '../default/mustache_expression/mustache-expression-module';
 import { ModuleType } from '../module/enum/module-type';
 import { IPwbExpressionModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass } from '../module/interface/module';
 import { Modules } from '../module/modules';
 import { ComponentManager } from './component-manager';
 import { LayerValues } from './values/layer-values';
 
+// Import default modules
+import '../default/component-event/component-event-attribute-module';
+import '../default/pwb_for_of/for-of-manipulator-attribute-module';
+import '../default/id_child/id-child-attribute-module';
+import '../default/pwb_if/if-manipulator-attribute-module';
+import '../default/one_way_binding/one-way-binding-attribute-module';
+import '../default/slot_attribute/slot-attribute-module';
+import '../default/two_way_binding/two-way-binding-attribute-module';
 
 export class ComponentModules {
     private readonly mComponentManager: ComponentManager;
@@ -152,5 +152,4 @@ export class ComponentModules {
 
         return lModule;
     }
-
 }

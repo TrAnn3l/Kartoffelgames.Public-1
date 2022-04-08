@@ -13,7 +13,6 @@ import { ElementCreator } from './content/element-creator';
 import { UpdateScope } from './enum/update-scope';
 import { ElementHandler } from './handler/element-handler';
 import { UpdateHandler } from './handler/update-handler';
-import { UserEventHandler } from './handler/user-event-handler';
 import { UserObjectHandler } from './handler/user-object-handler';
 import { UserClass } from './interface/user-class';
 import { TemplateParser } from './parser/template-parser';
@@ -30,7 +29,6 @@ export class ComponentManager {
     private readonly mExtensions: ComponentExtensions;
     private readonly mRootBuilder: StaticBuilder;
     private readonly mUpdateHandler: UpdateHandler;
-    private readonly mUserEventHandler: UserEventHandler;
     private readonly mUserObjectHandler: UserObjectHandler;
 
     /**
@@ -38,13 +36,6 @@ export class ComponentManager {
      */
     public get elementHandler(): ElementHandler {
         return this.mElementHandler;
-    }
-
-    /**
-     * Get user event handler.
-     */
-    public get userEventHandler(): UserEventHandler {
-        return this.mUserEventHandler;
     }
 
     /**
@@ -123,9 +114,7 @@ export class ComponentManager {
         ComponentConnection.connectComponentManagerWith(this.userObjectHandler.userObject, this);
         ComponentConnection.connectComponentManagerWith(this.userObjectHandler.untrackedUserObject, this);
 
-        // Create user event handler.
-        this.mUserEventHandler = new UserEventHandler(this.userObjectHandler);
-
+        // Create extensions.
         this.mExtensions = new ComponentExtensions({
             componentManager: this,
             componentElement: pHtmlComponent,

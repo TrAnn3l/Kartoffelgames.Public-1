@@ -1,9 +1,9 @@
-import { StaticAttributeModule } from '../../../module/decorator/static-attribute-module';
-import { ModuleAccessType } from '../../../module/enum/module-access-type';
-import { ModuleAttributeReference } from '../../../injection_reference/module-attribute-reference';
-import { ComponentManagerReference } from '../../../injection_reference/component-manager-reference';
-import { ModuleLayerValuesReference } from '../../../injection_reference/module-layer-values-reference';
-import { ModuleTargetReference } from '../../../injection_reference/module-target-reference';
+import { StaticAttributeModule } from '../../module/decorator/static-attribute-module';
+import { ModuleAccessType } from '../../module/enum/module-access-type';
+import { ModuleAttributeReference } from '../../injection_reference/module-attribute-reference';
+import { ComponentManagerReference } from '../../injection_reference/component-manager-reference';
+import { ModuleLayerValuesReference } from '../../injection_reference/module-layer-values-reference';
+import { ModuleTargetReference } from '../../injection_reference/module-target-reference';
 
 /**
  * Used with "#IdChildName" like => #PasswordInput.
@@ -24,6 +24,6 @@ export class IdChildAttributeModule {
         const lRegistedElement: Node = pComponentManager.value.updateHandler.registerObject(pTargetReference.value);
 
         // Add current html element to temporary root values. Delete starting #.
-        pValueReference.value.setRootValue(pAttributeReference.value.qualifiedName.substr(1), lRegistedElement);
+        pValueReference.value.setRootValue(pAttributeReference.value.qualifiedName.substring(1), lRegistedElement);
     }
 }
