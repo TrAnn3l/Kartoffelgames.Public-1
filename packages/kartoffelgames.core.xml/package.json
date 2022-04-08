@@ -1,7 +1,7 @@
 {
     "name": "@kartoffelgames/core.xml",
     "projectName": "KartoffelGames.Core.Xml",
-    "version": "0.0.11",
+    "version": "0.0.12",
     "description": "KartoffelGames.Core.Xml",
     "author": {
         "name": "KartoffelGames"
@@ -38,7 +38,7 @@
         "webpack-cli": "^4.8.0"
     },
     "dependencies": {
-        "@kartoffelgames/core.data": "^0.0.11"
+        "@kartoffelgames/core.data": "^0.0.12"
     },
     "scripts": {
         "script:build": "npm run pre:build && webpack-cli --config ../../enviroment/configuration/webpack.config.js",
