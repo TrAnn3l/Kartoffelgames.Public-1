@@ -1,6 +1,6 @@
 import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
-import { Extension } from '../../extension/decorator/extension';
+import { Extension } from '../../extension/decorator/extension.decorator';
 import { ExtensionType } from '../../extension/enum/extension-type';
 import { ComponentElementReference } from '../../injection_reference/component-element-reference';
 import { ExtensionTargetClassReference } from '../../injection_reference/extension-target-class-reference';

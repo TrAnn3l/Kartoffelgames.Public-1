@@ -5,7 +5,7 @@ import { ComponentElementReference } from '../../source/injection_reference/comp
 import { ComponentUpdateReference } from '../../source/injection_reference/component-update-reference';
 import { Export } from '../../source/default/export/export.decorator';
 import { HtmlComponent } from '../../source/component/decorator/html-component.decorator';
-import { ExpressionModule } from '../../source/module/decorator/expression-module';
+import { ExpressionModule } from '../../source/module/decorator/expression-module.decorator';
 import { UpdateScope } from '../../source/component/enum/update-scope';
 import { IPwbExpressionModuleOnUpdate } from '../../source/module/interface/module';
 import { IPwbAfterInit, IPwbAfterUpdate, IPwbOnAttributeChange, IPwbOnDeconstruct, IPwbOnInit, IPwbOnUpdate } from '../../source/component/interface/user-class';

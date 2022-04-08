@@ -1,6 +1,6 @@
 import { XmlElement } from '@kartoffelgames/core.xml';
 import { LayerValues } from '../../component/values/layer-values';
-import { MultiplicatorAttributeModule } from '../../module/decorator/multiplicator-attribute-module';
+import { MultiplicatorAttributeModule } from '../../module/decorator/multiplicator-attribute-module.decorator';
 import { IPwbMultiplicatorModuleOnUpdate } from '../../module/interface/module';
 import { ModuleAttributeReference } from '../../injection_reference/module-attribute-reference';
 import { ModuleLayerValuesReference } from '../../injection_reference/module-layer-values-reference';
