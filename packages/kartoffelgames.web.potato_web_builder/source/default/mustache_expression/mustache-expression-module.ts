@@ -1,5 +1,5 @@
 import { LayerValues } from '../../component/values/layer-values';
-import { ExpressionModule } from '../../module/decorator/expression-module.decorator';
+import { PwbExpressionModule } from '../../module/decorator/pwb-expression-module.decorator';
 import { IPwbExpressionModuleOnUpdate } from '../../module/interface/module';
 import { ModuleExpressionReference } from '../../injection_reference/module-expression-reference';
 import { ModuleLayerValuesReference } from '../../injection_reference/module-layer-values-reference';
@@ -9,7 +9,7 @@ import { ComponentScopeExecutor } from '../../module/execution/component-scope-e
  * Wannabe Mustache expression executor.
  * Executes readonly expressions inside double brackets.
  */
-@ExpressionModule({
+@PwbExpressionModule({
     selector: /{{.*?}}/
 })
 export class MustacheExpressionModule implements IPwbExpressionModuleOnUpdate {

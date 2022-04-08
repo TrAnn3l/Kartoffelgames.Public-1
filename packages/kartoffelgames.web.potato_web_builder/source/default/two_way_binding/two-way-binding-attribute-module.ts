@@ -1,7 +1,7 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
 import { LayerValues } from '../../component/values/layer-values';
-import { StaticAttributeModule } from '../../module/decorator/static-attribute-module.decorator';
+import { PwbStaticAttributeModule } from '../../module/decorator/pwb-static-attribute-module.decorator';
 import { ModuleAccessType } from '../../module/enum/module-access-type';
 import { IPwbStaticModuleOnUpdate } from '../../module/interface/module';
 import { ModuleAttributeReference } from '../../injection_reference/module-attribute-reference';
@@ -10,7 +10,7 @@ import { ModuleLayerValuesReference } from '../../injection_reference/module-lay
 import { ModuleTargetReference } from '../../injection_reference/module-target-reference';
 import { ComponentScopeExecutor } from '../../module/execution/component-scope-executor';
 
-@StaticAttributeModule({
+@PwbStaticAttributeModule({
     selector: /^\[\([[\w$]+\)\]$/,
     access: ModuleAccessType.ReadWrite,
     forbiddenInManipulatorScopes: false

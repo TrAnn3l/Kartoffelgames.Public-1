@@ -8,7 +8,7 @@ import { Modules } from '../modules';
  * AtScript. PWB Multiplicator attribute module.
  * @param pSettings - Module settings.
  */
-export function MultiplicatorAttributeModule(pSettings: AttributeModuleSettings): any {
+export function PwbMultiplicatorAttributeModule(pSettings: AttributeModuleSettings): any {
     return (pManipulatorModuleConstructor: IPwbMultiplicatorModuleClass) => {
 
         // Set user class to be injectable

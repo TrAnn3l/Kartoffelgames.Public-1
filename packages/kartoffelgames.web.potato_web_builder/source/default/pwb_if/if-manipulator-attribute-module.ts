@@ -1,5 +1,5 @@
 import { LayerValues } from '../../component/values/layer-values';
-import { MultiplicatorAttributeModule } from '../../module/decorator/multiplicator-attribute-module.decorator';
+import { PwbMultiplicatorAttributeModule } from '../../module/decorator/pwb-multiplicator-attribute-module.decorator';
 import { IPwbMultiplicatorModuleOnUpdate } from '../../module/interface/module';
 import { ModuleAttributeReference } from '../../injection_reference/module-attribute-reference';
 import { ModuleLayerValuesReference } from '../../injection_reference/module-layer-values-reference';
@@ -11,7 +11,7 @@ import { ComponentScopeExecutor } from '../../module/execution/component-scope-e
  * If expression.
  * If the executed result of the attribute value is false, the element will not be append to view.
  */
-@MultiplicatorAttributeModule({
+@PwbMultiplicatorAttributeModule({
     selector: /^\*pwbIf$/
 })
 export class IfManipulatorAttributeModule implements IPwbMultiplicatorModuleOnUpdate {

@@ -1,6 +1,6 @@
 import { CompareHandler } from '@kartoffelgames/web.change-detection';
 import { LayerValues } from '../../component/values/layer-values';
-import { StaticAttributeModule } from '../../module/decorator/static-attribute-module.decorator';
+import { PwbStaticAttributeModule } from '../../module/decorator/pwb-static-attribute-module.decorator';
 import { ModuleAccessType } from '../../module/enum/module-access-type';
 import { IPwbStaticModuleOnUpdate } from '../../module/interface/module';
 import { ModuleAttributeReference } from '../../injection_reference/module-attribute-reference';
@@ -12,7 +12,7 @@ import { ComponentScopeExecutor } from '../../module/execution/component-scope-e
  * Bind value to view object.
  * If the user class object changes, the view object value gets updated.
  */
-@StaticAttributeModule({
+@PwbStaticAttributeModule({
     selector: /^\[[\w$]+\]$/,
     access: ModuleAccessType.Read,
     forbiddenInManipulatorScopes: false

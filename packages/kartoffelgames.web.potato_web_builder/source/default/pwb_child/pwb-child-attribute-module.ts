@@ -1,4 +1,4 @@
-import { StaticAttributeModule } from '../../module/decorator/static-attribute-module.decorator';
+import { PwbStaticAttributeModule } from '../../module/decorator/pwb-static-attribute-module.decorator';
 import { ModuleAccessType } from '../../module/enum/module-access-type';
 import { ModuleAttributeReference } from '../../injection_reference/module-attribute-reference';
 import { ComponentManagerReference } from '../../injection_reference/component-manager-reference';
@@ -8,7 +8,7 @@ import { ModuleTargetReference } from '../../injection_reference/module-target-r
 /**
  * Used with "#IdChildName" like => #PasswordInput.
  */
-@StaticAttributeModule({
+@PwbStaticAttributeModule({
     selector: /^#[[\w$]+$/,
     access: ModuleAccessType.Write,
     forbiddenInManipulatorScopes: true

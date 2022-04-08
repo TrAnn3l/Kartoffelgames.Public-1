@@ -2,8 +2,8 @@ import { XmlElement } from '@kartoffelgames/core.xml';
 import { expect } from 'chai';
 import { LayerValues } from '../../../source/component/values/layer-values';
 import { PwbComponent } from '../../../source/component/decorator/pwb-component.decorator';
-import { MultiplicatorAttributeModule } from '../../../source/module/decorator/multiplicator-attribute-module.decorator';
-import { StaticAttributeModule } from '../../../source/module/decorator/static-attribute-module.decorator';
+import { PwbMultiplicatorAttributeModule } from '../../../source/module/decorator/pwb-multiplicator-attribute-module.decorator';
+import { PwbStaticAttributeModule } from '../../../source/module/decorator/pwb-static-attribute-module.decorator';
 import { ModuleAccessType } from '../../../source/module/enum/module-access-type';
 import { IPwbMultiplicatorModuleOnUpdate } from '../../../source/module/interface/module';
 import { ModuleLayerValuesReference } from '../../../source/injection_reference/module-layer-values-reference';
@@ -15,7 +15,7 @@ import { TestUtil } from '../../utility/test-util';
 describe('Custom Module', () => {
     it('-- Same result, twice', async () => {
         // Setup. Define module.
-        @MultiplicatorAttributeModule({
+        @PwbMultiplicatorAttributeModule({
             selector: /^\*multiresult$/
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -57,7 +57,7 @@ describe('Custom Module', () => {
 
     it('-- Manupulator without update method', async () => {
         // Setup. Define module.
-        @MultiplicatorAttributeModule({
+        @PwbMultiplicatorAttributeModule({
             selector: /^\*noupdatemethod$/
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -84,7 +84,7 @@ describe('Custom Module', () => {
 
     it('-- Deconstruct module without deconstructor method', async () => {
         // Setup. Define module.
-        @StaticAttributeModule({
+        @PwbStaticAttributeModule({
             selector: /^nodeconstructmethod$/,
             forbiddenInManipulatorScopes: false,
             access: ModuleAccessType.Read

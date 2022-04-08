@@ -6,7 +6,7 @@ import { IPwbExtensionClass } from '../interface/extension';
 /**
  * AtScript. PWB component extension.
  */
-export function Extension(pSettings: ExtensionSettings): any {
+export function PwbExtension(pSettings: ExtensionSettings): any {
     return (pExtensionConstructor: IPwbExtensionClass) => {
 
         // Set user class to be injectable

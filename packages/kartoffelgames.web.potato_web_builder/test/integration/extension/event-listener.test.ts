@@ -9,8 +9,8 @@ import { PwbEventListener } from '../../../source/default/event-listener/pwb-eve
 import { PwbExport } from '../../../source/default/export/pwb-export.decorator';
 import { ModuleLayerValuesReference } from '../../../source/injection_reference/module-layer-values-reference';
 import { ModuleTemplateReference } from '../../../source/injection_reference/module-template-reference';
-import { MultiplicatorAttributeModule } from '../../../source/module/decorator/multiplicator-attribute-module.decorator';
-import { StaticAttributeModule } from '../../../source/module/decorator/static-attribute-module.decorator';
+import { PwbMultiplicatorAttributeModule } from '../../../source/module/decorator/pwb-multiplicator-attribute-module.decorator';
+import { PwbStaticAttributeModule } from '../../../source/module/decorator/pwb-static-attribute-module.decorator';
 import { ModuleAccessType } from '../../../source/module/enum/module-access-type';
 import { IPwbMultiplicatorModuleOnUpdate } from '../../../source/module/interface/module';
 import { MultiplicatorResult } from '../../../source/module/result/multiplicator-result';
@@ -173,7 +173,7 @@ describe('PwbEventListener', () => {
         // Process.
         let lEventCalled: boolean = false;
 
-        @StaticAttributeModule({
+        @PwbStaticAttributeModule({
             selector: /^listenerTestModuleOne$/,
             forbiddenInManipulatorScopes: false,
             access: ModuleAccessType.Read
@@ -206,7 +206,7 @@ describe('PwbEventListener', () => {
         // Process.
         let lEventCalled: boolean = false;
 
-        @StaticAttributeModule({
+        @PwbStaticAttributeModule({
             selector: /^listenerTestModuleTwo$/,
             forbiddenInManipulatorScopes: false,
             access: ModuleAccessType.Read
@@ -237,7 +237,7 @@ describe('PwbEventListener', () => {
 
     it('-- Error on static properties on static module', async () => {
         // Setup. Create static module.
-        @StaticAttributeModule({
+        @PwbStaticAttributeModule({
             selector: /^listenerTestModuleThree$/,
             forbiddenInManipulatorScopes: false,
             access: ModuleAccessType.Read
@@ -271,7 +271,7 @@ describe('PwbEventListener', () => {
         // Process.
         let lEventCalled: boolean = false;
 
-        @MultiplicatorAttributeModule({
+        @PwbMultiplicatorAttributeModule({
             selector: /^\*listenerTestModuleFour$/
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -307,7 +307,7 @@ describe('PwbEventListener', () => {
         expect(lEventCalled).to.be.false;
 
         // Evaluation after component click.
-        lComponent.dispatchEvent(new Event('click', { bubbles: false }));;
+        lComponent.dispatchEvent(new Event('click', { bubbles: false }));
         expect(lEventCalled).to.be.true;
     });
 });

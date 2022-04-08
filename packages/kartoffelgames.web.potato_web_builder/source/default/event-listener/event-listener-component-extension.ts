@@ -1,14 +1,14 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
-import { Extension } from '../../extension/decorator/extension.decorator';
+import { PwbExtension } from '../../extension/decorator/pwb-extension.decorator';
 import { ExtensionType } from '../../extension/enum/extension-type';
 import { IPwbExtensionOnDeconstruct } from '../../extension/interface/extension';
 import { ComponentElementReference } from '../../injection_reference/component-element-reference';
 import { ExtensionTargetClassReference } from '../../injection_reference/extension-target-class-reference';
 import { ExtensionTargetObjectReference } from '../../injection_reference/extension-target-object-reference';
 
-@Extension({
+@PwbExtension({
     type: ExtensionType.Component
 })
 export class EventListenerComponentExtension implements IPwbExtensionOnDeconstruct {

@@ -1,13 +1,13 @@
 import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
-import { Extension } from '../../extension/decorator/extension.decorator';
+import { PwbExtension } from '../../extension/decorator/pwb-extension.decorator';
 import { ExtensionType } from '../../extension/enum/extension-type';
 import { ComponentElementReference } from '../../injection_reference/component-element-reference';
 import { ExtensionTargetClassReference } from '../../injection_reference/extension-target-class-reference';
 import { ExtensionTargetObjectReference } from '../../injection_reference/extension-target-object-reference';
 import { ComponentEventEmitter } from './component-event-emitter';
 
-@Extension({
+@PwbExtension({
     type: ExtensionType.Component
 })
 export class ComponentEventExtension {

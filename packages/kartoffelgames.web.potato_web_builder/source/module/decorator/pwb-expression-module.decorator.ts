@@ -8,7 +8,7 @@ import { Modules } from '../modules';
  * AtScript. PWB Expression module.
  * @param pSettings - Module settings.
  */
-export function ExpressionModule(pSettings: ExpressionModuleSetting): any {
+export function PwbExpressionModule(pSettings: ExpressionModuleSetting): any {
     return (pExpressionModuleConstructor: IPwbExpressionModuleClass) => {
         // Set user class to be injectable
         Injector.Injectable(pExpressionModuleConstructor);

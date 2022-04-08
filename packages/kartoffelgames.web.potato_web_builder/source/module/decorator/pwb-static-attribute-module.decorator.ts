@@ -9,7 +9,7 @@ import { IPwbStaticModuleClass } from '../interface/module';
  * AtScript. PWB static attribute module.
  * @param pSettings - Module settings.
  */
-export function StaticAttributeModule(pSettings: AttributeModuleSettings): any {
+export function PwbStaticAttributeModule(pSettings: AttributeModuleSettings): any {
     return (pStaticModuleConstructor: IPwbStaticModuleClass) => {
 
         // Set user class to be injectable

@@ -1,11 +1,11 @@
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
 import { UserObjectHandler } from '../../component/handler/user-object-handler';
-import { Extension } from '../../extension/decorator/extension.decorator';
+import { PwbExtension } from '../../extension/decorator/pwb-extension.decorator';
 import { ExtensionType } from '../../extension/enum/extension-type';
 import { ComponentElementReference } from '../../injection_reference/component-element-reference';
 import { ComponentManagerReference } from '../../injection_reference/component-manager-reference';
 
-@Extension({
+@PwbExtension({
     type: ExtensionType.Component
 })
 export class ExportExtension {
