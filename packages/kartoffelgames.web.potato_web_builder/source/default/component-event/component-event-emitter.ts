@@ -20,14 +20,6 @@ export class ComponentEventEmitter<T> {
     }
 
     /**
-     * Add event listener to event.
-     * @param pCallback - Event callback.
-     */
-    public addListener(pCallback: (this: HTMLElement, pEvent: ComponentEvent<T>) => void): void {
-        this.mElement.addEventListener(this.mEventName, pCallback);
-    }
-
-    /**
      * Call all event listener with event arguments.
      * @param pEventArgs - Event arguments.
      */
@@ -35,13 +27,5 @@ export class ComponentEventEmitter<T> {
         // Create and dispatch event.
         const lEvent: ComponentEvent<T> = new ComponentEvent<T>(this.mEventName, pEventArgs);
         this.mElement.dispatchEvent(lEvent);
-    }
-
-    /**
-     * Remove event listener from event.
-     * @param pCallback - Event callback.
-     */
-    public removeListener(pCallback: (this: null, pEvent: ComponentEvent<T>) => void): void {
-        this.mElement.removeEventListener(this.mEventName, pCallback);
     }
 }
