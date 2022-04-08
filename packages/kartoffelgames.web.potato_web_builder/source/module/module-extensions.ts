@@ -5,6 +5,9 @@ import { LayerValues } from '../component/values/layer-values';
 import { ModuleExtension } from '../extension/module-extension';
 import { Extensions } from '../extension/extensions';
 
+// Import default extensions.
+import '../default/event-listener/event-listener-extension';
+
 export class ModuleExtensions {
     private readonly mExtensionList: Array<ModuleExtension>;
 
