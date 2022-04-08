@@ -5,6 +5,7 @@ import { ComponentManager } from './component-manager';
 
 // Import default extensions.
 import '../default/component-event/component-event-extension';
+import '../default/export/export-extension';
 
 export class ComponentExtensions {
     private readonly mExtensionList: Array<ComponentExtension>;

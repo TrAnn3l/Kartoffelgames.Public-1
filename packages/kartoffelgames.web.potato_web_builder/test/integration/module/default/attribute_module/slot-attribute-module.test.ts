@@ -1,6 +1,6 @@
 import { InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
 import { expect } from 'chai';
-import { HtmlComponent } from '../../../../../source/component/decorator/html-component';
+import { HtmlComponent } from '../../../../../source/component/decorator/html-component.decorator';
 import '../../../../mock/request-animation-frame-mock-session';
 import '../../../../utility/chai-helper';
 import { TestUtil } from '../../../../utility/test-util';

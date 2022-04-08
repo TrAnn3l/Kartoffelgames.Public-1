@@ -1,24 +1,37 @@
-import { UserObjectHandler } from './user-object-handler';
+import { Metadata } from '@kartoffelgames/core.dependency-injection';
+import { UserObjectHandler } from '../../component/handler/user-object-handler';
+import { Extension } from '../../extension/decorator/extension';
+import { ExtensionType } from '../../extension/enum/extension-type';
+import { ComponentElementReference } from '../../injection_reference/component-element-reference';
+import { ComponentManagerReference } from '../../injection_reference/component-manager-reference';
 
-export class AttributeHandler {
+@Extension({
+    type: ExtensionType.Component
+})
+export class ExportExtension {
+    public static readonly METADATA_EXPORTED_PROPERTIES: string = 'pwb:exported_properties';
+
     private readonly mHtmlElement: HTMLElement;
     private readonly mUserObjectHandler: UserObjectHandler;
 
     /**
      * Constructor.
-     * @param pUserObjectHandler - user object handler.
-     * @param pHtmlElement - Components html element.
+     * @param pTargetElementReference - Component html element reference.
+     * @param pComponentManagerReference - Component manager reference.
      */
-    public constructor(pUserObjectHandler: UserObjectHandler, pHtmlElement: HTMLElement) {
-        this.mHtmlElement = pHtmlElement;
-        this.mUserObjectHandler = pUserObjectHandler;
+    public constructor(pTargetElementReference: ComponentElementReference, pComponentManagerReference: ComponentManagerReference, ) {
+        this.mHtmlElement = <HTMLElement>pTargetElementReference.value;
+        this.mUserObjectHandler = pComponentManagerReference.value.userObjectHandler;
+
+        const lExportedPropertyList: Array<string | symbol> = Metadata.get(this.mUserObjectHandler.userClass).getMetadata(ExportExtension.METADATA_EXPORTED_PROPERTIES);
+        this.connectExportedProperties(lExportedPropertyList ?? new Array<string | symbol>());
     }
 
     /**
      * Connect exported properties to html element attributes with the same name.
      * @param pExportedProperties - Exported user object properties.
      */
-    public connectExportedProperties(pExportedProperties: Array<string | symbol>): void {
+    private connectExportedProperties(pExportedProperties: Array<string | symbol>): void {
         this.exportPropertyAsAttribute(pExportedProperties);
         this.patchHtmlAttributes(pExportedProperties);
     }
@@ -87,5 +100,4 @@ export class AttributeHandler {
             return lOriginalGetAttribute.call(this.mHtmlElement, pQualifiedName);
         };
     }
-
 }

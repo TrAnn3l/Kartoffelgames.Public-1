@@ -21,9 +21,9 @@ export { TextNode, XmlElement, XmlAttribute } from '@kartoffelgames/core.xml';
 
 // Atscript
 export { HtmlComponentEvent } from './default/component-event/html-component-event.decorator';
-export { HtmlComponent } from './component/decorator/html-component';
+export { HtmlComponent } from './component/decorator/html-component.decorator';
 export { IdChild } from './default/id_child/id-child';
-export { Export } from './component/decorator/export';
+export { Export } from './default/export/export.decorator';
 export { ExpressionModule } from './module/decorator/expression-module';
 export { MultiplicatorAttributeModule } from './module/decorator/multiplicator-attribute-module';
 export { StaticAttributeModule } from './module/decorator/static-attribute-module';

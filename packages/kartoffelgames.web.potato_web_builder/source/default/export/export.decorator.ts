@@ -1,7 +1,7 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
-import { MetadataKey } from '../../metadata-key';
-import { UserClass } from '../interface/user-class';
+import { UserClass } from '../../component/interface/user-class';
+import { ExportExtension } from './export-extension';
 
 /**
  * AtScript.
@@ -18,9 +18,9 @@ export function Export(pTarget: object, pPropertyKey: string): void {
     }
 
     // Get property list from constructor metadata.
-    const lExportedPropertyList: Array<string | symbol> = Metadata.get(lUserClassConstructor).getMetadata(MetadataKey.METADATA_EXPORTED_PROPERTIES) ?? new Array<string | symbol>();
+    const lExportedPropertyList: Array<string | symbol> = Metadata.get(lUserClassConstructor).getMetadata(ExportExtension.METADATA_EXPORTED_PROPERTIES) ?? new Array<string | symbol>();
     lExportedPropertyList.push(pPropertyKey);
 
     // Set metadata.
-    Metadata.get(lUserClassConstructor).setMetadata(MetadataKey.METADATA_EXPORTED_PROPERTIES, lExportedPropertyList);
+    Metadata.get(lUserClassConstructor).setMetadata(ExportExtension.METADATA_EXPORTED_PROPERTIES, lExportedPropertyList);
 }

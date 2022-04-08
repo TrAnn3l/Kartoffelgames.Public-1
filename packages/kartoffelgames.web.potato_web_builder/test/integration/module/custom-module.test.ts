@@ -1,7 +1,7 @@
 import { XmlElement } from '@kartoffelgames/core.xml';
 import { expect } from 'chai';
 import { LayerValues } from '../../../source/component/values/layer-values';
-import { HtmlComponent } from '../../../source/component/decorator/html-component';
+import { HtmlComponent } from '../../../source/component/decorator/html-component.decorator';
 import { MultiplicatorAttributeModule } from '../../../source/module/decorator/multiplicator-attribute-module';
 import { StaticAttributeModule } from '../../../source/module/decorator/static-attribute-module';
 import { ModuleAccessType } from '../../../source/module/enum/module-access-type';

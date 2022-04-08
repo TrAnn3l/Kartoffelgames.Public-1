@@ -107,7 +107,7 @@ export class ComponentManager {
         this.mUserObjectHandler.callOnPwbInitialize();
 
         // Create element handler and export properties.
-        this.mElementHandler = new ElementHandler(pHtmlComponent, this.mUserObjectHandler);
+        this.mElementHandler = new ElementHandler(pHtmlComponent);
 
         // Connect with this component manager.
         ComponentConnection.connectComponentManagerWith(this.elementHandler.htmlElement, this);
