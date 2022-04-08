@@ -7,14 +7,14 @@ import { ExportExtension } from './export-extension';
  * AtScript.
  * Export value to component element.
  */
-export function Export(pTarget: object, pPropertyKey: string): void {
+export function PwbExport(pTarget: object, pPropertyKey: string): void {
     // Usually Class Prototype. Globaly.
     const lPrototype: object = pTarget;
     const lUserClassConstructor: UserClass = <any>lPrototype.constructor;
 
     // Check if real decorator on static property.
     if (typeof pTarget === 'function') {
-        throw new Exception('Event target is not for a static property.', Export);
+        throw new Exception('Event target is not for a static property.', PwbExport);
     }
 
     // Get property list from constructor metadata.

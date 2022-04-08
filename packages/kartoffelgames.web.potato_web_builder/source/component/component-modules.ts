@@ -12,7 +12,7 @@ import { LayerValues } from './values/layer-values';
 // Import default modules
 import '../default/component-event/component-event-attribute-module';
 import '../default/pwb_for_of/for-of-manipulator-attribute-module';
-import '../default/id_child/id-child-attribute-module';
+import '../default/pwb_child/pwb-child-attribute-module';
 import '../default/pwb_if/if-manipulator-attribute-module';
 import '../default/one_way_binding/one-way-binding-attribute-module';
 import '../default/slot_attribute/slot-attribute-module';

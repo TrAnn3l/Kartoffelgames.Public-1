@@ -7,7 +7,7 @@ import { ComponentEventExtension } from './component-event-extension';
  * Define event for external access.
  * @param pEventName - Name of event.
  */
-export function HtmlComponentEvent(pEventName: string): any {
+export function PwbComponentEvent(pEventName: string): any {
     return (pTarget: object, pPropertyKey: string, pDescriptor: PropertyDescriptor): void => {
         // Usually Class Prototype. Globaly.
         const lPrototype: object = pTarget;
@@ -15,7 +15,7 @@ export function HtmlComponentEvent(pEventName: string): any {
 
         // Check if real prototype.
         if (typeof pTarget === 'function') {
-            throw new Exception('Event target is not for an instanced property.', HtmlComponentEvent);
+            throw new Exception('Event target is not for an instanced property.', PwbComponentEvent);
         }
 
         // Get property list from constructor metadata.

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { Export } from '../../../../../source/default/export/export.decorator';
-import { HtmlComponent } from '../../../../../source/component/decorator/html-component.decorator';
+import { PwbExport } from '../../../../../source/default/export/pwb-export.decorator';
+import { PwbComponent } from '../../../../../source/component/decorator/pwb-component.decorator';
 import '../../../../mock/request-animation-frame-mock-session';
 import '../../../../utility/chai-helper';
 import { TestUtil } from '../../../../utility/test-util';
@@ -11,12 +11,12 @@ describe('OneWayBindingAttribute', () => {
         const lInitialValue: string = 'INITIAL__VALUE';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: '<input [value]="this.userValue"/>'
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public userValue: string = lInitialValue;
         }
 
@@ -35,12 +35,12 @@ describe('OneWayBindingAttribute', () => {
         const lNewValue: string = 'NEW__VALUE';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: '<input [value]="this.userValue"/>'
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public userValue: string = 'INITIAL__VALUE';
         }
 

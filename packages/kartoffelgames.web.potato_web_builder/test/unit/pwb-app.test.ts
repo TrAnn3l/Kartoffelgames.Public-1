@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { HtmlComponent } from '../../source/component/decorator/html-component.decorator';
+import { PwbComponent } from '../../source/component/decorator/pwb-component.decorator';
 import { PwbApp } from '../../source/pwb-app';
 import '../mock/request-animation-frame-mock-session';
 import '../utility/chai-helper';
@@ -25,7 +25,7 @@ describe('PwbApp', () => {
             const lComponentSelector: string = TestUtil.randomSelector();
 
             // Setup. Define component.
-            @HtmlComponent({
+            @PwbComponent({
                 selector: lComponentSelector,
                 template: '<div/>'
             })
@@ -45,7 +45,7 @@ describe('PwbApp', () => {
             lApp.appendTo(document.body);
 
             // Setup. Define component.
-            @HtmlComponent({
+            @PwbComponent({
                 selector: TestUtil.randomSelector(),
                 template: '<div/>'
             })
@@ -68,7 +68,7 @@ describe('PwbApp', () => {
             const lApp: PwbApp = new PwbApp('Name');
 
             // Setup. Define component.
-            @HtmlComponent({
+            @PwbComponent({
                 selector: TestUtil.randomSelector(),
                 template: '<div/>'
             })

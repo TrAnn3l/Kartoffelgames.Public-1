@@ -1,7 +1,7 @@
 import { XmlElement } from '@kartoffelgames/core.xml';
 import { expect } from 'chai';
 import { LayerValues } from '../../../source/component/values/layer-values';
-import { HtmlComponent } from '../../../source/component/decorator/html-component.decorator';
+import { PwbComponent } from '../../../source/component/decorator/pwb-component.decorator';
 import { MultiplicatorAttributeModule } from '../../../source/module/decorator/multiplicator-attribute-module.decorator';
 import { StaticAttributeModule } from '../../../source/module/decorator/static-attribute-module.decorator';
 import { ModuleAccessType } from '../../../source/module/enum/module-access-type';
@@ -37,7 +37,7 @@ describe('Custom Module', () => {
         }
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *multiresult/>`
         })
@@ -64,7 +64,7 @@ describe('Custom Module', () => {
         class WrongModule { }
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *noupdatemethod/>`
         })
@@ -93,7 +93,7 @@ describe('Custom Module', () => {
         class Module  {}
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div nodeconstructmethod/>`
         })

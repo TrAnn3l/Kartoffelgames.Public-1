@@ -5,8 +5,8 @@ export { PwbApp } from './pwb-app';
 export { IPwbOnInit, IPwbAfterInit, IPwbOnDeconstruct, IPwbSlotAssign, IPwbAfterUpdate, IPwbOnUpdate, IPwbOnAttributeChange } from './component/interface/user-class';
 
 // Injections
-export { ComponentElementReference as PwbElementReference } from './injection_reference/component-element-reference';
-export { ComponentUpdateReference as PwbUpdateReference } from './injection_reference/component-update-reference';
+export { ComponentElementReference } from './injection_reference/component-element-reference';
+export { ComponentUpdateReference } from './injection_reference/component-update-reference';
 
 // Modules
 export { ComponentScopeExecutor } from './module/execution/component-scope-executor';
@@ -20,10 +20,10 @@ export { TemplateParser } from './component/parser/template-parser';
 export { TextNode, XmlElement, XmlAttribute } from '@kartoffelgames/core.xml';
 
 // Atscript
-export { HtmlComponentEvent } from './default/component-event/html-component-event.decorator';
-export { HtmlComponent } from './component/decorator/html-component.decorator';
-export { IdChild } from './default/id_child/id-child.decorator';
-export { Export } from './default/export/export.decorator';
+export { PwbComponentEvent } from './default/component-event/pwb-component-event.decorator';
+export { PwbComponent } from './component/decorator/pwb-component.decorator';
+export { PwbChild } from './default/pwb_child/pwb-child.decorator';
+export { PwbExport } from './default/export/pwb-export.decorator';
 export { ExpressionModule } from './module/decorator/expression-module.decorator';
 export { MultiplicatorAttributeModule } from './module/decorator/multiplicator-attribute-module.decorator';
 export { StaticAttributeModule } from './module/decorator/static-attribute-module.decorator';

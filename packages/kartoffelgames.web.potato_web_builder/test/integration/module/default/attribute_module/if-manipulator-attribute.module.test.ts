@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { Export } from '../../../../../source/default/export/export.decorator';
-import { HtmlComponent } from '../../../../../source/component/decorator/html-component.decorator';
+import { PwbExport } from '../../../../../source/default/export/pwb-export.decorator';
+import { PwbComponent } from '../../../../../source/component/decorator/pwb-component.decorator';
 import '../../../../mock/request-animation-frame-mock-session';
 import '../../../../utility/chai-helper';
 import { TestUtil } from '../../../../utility/test-util';
@@ -11,7 +11,7 @@ describe('IfManipulatorAttributeModule', () => {
         const lDisplayed: boolean = false;
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbIf="this.displayed"/>`
         })
@@ -34,7 +34,7 @@ describe('IfManipulatorAttributeModule', () => {
         const lDisplayed: boolean = true;
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbIf="this.displayed"/>`
         })
@@ -59,12 +59,12 @@ describe('IfManipulatorAttributeModule', () => {
         const lDisplayed: boolean = false;
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbIf="this.displayed"/>`
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public displayed: boolean = !lDisplayed;
         }
 
@@ -85,12 +85,12 @@ describe('IfManipulatorAttributeModule', () => {
         const lDisplayed: boolean = true;
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbIf="this.displayed"/>`
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public displayed: boolean = !lDisplayed;
         }
 
@@ -113,7 +113,7 @@ describe('IfManipulatorAttributeModule', () => {
         const lDisplayed: any = null;
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbIf="this.displayed"/>`
         })
@@ -136,7 +136,7 @@ describe('IfManipulatorAttributeModule', () => {
         const lDisplayed: any = new Object();
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbIf="this.displayed"/>`
         })

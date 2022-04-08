@@ -1,8 +1,8 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { expect } from 'chai';
-import { Export } from '../../../../../source/default/export/export.decorator';
-import { HtmlComponent } from '../../../../../source/component/decorator/html-component.decorator';
-import { HtmlComponentEvent } from '../../../../../source/default/component-event/html-component-event.decorator';
+import { PwbExport } from '../../../../../source/default/export/pwb-export.decorator';
+import { PwbComponent } from '../../../../../source/component/decorator/pwb-component.decorator';
+import { PwbComponentEvent } from '../../../../../source/default/component-event/pwb-component-event.decorator';
 import { ComponentEventEmitter } from '../../../../../source/default/component-event/component-event-emitter';
 import '../../../../mock/request-animation-frame-mock-session';
 import '../../../../utility/chai-helper';
@@ -15,14 +15,14 @@ describe('EventAttributeModule', () => {
         const lEventComponentSelector: string = TestUtil.randomSelector();
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: lEventComponentSelector,
         })
         class EventComponent { }
 
         // Process. Define component and wait for update.
         let lEventValueResult: string = null;
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<${lEventComponentSelector} (click)="this.handler($event)"/>`
         })
@@ -47,14 +47,14 @@ describe('EventAttributeModule', () => {
         const lEventComponentSelector: string = TestUtil.randomSelector();
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: lEventComponentSelector,
         })
         class EventComponent {
-            @HtmlComponentEvent('custom-event')
+            @PwbComponentEvent('custom-event')
             private readonly mEvent: ComponentEventEmitter<string>;
 
-            @Export
+            @PwbExport
             public callEvent(): void {
                 this.mEvent.dispatchEvent(lEventValue);
             }
@@ -62,7 +62,7 @@ describe('EventAttributeModule', () => {
 
         // Process. Define component and wait for update.
         let lEventValueResult: string = null;
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<${lEventComponentSelector} (custom-event)="this.handler($event)"/>`
         })
@@ -86,17 +86,17 @@ describe('EventAttributeModule', () => {
         const lEventComponentSelector: string = TestUtil.randomSelector();
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: lEventComponentSelector,
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         class EventComponent {
-            @HtmlComponentEvent('custom-event')
+            @PwbComponentEvent('custom-event')
             public mEvent: string; // Wrong type.
         }
 
         // Process. Define component and wait for update.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<${lEventComponentSelector} (custom-event)="this.handler($event)"/>`
         })
@@ -121,14 +121,14 @@ describe('EventAttributeModule', () => {
         const lEventComponentSelector: string = TestUtil.randomSelector();
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: lEventComponentSelector,
         })
         class EventComponent {
-            @HtmlComponentEvent('custom-event')
+            @PwbComponentEvent('custom-event')
             private readonly mEvent: ComponentEventEmitter<string>;
 
-            @Export
+            @PwbExport
             public callEvent(): void {
                 this.mEvent.dispatchEvent('');
             }
@@ -136,7 +136,7 @@ describe('EventAttributeModule', () => {
 
         // Process. Define component and wait for update.
         let lEventCalled: boolean = false;
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<${lEventComponentSelector} (custom-event)="this.handler($event)"/>`
         })
@@ -161,7 +161,7 @@ describe('EventAttributeModule', () => {
         let lClicked: boolean = false;
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div (click)="this.handler($event)"/>`
         })
@@ -184,12 +184,12 @@ describe('EventAttributeModule', () => {
     it('-- Forbidden static usage', () => {
         // Process. Define component.
         const lErrorFunction = () => {
-            @HtmlComponent({
+            @PwbComponent({
                 selector: TestUtil.randomSelector()
             })
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             class EventComponent {
-                @HtmlComponentEvent('custom-event')
+                @PwbComponentEvent('custom-event')
                 private static readonly mEvent: ComponentEventEmitter<string>;
             }
         };
@@ -205,21 +205,21 @@ describe('EventAttributeModule', () => {
         const lEventComponentSelector: string = TestUtil.randomSelector();
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: lEventComponentSelector,
         })
         class EventComponent {
-            @HtmlComponentEvent('custom-event-one')
+            @PwbComponentEvent('custom-event-one')
             private readonly mEventOne: ComponentEventEmitter<string>;
-            @HtmlComponentEvent('custom-event-two')
+            @PwbComponentEvent('custom-event-two')
             private readonly mEventTwo: ComponentEventEmitter<string>;
 
-            @Export
+            @PwbExport
             public callEventOne(): void {
                 this.mEventOne.dispatchEvent(lEventValueOne);
             }
 
-            @Export
+            @PwbExport
             public callEventTwo(): void {
                 this.mEventTwo.dispatchEvent(lEventValueTwo);
             }
@@ -228,7 +228,7 @@ describe('EventAttributeModule', () => {
         // Process. Define component and wait for update.
         let lEventValueResultOne: string = null;
         let lEventValueResultTwo: string = null;
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<${lEventComponentSelector} (custom-event-one)="this.handlerOne($event)" (custom-event-two)="this.handlerTwo($event)"/>`
         })
@@ -257,14 +257,14 @@ describe('EventAttributeModule', () => {
         const lEventComponentSelector: string = TestUtil.randomSelector();
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: lEventComponentSelector,
         })
         class EventComponent {
-            @HtmlComponentEvent('custom-event')
+            @PwbComponentEvent('custom-event')
             private readonly mEvent: ComponentEventEmitter<void>;
 
-            @Export
+            @PwbExport
             public callEvent(): void {
                 this.mEvent.dispatchEvent();
             }
@@ -273,7 +273,7 @@ describe('EventAttributeModule', () => {
         // Process. Define component and wait for update.
         let lCustomCalled: boolean = false;
         let lNativeCalled: boolean = false;
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<${lEventComponentSelector} (custom-event)="this.customHandler($event)"  (click)="this.nativeHandler($event)"/>`
         })
@@ -304,14 +304,14 @@ describe('EventAttributeModule', () => {
         const lEventComponentSelector: string = TestUtil.randomSelector();
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: lEventComponentSelector,
         })
         class EventComponent {
-            @HtmlComponentEvent('click')
+            @PwbComponentEvent('click')
             private readonly mEvent: ComponentEventEmitter<string>;
 
-            @Export
+            @PwbExport
             public callEvent(): void {
                 this.mEvent.dispatchEvent(lEventValue);
             }
@@ -319,7 +319,7 @@ describe('EventAttributeModule', () => {
 
         // Process. Define component and wait for update.
         let lEventValueResult: string = null;
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<${lEventComponentSelector} (click)="this.handler($event)"/>`
         })

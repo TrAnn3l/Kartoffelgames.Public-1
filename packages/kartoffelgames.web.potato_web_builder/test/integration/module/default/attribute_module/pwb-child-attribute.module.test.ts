@@ -1,26 +1,26 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { expect } from 'chai';
-import { Export } from '../../../../../source/default/export/export.decorator';
-import { HtmlComponent } from '../../../../../source/component/decorator/html-component.decorator';
-import { IdChild } from '../../../../../source/default/id_child/id-child.decorator';
+import { PwbExport } from '../../../../../source/default/export/pwb-export.decorator';
+import { PwbComponent } from '../../../../../source/component/decorator/pwb-component.decorator';
+import { PwbChild } from '../../../../../source/default/pwb_child/pwb-child.decorator';
 import '../../../../mock/request-animation-frame-mock-session';
 import '../../../../utility/chai-helper';
 import { TestUtil } from '../../../../utility/test-util';
 
-describe('IdChildAttributeModule', () => {
+describe('PwbChildAttributeModule', () => {
     it('-- Read id child', async () => {
         // Setup. Values.
         const lIdName: string = 'IdChildId';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div #${lIdName}/>`
         })
         class TestComponent {
-            @Export
-            @IdChild(lIdName)
+            @PwbExport
+            @PwbChild(lIdName)
             public idChild: HTMLDivElement;
         }
 
@@ -36,12 +36,12 @@ describe('IdChildAttributeModule', () => {
     it('-- Forbidden static property use', () => {
         // Process.
         const lErrorFunction = () => {
-            @HtmlComponent({
+            @PwbComponent({
                 selector: TestUtil.randomSelector()
             })
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             class TestComponent {
-                @IdChild('Name')
+                @PwbChild('Name')
                 public static idChild: HTMLDivElement;
             }
         };
@@ -55,13 +55,13 @@ describe('IdChildAttributeModule', () => {
         const lWrongName: string = 'WrongName';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div #Name/>`
         })
         class TestComponent {
-            @Export
-            @IdChild(lWrongName)
+            @PwbExport
+            @PwbChild(lWrongName)
             public idChild: HTMLDivElement;
         }
 
@@ -72,6 +72,6 @@ describe('IdChildAttributeModule', () => {
         };
 
         // Evaluation. Two Anchors. Static-Root => Manipulator => No Childs, no anchors.
-        expect(lErrorFunction).to.throw(Exception, `Can't find IdChild "${lWrongName}".`);
+        expect(lErrorFunction).to.throw(Exception, `Can't find child "${lWrongName}".`);
     });
 });

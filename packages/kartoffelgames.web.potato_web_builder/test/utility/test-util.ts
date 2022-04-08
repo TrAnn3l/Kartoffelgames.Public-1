@@ -1,7 +1,6 @@
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
 import { ComponentConnection } from '../../source/component/component-connection';
 import { ComponentManager } from '../../source/component/component-manager';
-import { MetadataKey } from '../../source/metadata-key';
 
 export class TestUtil {
     /**
@@ -9,7 +8,7 @@ export class TestUtil {
      * @param pSelector - component selector.
      */
     public static async createComponent(pClass: any): Promise<HTMLElement> {
-        const lSelector: string = Metadata.get(pClass).getMetadata(MetadataKey.METADATA_SELECTOR);
+        const lSelector: string = Metadata.get(pClass).getMetadata(ComponentManager.METADATA_SELECTOR);
 
         // Create element.
         const lComponentConstructor: CustomElementConstructor = window.customElements.get(lSelector);

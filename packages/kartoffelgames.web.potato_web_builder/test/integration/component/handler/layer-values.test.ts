@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { ComponentConnection } from '../../../../source/component/component-connection';
 import { ComponentManager } from '../../../../source/component/component-manager';
-import { HtmlComponent } from '../../../../source/component/decorator/html-component.decorator';
+import { PwbComponent } from '../../../../source/component/decorator/pwb-component.decorator';
 import { TestUtil } from '../../../utility/test-util';
 import '../../../mock/request-animation-frame-mock-session';
 import '../../../utility/chai-helper';
@@ -10,7 +10,7 @@ import { LayerValues } from '../../../../source/component/values/layer-values';
 describe('LayerValues', () => {
     it('-- Underlying component values', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector()
         })
         class TestComponent { }
@@ -28,7 +28,7 @@ describe('LayerValues', () => {
 
     it('-- Get child root value', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector()
         })
         class TestComponent { }
@@ -48,7 +48,7 @@ describe('LayerValues', () => {
     describe('-- Equal', () => {
         it('-- Everything equal', async () => {
             // Setup. Define component.
-            @HtmlComponent({
+            @PwbComponent({
                 selector: TestUtil.randomSelector()
             })
             class TestComponent { }
@@ -66,13 +66,13 @@ describe('LayerValues', () => {
 
         it('-- Different user object', async () => {
             // Setup. Define component one.
-            @HtmlComponent({
+            @PwbComponent({
                 selector: TestUtil.randomSelector()
             })
             class TestComponentOne { }
 
             // Setup. Define component two.
-            @HtmlComponent({
+            @PwbComponent({
                 selector: TestUtil.randomSelector()
             })
             class TestComponentTwo { }
@@ -92,7 +92,7 @@ describe('LayerValues', () => {
 
         it('-- Different temporary data', async () => {
             // Setup. Define component.
-            @HtmlComponent({
+            @PwbComponent({
                 selector: TestUtil.randomSelector()
             })
             class TestComponent { }
@@ -115,7 +115,7 @@ describe('LayerValues', () => {
 
         it('-- Same keys, different temporary data value', async () => {
             // Setup. Define component.
-            @HtmlComponent({
+            @PwbComponent({
                 selector: TestUtil.randomSelector()
             })
             class TestComponent { }
@@ -145,7 +145,7 @@ describe('LayerValues', () => {
             const lLayerValue: string = 'LAYER-VALUE';
 
             // Setup. Define component.
-            @HtmlComponent({
+            @PwbComponent({
                 selector: TestUtil.randomSelector()
             })
             class TestComponent { }
@@ -168,7 +168,7 @@ describe('LayerValues', () => {
             const lLayerValue: string = 'LAYER-VALUE';
 
             // Setup. Define component.
-            @HtmlComponent({
+            @PwbComponent({
                 selector: TestUtil.randomSelector()
             })
             class TestComponent { }
@@ -195,7 +195,7 @@ describe('LayerValues', () => {
         const lLayerValue: string = 'LAYER-VALUE';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector()
         })
         class TestComponent { }
@@ -219,7 +219,7 @@ describe('LayerValues', () => {
         const lLayerValue: string = 'LAYER-VALUE';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector()
         })
         class TestComponent { }

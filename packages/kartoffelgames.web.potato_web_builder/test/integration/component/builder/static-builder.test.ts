@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { HtmlComponent } from '../../../../source/component/decorator/html-component.decorator';
+import { PwbComponent } from '../../../../source/component/decorator/pwb-component.decorator';
 import '../../../mock/request-animation-frame-mock-session';
 import '../../../utility/chai-helper';
 import { TestUtil } from '../../../utility/test-util';
@@ -7,7 +7,7 @@ import { TestUtil } from '../../../utility/test-util';
 describe('PwbApp', () => {
     it('-- Multiple module update order', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div 
             expression="{{value}}"
@@ -30,7 +30,7 @@ describe('PwbApp', () => {
 
     it('-- Forbidden inside manipulator scope', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbIf="true">
                 <div #child/>

@@ -1,10 +1,10 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { expect } from 'chai';
-import { HtmlComponent } from '../../../../source/component/decorator/html-component.decorator';
+import { PwbComponent } from '../../../../source/component/decorator/pwb-component.decorator';
 import { TestUtil } from '../../../utility/test-util';
 import '../../../mock/request-animation-frame-mock-session';
 import '../../../utility/chai-helper';
-import { Export } from '../../../../source/default/export/export.decorator';
+import { PwbExport } from '../../../../source/default/export/pwb-export.decorator';
 
 describe('Export', () => {
     it('-- Default export get', async () => {
@@ -12,11 +12,11 @@ describe('Export', () => {
         const lTestValue: string = 'TEST-VALUE';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector()
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public value: string = lTestValue;
         }
 
@@ -33,11 +33,11 @@ describe('Export', () => {
         const lTestValue: string = 'TEST-VALUE';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector()
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public value: string = '';
         }
 
@@ -56,13 +56,13 @@ describe('Export', () => {
         const lTestValueTwo: string = 'TEST-VALUE-TWO';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector()
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public valueOne: string = lTestValueOne;
-            @Export
+            @PwbExport
             public valueTwo: string = lTestValueTwo;
         }
 
@@ -80,12 +80,12 @@ describe('Export', () => {
         // Process.
         const lErrorFunction = () => {
             // Setup. Define component.
-            @HtmlComponent({
+            @PwbComponent({
                 selector: TestUtil.randomSelector()
             })
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             class TestComponent {
-                @Export
+                @PwbExport
                 public static value: string = '';
             }
         };
@@ -99,11 +99,11 @@ describe('Export', () => {
         const lTestValue: string = 'TEST-VALUE';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector()
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public value: string = '';
         }
 
@@ -121,11 +121,11 @@ describe('Export', () => {
         const lTestValue: string = 'TEST-VALUE';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector()
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public value: string = '';
         }
 
@@ -143,7 +143,7 @@ describe('Export', () => {
         const lTestValue: string = 'TEST-VALUE';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector()
         })
         class TestComponent { }
@@ -162,11 +162,11 @@ describe('Export', () => {
         const lTestValue: string = 'TEST-VALUE';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector()
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public children: string = lTestValue;
         }
 

@@ -13,7 +13,7 @@ import { ModuleTargetReference } from '../../injection_reference/module-target-r
     access: ModuleAccessType.Write,
     forbiddenInManipulatorScopes: true
 })
-export class IdChildAttributeModule {
+export class PwbChildAttributeModule {
     /**
      * Constructor.
      * @param pTargetReference - Target element.

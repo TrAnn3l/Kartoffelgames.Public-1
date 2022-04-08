@@ -1,9 +1,9 @@
-import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { Exception } from '@kartoffelgames/core.data';
-import { ElementCreator } from './component/content/element-creator';
 import { InjectionConstructor, Metadata } from '@kartoffelgames/core.dependency-injection';
-import { MetadataKey } from './metadata-key';
 import { XmlElement } from '@kartoffelgames/core.xml';
+import { ChangeDetection } from '@kartoffelgames/web.change-detection';
+import { ComponentManager } from './component/component-manager';
+import { ElementCreator } from './component/content/element-creator';
 
 export class PwbApp {
     public static readonly PUBLIC_APP_KEY: string = '_PWB_APP';
@@ -45,7 +45,7 @@ export class PwbApp {
      */
     public addContent(pContentClass: InjectionConstructor): Element {
         // Get content selector.
-        const lSelector: string = Metadata.get(pContentClass).getMetadata(MetadataKey.METADATA_SELECTOR);
+        const lSelector: string = Metadata.get(pContentClass).getMetadata(ComponentManager.METADATA_SELECTOR);
         if (!lSelector) {
             throw new Exception('Content is not a component.', this);
         }

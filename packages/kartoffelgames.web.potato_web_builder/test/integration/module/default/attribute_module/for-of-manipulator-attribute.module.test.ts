@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { Export } from '../../../../../source/default/export/export.decorator';
-import { HtmlComponent } from '../../../../../source/component/decorator/html-component.decorator';
+import { PwbExport } from '../../../../../source/default/export/pwb-export.decorator';
+import { PwbComponent } from '../../../../../source/component/decorator/pwb-component.decorator';
 import '../../../../mock/request-animation-frame-mock-session';
 import '../../../../utility/chai-helper';
 import { TestUtil } from '../../../../utility/test-util';
@@ -8,7 +8,7 @@ import { TestUtil } from '../../../../utility/test-util';
 describe('ForOfManipulatorAttributeModule', () => {
     it('Array items', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="item of this.list"/>`
         })
@@ -34,7 +34,7 @@ describe('ForOfManipulatorAttributeModule', () => {
 
     it('Object properties', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="item of this.list"/>`
         })
@@ -74,7 +74,7 @@ describe('ForOfManipulatorAttributeModule', () => {
         }
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="item of this.list"/>`
         })
@@ -100,12 +100,12 @@ describe('ForOfManipulatorAttributeModule', () => {
 
     it('Push item to list', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="item of this.list"/>`
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public list: Array<string> = ['One'];
         }
 
@@ -127,12 +127,12 @@ describe('ForOfManipulatorAttributeModule', () => {
 
     it('Pop item from list', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="item of this.list"/>`
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public list: Array<string> = ['One', 'Two'];
         }
 
@@ -152,12 +152,12 @@ describe('ForOfManipulatorAttributeModule', () => {
 
     it('Push middle item to list', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="item of this.list"/>`
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public list: Array<string> = ['One', 'Three'];
         }
 
@@ -181,12 +181,12 @@ describe('ForOfManipulatorAttributeModule', () => {
 
     it('pop middle item to list', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="item of this.list"/>`
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public list: Array<string> = ['One', 'Two', 'Three'];
         }
 
@@ -208,12 +208,12 @@ describe('ForOfManipulatorAttributeModule', () => {
 
     it('Null value', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="item of this.list"/>`
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public list: Array<string> = null;
         }
 
@@ -232,7 +232,7 @@ describe('ForOfManipulatorAttributeModule', () => {
         const lTextContent: string = 'TEXT CONTENT.';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="item of this.list">{{item}}</div>`
         })
@@ -260,7 +260,7 @@ describe('ForOfManipulatorAttributeModule', () => {
         const lTextContent: string = 'TEXT CONTENT.';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="item of this.list">{{item}}</div>`
         })
@@ -287,7 +287,7 @@ describe('ForOfManipulatorAttributeModule', () => {
 
     it('Array index', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="item of this.list; index = $index">{{index}}</div>`
         })
@@ -317,7 +317,7 @@ describe('ForOfManipulatorAttributeModule', () => {
 
     it('Object property as index', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="item of this.list; index = $index">{{index}}</div>`
         })
@@ -352,7 +352,7 @@ describe('ForOfManipulatorAttributeModule', () => {
         const lList: Array<number> = [2, 4];
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="item of this.list; index = $index * item">{{index}}</div>`
         })
@@ -382,7 +382,7 @@ describe('ForOfManipulatorAttributeModule', () => {
 
     it('Wrong syntax', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="item WRONG this.list"/>`
         })
@@ -402,14 +402,14 @@ describe('ForOfManipulatorAttributeModule', () => {
 
     it('-- Wrapped itself', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="outerItem of [1,2]">
                 <div *pwbFor="innerItem of this.list"/>
             </div>`
         })
         class TestComponent {
-            @Export
+            @PwbExport
             public list: Array<number> = [1];
         }
 
@@ -449,7 +449,7 @@ describe('ForOfManipulatorAttributeModule', () => {
 
     it('-- Deconstruct wrapped modules', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div *pwbFor="outerItem of [1,2]">
                 <div *pwbFor="innerItem of this.list"/>
@@ -469,7 +469,7 @@ describe('ForOfManipulatorAttributeModule', () => {
 
     it('-- After native elements', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `
             <div/>
@@ -499,7 +499,7 @@ describe('ForOfManipulatorAttributeModule', () => {
 
     it('-- After native elements', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `
             <div>

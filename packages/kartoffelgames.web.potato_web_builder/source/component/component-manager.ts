@@ -22,6 +22,8 @@ import { LayerValues } from './values/layer-values';
  * Base component handler. Handles initialisation and update of components.
  */
 export class ComponentManager {
+    public static readonly METADATA_SELECTOR: string = 'pwb:selector';
+
     private static readonly mComponentCache: Dictionary<UserClass, [ComponentModules, XmlDocument]> = new Dictionary<UserClass, [ComponentModules, XmlDocument]>();
     private static readonly mXmlParser: TemplateParser = new TemplateParser();
 

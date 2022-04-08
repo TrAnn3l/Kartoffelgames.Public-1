@@ -1,6 +1,6 @@
 import { InjectionConstructor } from '@kartoffelgames/core.dependency-injection';
 import { expect } from 'chai';
-import { HtmlComponent } from '../../../../../source/component/decorator/html-component.decorator';
+import { PwbComponent } from '../../../../../source/component/decorator/pwb-component.decorator';
 import '../../../../mock/request-animation-frame-mock-session';
 import '../../../../utility/chai-helper';
 import { TestUtil } from '../../../../utility/test-util';
@@ -11,7 +11,7 @@ const HTMLSlotElement: InjectionConstructor = <any>document.createElement('slot'
 describe('SlotAttribute', () => {
     it('-- Default slot', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: '<div $DEFAULT/>'
         })
@@ -39,7 +39,7 @@ describe('SlotAttribute', () => {
         const lSlotName: string = 'slotname';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<div $${lSlotName}/>`
         })

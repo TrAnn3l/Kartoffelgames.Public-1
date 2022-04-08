@@ -3,8 +3,8 @@ import { expect } from 'chai';
 import { LoopError } from '../../source/component/handler/loop-detection-handler';
 import { ComponentElementReference } from '../../source/injection_reference/component-element-reference';
 import { ComponentUpdateReference } from '../../source/injection_reference/component-update-reference';
-import { Export } from '../../source/default/export/export.decorator';
-import { HtmlComponent } from '../../source/component/decorator/html-component.decorator';
+import { PwbExport } from '../../source/default/export/pwb-export.decorator';
+import { PwbComponent } from '../../source/component/decorator/pwb-component.decorator';
 import { ExpressionModule } from '../../source/module/decorator/expression-module.decorator';
 import { UpdateScope } from '../../source/component/enum/update-scope';
 import { IPwbExpressionModuleOnUpdate } from '../../source/module/interface/module';
@@ -16,7 +16,7 @@ import { TestUtil } from '../utility/test-util';
 describe('HtmlComponent', () => {
     it('-- Single element', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: '<div/>'
         })
@@ -33,7 +33,7 @@ describe('HtmlComponent', () => {
 
     it('-- Sibling element', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: '<div/><span/>'
         })
@@ -50,7 +50,7 @@ describe('HtmlComponent', () => {
 
     it('-- Child element', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: '<div><span/></div>'
         })
@@ -73,7 +73,7 @@ describe('HtmlComponent', () => {
 
     it('-- Ignore comments', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: '<div><!-- Comment --></div>'
         })
@@ -98,14 +98,14 @@ describe('HtmlComponent', () => {
     it('-- Same component childs', async () => {
         // Setup. Define child component.
         const lChildSelector: string = TestUtil.randomSelector();
-        @HtmlComponent({
+        @PwbComponent({
             selector: lChildSelector
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         class TestChildComponent { }
 
         // Setup. Define parent component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: `<${lChildSelector}/><${lChildSelector}/>`
         })
@@ -124,7 +124,7 @@ describe('HtmlComponent', () => {
 
     it('-- No template', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector()
         })
         class TestComponent { }
@@ -142,7 +142,7 @@ describe('HtmlComponent', () => {
         const lStyleContent: string = 'p {color: red;}';
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             style: lStyleContent
         })
@@ -162,7 +162,7 @@ describe('HtmlComponent', () => {
 
     it('-- Manual update. No initial update.', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: '<div />',
             updateScope: UpdateScope.Manual
@@ -178,7 +178,7 @@ describe('HtmlComponent', () => {
 
     it('-- Manual update. User triggered update.', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: '<div />',
             updateScope: UpdateScope.Manual
@@ -189,7 +189,7 @@ describe('HtmlComponent', () => {
                 this.mUpdateReference = pUpdateReference;
             }
 
-            @Export
+            @PwbExport
             public update(): void {
                 this.mUpdateReference.update();
             }
@@ -223,7 +223,7 @@ describe('HtmlComponent', () => {
         }
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: '<div>&&Anything&&</div>',
             expressionmodule: TestExpressionModule
@@ -245,7 +245,7 @@ describe('HtmlComponent', () => {
 
     it('-- Create HTMLUnknownElement on unknown element', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: '<unknowncomponent/>'
         })
@@ -262,7 +262,7 @@ describe('HtmlComponent', () => {
 
     it('-- Create HTMLElement on unknown component', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: '<unknown-component/>'
         })
@@ -279,7 +279,7 @@ describe('HtmlComponent', () => {
 
     it('-- Element reference', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
         })
         class TestComponent {
@@ -288,7 +288,7 @@ describe('HtmlComponent', () => {
                 this.mElementReference = pElementReference;
             }
 
-            @Export
+            @PwbExport
             public element(): Node {
                 return this.mElementReference.value;
             }
@@ -318,12 +318,12 @@ describe('HtmlComponent', () => {
         const lExpectedCallOrder: Array<number> = new Array<number>();
 
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: '<div>{{this.innerValue}}</div>'
         })
         class TestComponent implements IPwbOnInit, IPwbAfterInit, IPwbOnUpdate, IPwbAfterUpdate, IPwbOnAttributeChange, IPwbOnDeconstruct {
-            @Export
+            @PwbExport
             public innerValue: string = 'DUMMY-VALUE';
 
             private mAfterPwbUpdateCalled: boolean = false;
@@ -382,7 +382,7 @@ describe('HtmlComponent', () => {
 
     it('-- Loop detection', async () => {
         // Setup. Define component.
-        @HtmlComponent({
+        @PwbComponent({
             selector: TestUtil.randomSelector(),
             template: '<div>{{this.innerValue}}</div>'
         })
