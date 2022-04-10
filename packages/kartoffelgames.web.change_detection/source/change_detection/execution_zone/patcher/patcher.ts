@@ -14,6 +14,8 @@ export class Patcher {
     public static readonly ORIGINAL_FUNCTION_KEY: symbol = Symbol('_OriginalFunctionKey');
     // eslint-disable-next-line @typescript-eslint/naming-convention
     public static readonly PATCHED_FUNCTION_KEY: symbol = Symbol('_PatchedFunctionKey');
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    public static readonly PATCHED_PROMISE_ZONE_KEY: symbol = Symbol('_PatchedPromiseZoneKey');
     private static mIsPatched: boolean = false;
 
     /**
@@ -193,7 +195,7 @@ export class Patcher {
         pGlobalObject.setTimeout = <any>this.patchFunctionParameter(pGlobalObject.setTimeout);
 
         // Promise
-        pGlobalObject.Promise = this.patchClass(pGlobalObject.Promise);
+        pGlobalObject.Promise = this.patchPromise(pGlobalObject.Promise);
 
         // Observer
         pGlobalObject.ResizeObserver = this.patchClass(pGlobalObject.ResizeObserver);
@@ -306,6 +308,31 @@ export class Patcher {
             Object.defineProperty(pObject, lPropertyName, lDescriptorInformation);
             pObject[lPatchedFlag] = true;
         }
+    }
+
+    /**
+     * Patch promise.
+     * @param pConstructor - Promise constructor.
+     */
+    private patchPromise(pConstructor: any): any {
+        const lConstructor: any = this.patchClass(pConstructor);
+        const lOriginalClass: any = Reflect.get(lConstructor, Patcher.ORIGINAL_CLASS_KEY);
+
+        // Patch only the constructor.
+        const lPatchedClass = class PatchedClass extends lConstructor {
+            public constructor(...pArgs: Array<any>) {
+                super(...pArgs);
+
+                // Get zone.
+                const lCurrentZone = ExecutionZone.current;
+                Reflect.set(this, Patcher.PATCHED_PROMISE_ZONE_KEY, lCurrentZone);
+            }
+        };
+
+        // Add original class with symbol key.
+        Reflect.set(lPatchedClass, Patcher.ORIGINAL_CLASS_KEY, lOriginalClass);
+
+        return lPatchedClass;
     }
 
     /**

@@ -34,32 +34,6 @@ describe('ExecutionZone', () => {
       expect(lNameResult).to.equal(lZoneName);
    });
 
-   describe('Property: onError', () => {
-      it('-- Set value', () => {
-         // Setup.
-         const lOnError = (): void => { /* Empty */ };
-         const lZone: ExecutionZone = new ExecutionZone('Name');
-
-         // Process.
-         lZone.onError = lOnError;
-         const lOnErrorResult = lZone.onError;
-
-         // Evaluation.
-         expect(lOnErrorResult).to.equal(lOnError);
-      });
-
-      it('-- Empty value', () => {
-         // Setup.
-         const lZone: ExecutionZone = new ExecutionZone('Name');
-
-         // Process.
-         const lOnErrorResult = lZone.onError;
-
-         // Evaluation.
-         expect(lOnErrorResult).to.be.null;
-      });
-   });
-
    describe('Property: onInteraction', () => {
       it('-- Set value', () => {
          // Setup.
@@ -139,7 +113,7 @@ describe('ExecutionZone', () => {
          expect(lErrorResult).to.equal(lError);
       });
 
-      it('-- Execute inside zone with error', () => {
+      it('-- Error inside zone, ensure correct zones', () => {
          // Setup.
          const lZoneName: string = 'ZoneName';
          const lZone: ExecutionZone = new ExecutionZone(lZoneName);
@@ -183,24 +157,6 @@ describe('ExecutionZone', () => {
          // Evaluation.
          expect(lZoneNameResult).to.equal(lZoneName);
          expect(lExecutedFunction).to.equal(lFunction);
-      });
-
-      it('-- Check error callback', () => {
-         // Setup.
-         const lZone: ExecutionZone = new ExecutionZone('ZoneName');
-         const lError: string = 'ErrorName';
-
-         // Process.
-         let lErrorResult: string;
-         lZone.onError = (pError: string) => {
-            lErrorResult = pError;
-         };
-         try {
-            lZone.executeInZone(() => { throw lError; });
-         } catch (_pError) {/* Empty */ }
-
-         // Evaluation.
-         expect(lErrorResult).to.equal(lError);
       });
    });
 
@@ -257,7 +213,7 @@ describe('ExecutionZone', () => {
          expect(lErrorResult).to.equal(lError);
       });
 
-      it('-- Execute inside zone with error', () => {
+      it('-- Error inside zone, ensure correct zones', () => {
          // Setup.
          const lZoneName: string = 'ZoneName';
          const lZone: ExecutionZone = new ExecutionZone(lZoneName);
@@ -296,24 +252,6 @@ describe('ExecutionZone', () => {
 
          // Evaluation.
          expect(lInteractionCallbackCalled).to.be.false;
-      });
-
-      it('-- Check error callback', () => {
-         // Setup.
-         const lZone: ExecutionZone = new ExecutionZone('ZoneName');
-         const lError: string = 'ErrorName';
-
-         // Process.
-         let lErrorResult: string;
-         lZone.onError = (pError: string) => {
-            lErrorResult = pError;
-         };
-         try {
-            lZone.executeInZoneSilent(() => { throw lError; });
-         } catch (_pError) {/* Empty */ }
-
-         // Evaluation.
-         expect(lErrorResult).to.equal(lError);
       });
    });
 

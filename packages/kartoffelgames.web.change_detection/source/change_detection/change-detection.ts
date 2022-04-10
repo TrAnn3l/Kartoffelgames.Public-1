@@ -1,4 +1,5 @@
 import { List, ObjectFieldPathPart } from '@kartoffelgames/core.data';
+import { ErrorAllocation } from './execution_zone/error-allocation';
 import { ExecutionZone } from './execution_zone/execution-zone';
 import { Patcher } from './execution_zone/patcher/patcher';
 import { InteractionDetectionProxy } from './synchron_tracker/interaction-detection-proxy';
@@ -83,8 +84,8 @@ export class ChangeDetection {
         ExecutionZone.initialize();
 
         // Initialize lists
-        this.mChangeListenerList = new List<() => void>();
-        this.mErrorListenerList = new List<() => void>();
+        this.mChangeListenerList = new List<ChangeListener>();
+        this.mErrorListenerList = new List<ErrorListener>();
 
         // Save parent.
         this.mParent = pParentChangeDetection ?? null;
@@ -94,13 +95,41 @@ export class ChangeDetection {
         this.mExecutionZone.onInteraction = (_pZoneName: string, pFunction, pStacktrace: string) => {
             this.dispatchChangeEvent({ source: pFunction, property: 'apply', stacktrace: pStacktrace });
         };
-        this.mExecutionZone.onError = (pError: any) => {
-            this.dispatchErrorEvent(pError);
-        };
         this.mExecutionZone.setZoneData(ChangeDetection.CURRENT_CHANGE_DETECTION_ZONE_DATA_KEY, this);
 
         // Set silent state. Convert null to false.
         this.mSilent = !!pSilent;
+
+        // Catch global error, check if allocated zone is child of this change detection and report the error.
+        const lErrorHandler = (pErrorEvent: Event, pError: any) => {
+            // Get change detection
+            const lErrorZone: ExecutionZone = ErrorAllocation.getExecutionZoneOfError(pError);
+            if (lErrorZone) {
+                const lChangeDetection: ChangeDetection = lErrorZone.getZoneData(ChangeDetection.CURRENT_CHANGE_DETECTION_ZONE_DATA_KEY);
+
+                // Check if error change detection is child of the change detection.
+                if (lChangeDetection.isChildOf(this)) {
+                    // Suppress console error message if error should be suppressed
+                    const lSuppressError: boolean = this.dispatchErrorEvent(pError);
+                    if (lSuppressError) {
+                        pErrorEvent.preventDefault();
+                    }
+                }
+            }
+        };
+
+        // Global error listener.
+        window.addEventListener('error', (pEvent: ErrorEvent) => {
+            lErrorHandler(pEvent, pEvent.error);
+        });
+
+        window.addEventListener('unhandledrejection', (pEvent: PromiseRejectionEvent) => {
+            const lPromise: Promise<any> = pEvent.promise;
+            const lPromiseZone: ExecutionZone = Reflect.get(lPromise, Patcher.PATCHED_PROMISE_ZONE_KEY);
+            ErrorAllocation.allocateError(pEvent.reason, lPromiseZone);
+
+            lErrorHandler(pEvent, pEvent.reason);
+        });
     }
 
     /**
@@ -146,22 +175,6 @@ export class ChangeDetection {
                 this.mParent?.dispatchChangeEvent(pReason);
             });
         }
-    }
-
-    /**
-     * Trigger all change event.
-     */
-    public dispatchErrorEvent(pError: any): void {
-        // Get current executing zone.
-        const lCurrentChangeDetection: ChangeDetection = ChangeDetection.current ?? this;
-
-        // Execute all listener in event target zone.
-        lCurrentChangeDetection.execute(() => {
-            this.callErrorListener(pError);
-
-            // Pass through error event to parent.
-            this.mParent?.dispatchErrorEvent(pError);
-        });
     }
 
     /**
@@ -260,14 +273,43 @@ export class ChangeDetection {
     /**
      * Call all registered error listener.
      */
-    private callErrorListener(pError: any): void {
+    private callErrorListener(pError: any): boolean {
+        let lSuppressError: boolean = false;
+
         // Dispatch error event.
         for (const lListener of this.mErrorListenerList) {
-            lListener(pError);
+            lSuppressError = lListener(pError) || lSuppressError;
         }
+
+        return lSuppressError;
+    }
+
+    /**
+     * Trigger all change event.
+     */
+    private dispatchErrorEvent(pError: any): boolean {
+        // Get current executing zone.
+        const lCurrentChangeDetection: ChangeDetection = ChangeDetection.current ?? this;
+
+        // Execute all listener in event target zone.
+        return lCurrentChangeDetection.execute(() => {
+            return this.callErrorListener(pError);
+        });
+    }
+
+    /**
+     * Check if this change detection is a child of another change detection.
+     * @param pChangeDetection - Possible parent change detection.
+     */
+    private isChildOf(pChangeDetection: ChangeDetection): boolean {
+        if (pChangeDetection === this) {
+            return true;
+        }
+
+        return !!this.parent?.isChildOf(pChangeDetection);
     }
 }
 
 export type ChangeListener = (pReason: ChangeDetectionReason) => void;
-export type ErrorListener = (pError: any) => void;
+export type ErrorListener = (pError: any) => void | boolean;
 export type ChangeDetectionReason = { source: any, property: ObjectFieldPathPart | ((...pArgs: Array<any>) => any), stacktrace: string; };

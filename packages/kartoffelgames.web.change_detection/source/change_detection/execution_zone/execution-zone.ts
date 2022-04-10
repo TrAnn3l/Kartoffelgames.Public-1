@@ -1,5 +1,6 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { ChangeDetection } from '../change-detection';
+import { ErrorAllocation } from './error-allocation';
 import { Patcher } from './patcher/patcher';
 
 /**
@@ -26,7 +27,6 @@ export class ExecutionZone {
     }
 
     private readonly mAdditionalData: Dictionary<string | symbol | number, any>;
-    private mErrorCallback: ErrorCallback;
     private mInteractionCallback: InteractionCallback;
     private readonly mName: string;
 
@@ -35,20 +35,6 @@ export class ExecutionZone {
      */
     public get name(): string {
         return this.mName;
-    }
-
-    /**
-     * Get error callback.
-     */
-    public get onError(): ErrorCallback {
-        return this.mErrorCallback ?? null;
-    }
-
-    /**
-     * Set error callback.
-     */
-    public set onError(pErrorCallback: ErrorCallback) {
-        this.mErrorCallback = pErrorCallback;
     }
 
     /**
@@ -69,7 +55,6 @@ export class ExecutionZone {
      * Constructor.
      * Create new zone.
      * @param pZoneName - Name of zone.
-     * @param pZone
      */
     public constructor(pZoneName: string) {
         this.mName = pZoneName;
@@ -93,7 +78,7 @@ export class ExecutionZone {
         try {
             lResult = pFunction(...pArgs);
         } catch (pError) {
-            this.dispatchErrorEvent(pError);
+            ErrorAllocation.allocateError(pError, this);
             throw pError;
         } finally {
             // Dispach change event.
@@ -123,7 +108,7 @@ export class ExecutionZone {
         try {
             lResult = pFunction(...pArgs);
         } catch (pError) {
-            this.dispatchErrorEvent(pError);
+            ErrorAllocation.allocateError(pError, this);
             throw pError;
         } finally {
             // Reset to last zone.
@@ -164,16 +149,6 @@ export class ExecutionZone {
             this.onInteraction?.(pZoneName, pFunction, pStacktrace);
         }
     }
-
-    /**
-     * Dispatch error event. 
-     * @param pZoneName - Zone name.
-     */
-    private dispatchErrorEvent(pError: any): void {
-        // Call error callbacks.
-        this.onError?.(pError);
-    }
 }
 
 type InteractionCallback = (pZoneName: string, pFunction: (...pArgs: Array<any>) => any, pStacktrace: string) => void;
-type ErrorCallback = (pError: any) => void;
