@@ -56,7 +56,6 @@ module.exports = {
         "no-var": "warn",
         "eqeqeq": "warn",
         "valid-typeof": "warn",
-        "@typescript-eslint/no-invalid-void-type": "warn",
         "prefer-const": "warn",
         "@typescript-eslint/prefer-readonly": "warn",
         "new-parens": "warn",
