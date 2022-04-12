@@ -43,7 +43,7 @@ export class UpdateHandler {
         if (this.mUpdateScope === UpdateScope.Manual) {
             // Manual zone outside every other zone.
             this.mChangeDetection = new ChangeDetection('Manual Zone', null, true);
-        } else if (!ChangeDetection.current || this.mUpdateScope === UpdateScope.Capsuled) {
+        } else if (this.mUpdateScope === UpdateScope.Capsuled) {
             this.mChangeDetection = new ChangeDetection('DefaultComponentZone');
         } else {
             this.mChangeDetection = ChangeDetection.currentNoneSilent;
@@ -78,6 +78,10 @@ export class UpdateHandler {
 
         // Remove all update listener.
         this.mUpdateListener.clear();
+
+        if(this.mUpdateScope !== UpdateScope.Manual){
+            this.mChangeDetection.deconstruct();
+        }
 
         // Disable handling.
         this.enabled = false;

@@ -1,4 +1,4 @@
-import { List, ObjectFieldPathPart } from '@kartoffelgames/core.data';
+import { List, ObjectFieldPathPart, IDeconstructable } from '@kartoffelgames/core.data';
 import { ErrorAllocation } from './execution_zone/error-allocation';
 import { ExecutionZone } from './execution_zone/execution-zone';
 import { Patcher } from './execution_zone/patcher/patcher';
@@ -7,7 +7,7 @@ import { InteractionDetectionProxy } from './synchron_tracker/interaction-detect
 /**
  * Merges execution zone and proxy tracking.
  */
-export class ChangeDetection {
+export class ChangeDetection implements IDeconstructable {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     private static readonly CURRENT_CHANGE_DETECTION_ZONE_DATA_KEY: symbol = Symbol('_CD_DATA_KEY');
     private static readonly mZoneConnectedChangeDetections: WeakMap<ExecutionZone, ChangeDetection> = new WeakMap<ExecutionZone, ChangeDetection>();
@@ -55,6 +55,9 @@ export class ChangeDetection {
     private readonly mExecutionZone: ExecutionZone;
     private readonly mParent: ChangeDetection;
     private readonly mSilent: boolean;
+    private readonly mWindowErrorListener: (pEvent: ErrorEvent) => void;
+    private readonly mWindowRejectionListener: (pEvent: PromiseRejectionEvent) => void;
+
 
     /**
      * If change detection is silent.
@@ -135,19 +138,21 @@ export class ChangeDetection {
             }
         };
 
-        // Global error listener.
-        window.addEventListener('error', (pEvent: ErrorEvent) => {
+        // Create error and rejection listener.
+        this.mWindowErrorListener = (pEvent: ErrorEvent) => {
             lErrorHandler(pEvent, pEvent.error);
-        });
-
-        // Global promise rejection listener.
-        window.addEventListener('unhandledrejection', (pEvent: PromiseRejectionEvent) => {
+        };
+        this.mWindowRejectionListener = (pEvent: PromiseRejectionEvent) => {
             const lPromise: Promise<any> = pEvent.promise;
             const lPromiseZone: ExecutionZone = Reflect.get(lPromise, Patcher.PATCHED_PROMISE_ZONE_KEY);
             ErrorAllocation.allocateError(pEvent.reason, lPromiseZone);
 
             lErrorHandler(pEvent, pEvent.reason);
-        });
+        };
+
+        // Register global error listener.
+        window.addEventListener('error', this.mWindowErrorListener);
+        window.addEventListener('unhandledrejection', this.mWindowRejectionListener);
     }
 
     /**
@@ -174,6 +179,15 @@ export class ChangeDetection {
      */
     public createChildDetection(pName: string): ChangeDetection {
         return new ChangeDetection(pName, this);
+    }
+
+    /**
+     * Deconstruct change detection.
+     */
+    public deconstruct(): void {
+        // Register global error listener.
+        window.removeEventListener('error', this.mWindowErrorListener);
+        window.removeEventListener('unhandledrejection', this.mWindowRejectionListener);
     }
 
     /**
@@ -249,7 +263,13 @@ export class ChangeDetection {
      * @param pArgs - function execution arguments.
      */
     public silentExecution<T>(pFunction: (...pArgs: Array<any>) => T, ...pArgs: Array<any>): T {
-        return new ChangeDetection(`${this.name}-SilentCD`, this, true).execute(pFunction, ...pArgs);
+        const lChangeDetection: ChangeDetection = new ChangeDetection(`${this.name}-SilentCD`, this, true);
+        const lExecutionResult: any = lChangeDetection.execute(pFunction, ...pArgs);
+
+        // Deconstruct change detection. Error events are not needed on temporary change detections.
+        lChangeDetection.deconstruct();
+
+        return lExecutionResult;
     }
 
     /**
