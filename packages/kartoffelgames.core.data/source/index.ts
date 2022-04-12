@@ -12,6 +12,7 @@ export { TypeUtil } from './util/type-util';
 // Interfaces.
 export { IVoidParameterConstructor } from './interface/i-constructor';
 export { ICloneable } from './interface/i-cloneable';
+export { IDeconstructable } from './interface/i-deconstructable';
 
 // Support types.
 export { Writeable, Readonly, ObjectFieldPath, ObjectFieldPathPart } from './types';
