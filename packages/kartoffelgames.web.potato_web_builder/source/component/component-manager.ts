@@ -102,7 +102,7 @@ export class ComponentManager {
         const lLocalInjections: Array<object> = new Array<object>();
         lLocalInjections.push(new ComponentElementReference(pHtmlComponent));
         lLocalInjections.push(new ComponentUpdateReference(this.mUpdateHandler));
-        lLocalInjections.push(ChangeDetection.current?.getZoneData(PwbApp.PUBLIC_APP_KEY));
+        //lLocalInjections.push(ChangeDetection.current?.getZoneData(PwbApp.PUBLIC_APP_KEY)); TODO: How?
         this.mUserObjectHandler = new UserObjectHandler(pUserClass, this.updateHandler, lLocalInjections);
 
         // After build, before initialization.
