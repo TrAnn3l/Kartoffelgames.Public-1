@@ -10,20 +10,29 @@ import { InteractionDetectionProxy } from './synchron_tracker/interaction-detect
 export class ChangeDetection {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     private static readonly CURRENT_CHANGE_DETECTION_ZONE_DATA_KEY: symbol = Symbol('_CD_DATA_KEY');
+    private static readonly mZoneConnectedChangeDetections: WeakMap<ExecutionZone, ChangeDetection> = new WeakMap<ExecutionZone, ChangeDetection>();
 
     /**
      * Get current change detection.
      */
     public static get current(): ChangeDetection {
-        return ExecutionZone.current.getZoneData(ChangeDetection.CURRENT_CHANGE_DETECTION_ZONE_DATA_KEY) ?? null;
+        const lCurrentZone: ExecutionZone = ExecutionZone.current;
+        let lCurrentChangeDetection: ChangeDetection = ChangeDetection.mZoneConnectedChangeDetections.get(lCurrentZone);
+
+        // Initialize new change detection
+        if (!lCurrentChangeDetection) {
+            lCurrentChangeDetection = new ChangeDetection(lCurrentZone);
+        }
+
+        return lCurrentChangeDetection;
     }
 
     /**
      * Get current change detection.
      * Ignores all silent zones and returns next none silent zone.
      */
-    public static get currentNoneSilent(): ChangeDetection {
-        let lCurrent: ChangeDetection = ExecutionZone.current.getZoneData(ChangeDetection.CURRENT_CHANGE_DETECTION_ZONE_DATA_KEY);
+    public static get currentNoneSilent(): ChangeDetection | null {
+        let lCurrent: ChangeDetection = ChangeDetection.current;
 
         while (lCurrent?.isSilent) {
             lCurrent = lCurrent.mParent;
@@ -74,14 +83,16 @@ export class ChangeDetection {
      * Except IndexDB calls.
      * Listens on changes and function calls on registered objects.
      * Child changes triggers parent change detection but parent doesn't trigger child.
-     * @param pName - Name of change detection.
+     * @param pName - Name of change detection or the change detection.
      * @param pOnChange - Callback function that executes on possible change.
      * @param pParentChangeDetection - Parent change detection.
      * @param pSilent - [Optinal] If change detection triggers any change events.
      */
-    public constructor(pName: string, pParentChangeDetection?: ChangeDetection | null, pSilent?: boolean) {
-        // Patch execution zone.
-        ExecutionZone.initialize();
+    public constructor(pChangeDetection: ExecutionZone);
+    public constructor(pName: string, pParentChangeDetection?: ChangeDetection | null, pSilent?: boolean);
+    public constructor(pName: string | ExecutionZone, pParentChangeDetection?: ChangeDetection | null, pSilent?: boolean) {
+        // Patch for execution zone.
+        Patcher.patch(globalThis);
 
         // Initialize lists
         this.mChangeListenerList = new List<ChangeListener>();
@@ -90,12 +101,18 @@ export class ChangeDetection {
         // Save parent.
         this.mParent = pParentChangeDetection ?? null;
 
-        // Create new execution zone.
-        this.mExecutionZone = new ExecutionZone(pName);
+        // Create new execution zone or use old one.
+        if (typeof pName === 'string') {
+            this.mExecutionZone = new ExecutionZone(pName);
+        } else {
+            this.mExecutionZone = pName;
+        }
+
+        // Register interaction event and connect execution zone with change detection.
         this.mExecutionZone.onInteraction = (_pZoneName: string, pFunction, pStacktrace: string) => {
             this.dispatchChangeEvent({ source: pFunction, property: 'apply', stacktrace: pStacktrace });
         };
-        this.mExecutionZone.setZoneData(ChangeDetection.CURRENT_CHANGE_DETECTION_ZONE_DATA_KEY, this);
+        ChangeDetection.mZoneConnectedChangeDetections.set(this.mExecutionZone, this);
 
         // Set silent state. Convert null to false.
         this.mSilent = !!pSilent;
@@ -105,7 +122,7 @@ export class ChangeDetection {
             // Get change detection
             const lErrorZone: ExecutionZone = ErrorAllocation.getExecutionZoneOfError(pError);
             if (lErrorZone) {
-                const lChangeDetection: ChangeDetection = lErrorZone.getZoneData(ChangeDetection.CURRENT_CHANGE_DETECTION_ZONE_DATA_KEY);
+                const lChangeDetection: ChangeDetection = ChangeDetection.mZoneConnectedChangeDetections.get(lErrorZone);
 
                 // Check if error change detection is child of the change detection.
                 if (lChangeDetection.isChildOf(this)) {
@@ -123,6 +140,7 @@ export class ChangeDetection {
             lErrorHandler(pEvent, pEvent.error);
         });
 
+        // Global promise rejection listener.
         window.addEventListener('unhandledrejection', (pEvent: PromiseRejectionEvent) => {
             const lPromise: Promise<any> = pEvent.promise;
             const lPromiseZone: ExecutionZone = Reflect.get(lPromise, Patcher.PATCHED_PROMISE_ZONE_KEY);
@@ -165,7 +183,7 @@ export class ChangeDetection {
         // One trigger if change detection is not silent.
         if (!this.mSilent) {
             // Get current executing zone.
-            const lCurrentChangeDetection: ChangeDetection = ChangeDetection.current ?? this;
+            const lCurrentChangeDetection: ChangeDetection = ChangeDetection.current;
 
             // Execute all listener in event target zone.
             lCurrentChangeDetection.execute(() => {
@@ -186,23 +204,6 @@ export class ChangeDetection {
      */
     public execute<T>(pFunction: (...pArgs: Array<any>) => T, ...pArgs: Array<any>): T {
         return this.mExecutionZone.executeInZoneSilent(pFunction, ...pArgs);
-    }
-
-    /**
-     * Access data that has been add in this zone.
-     * Can access data of parent zones.
-     * @param pDataKey - Key of data.
-     * @returns zone data.
-     */
-    public getZoneData(pDataKey: string): any {
-        const lValue: any = this.mExecutionZone.getZoneData(pDataKey);
-
-        // Get data from parent if data is not found in this change detection.
-        if (typeof lValue === 'undefined' && this.mParent !== null) {
-            return this.mParent.getZoneData(pDataKey);
-        }
-
-        return lValue;
     }
 
     /**
@@ -239,15 +240,6 @@ export class ChangeDetection {
      */
     public removeErrorListener(pListener: ErrorListener): void {
         this.mErrorListenerList.remove(pListener);
-    }
-
-    /**
-     * Set data that can be only accessed in this zone.
-     * @param pDataKey - Key of data.
-     * @param pValue - Value.
-     */
-    public setZoneData(pDataKey: string, pValue: any): void {
-        this.mExecutionZone.setZoneData(pDataKey, pValue);
     }
 
     /**
@@ -289,7 +281,7 @@ export class ChangeDetection {
      */
     private dispatchErrorEvent(pError: any): boolean {
         // Get current executing zone.
-        const lCurrentChangeDetection: ChangeDetection = ChangeDetection.current ?? this;
+        const lCurrentChangeDetection: ChangeDetection = ChangeDetection.current;
 
         // Execute all listener in event target zone.
         return lCurrentChangeDetection.execute(() => {

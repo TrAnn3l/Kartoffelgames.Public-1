@@ -1,7 +1,4 @@
-import { Dictionary } from '@kartoffelgames/core.data';
-import { ChangeDetection } from '../change-detection';
 import { ErrorAllocation } from './error-allocation';
-import { Patcher } from './patcher/patcher';
 
 /**
  * Detects if registered object has possibly changed or any asynchron function inside this zone was executed.
@@ -11,22 +8,12 @@ export class ExecutionZone {
     private static mCurrentZone: ExecutionZone = new ExecutionZone('Default');
 
     /**
-     * Patch all asynchron functions.
-     * Does not patch twice.
-     */
-    public static initialize(): void {
-        // Patch everything.
-        Patcher.patch(globalThis);
-    }
-
-    /**
      * Current execution zone.
      */
     public static get current(): ExecutionZone {
         return ExecutionZone.mCurrentZone;
     }
 
-    private readonly mAdditionalData: Dictionary<string | symbol | number, any>;
     private mInteractionCallback: InteractionCallback;
     private readonly mName: string;
 
@@ -58,7 +45,6 @@ export class ExecutionZone {
      */
     public constructor(pZoneName: string) {
         this.mName = pZoneName;
-        this.mAdditionalData = new Dictionary<string | symbol | number, any>();
     }
 
     /**
@@ -119,35 +105,12 @@ export class ExecutionZone {
     }
 
     /**
-     * Access data that has been add in this zone.
-     * Can access data of parent zones.
-     * @param pDataKey - Key of data.
-     * @returns zone data.
-     */
-    public getZoneData(pDataKey: string | symbol | number): any {
-        const lData: any = this.mAdditionalData.get(pDataKey);
-        return lData;
-    }
-
-    /**
-     * Set data that can be only accessed in this zone.
-     * @param pDataKey - Key of data.
-     * @param pValue - Value.
-     */
-    public setZoneData(pDataKey: string | symbol | number, pValue: any): void {
-        this.mAdditionalData.set(pDataKey, pValue);
-    }
-
-    /**
      * Dispatch change event.
      * @param pZoneName - Zone name.
      */
     private dispatchChangeEvent(pZoneName: string, pFunction: (...pArgs: Array<any>) => any, pStacktrace: string): void {
-        // Execute only inside none silent zones.
-        if (!ChangeDetection.current?.isSilent) {
-            // Call change callbacks.
-            this.onInteraction?.(pZoneName, pFunction, pStacktrace);
-        }
+        // Call change callbacks.
+        this.onInteraction?.(pZoneName, pFunction, pStacktrace);
     }
 }
 

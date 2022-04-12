@@ -55,7 +55,7 @@ describe('ChangeDetection', () => {
             const lCurrentNoneSilentChangeDetection: ChangeDetection = ChangeDetection.currentNoneSilent;
 
             // Evaluation.
-            expect(lCurrentNoneSilentChangeDetection).to.be.null;
+            expect(lCurrentNoneSilentChangeDetection).to.be.instanceOf(ChangeDetection);
         });
 
         it('-- No none silent zone', () => {
@@ -235,11 +235,9 @@ describe('ChangeDetection', () => {
             // Process. Add listener.
             let lListenerCalled: boolean = false;
             let lReasonResult: ChangeDetectionReason;
-            let lExecutingChangeDetectionName: string;
             const lListener = (pReason: ChangeDetectionReason) => {
                 lListenerCalled = true;
                 lReasonResult = pReason;
-                lExecutingChangeDetectionName = ChangeDetection.current.name;
             };
             lParentChangeDetection.addChangeListener(lListener);
 
@@ -249,6 +247,46 @@ describe('ChangeDetection', () => {
             // Evaluation.
             expect(lListenerCalled).to.be.true;
             expect(lReasonResult).to.equal(lReason);
+        });
+
+        it('-- Preserve execution change detection. Default execution.', () => {
+            // Setup.
+            const lParentChangeDetection: ChangeDetection = new ChangeDetection('Name');
+            const lChangeDetection: ChangeDetection = lParentChangeDetection.createChildDetection('CD-child');
+
+            // Process. Add listener.
+            let lExecutingChangeDetectionName: string;
+            const lListener = () => {
+                lExecutingChangeDetectionName = ChangeDetection.current.name;
+            };
+            lParentChangeDetection.addChangeListener(lListener);
+
+            // Process. Dispatch event on child..
+            lChangeDetection.dispatchChangeEvent({ source: 1, property: 2, stacktrace: '3' });
+
+            // Evaluation.
+            expect(lExecutingChangeDetectionName).to.equal('Default');
+        });
+
+        it('-- Preserve execution change detection. Zone execution.', () => {
+            // Setup.
+            const lChildChangeDetectionName: string = 'CD-child';
+            const lParentChangeDetection: ChangeDetection = new ChangeDetection('Name');
+            const lChangeDetection: ChangeDetection = lParentChangeDetection.createChildDetection(lChildChangeDetectionName);
+
+            // Process. Add listener.
+            let lExecutingChangeDetectionName: string;
+            const lListener = () => {
+                lExecutingChangeDetectionName = ChangeDetection.current.name;
+            };
+            lParentChangeDetection.addChangeListener(lListener);
+
+            // Process. Dispatch event on child..
+            lChangeDetection.execute(() => {
+                lChangeDetection.dispatchChangeEvent({ source: 1, property: 2, stacktrace: '3' });
+            });
+
+            // Evaluation.
             expect(lExecutingChangeDetectionName).to.equal(lChildChangeDetectionName);
         });
     });
@@ -283,41 +321,6 @@ describe('ChangeDetection', () => {
         // Evaluation.
         expect(lOriginalObject).to.not.equal(lTrackedObject);
         expect(lUntrackedObject).to.equal(lOriginalObject);
-    });
-
-    describe('Method: getZoneData', () => {
-        it('-- Data on same change detection', () => {
-            // Setup. Values.
-            const lKey: string = 'key';
-            const lValue: number = 12;
-
-            // Setup. Set zone data.
-            const lChangeDetection: ChangeDetection = new ChangeDetection('Name');
-            lChangeDetection.setZoneData(lKey, lValue);
-
-            // Process.
-            const lResultValue: number = lChangeDetection.getZoneData(lKey);
-
-            // Evaluation.
-            expect(lResultValue).to.equal(lValue);
-        });
-
-        it('-- Data on parent change detection', () => {
-            // Setup. Values.
-            const lKey: string = 'key';
-            const lValue: number = 12;
-
-            // Setup. Set zone data.
-            const lParentChangeDetection: ChangeDetection = new ChangeDetection('Name');
-            lParentChangeDetection.setZoneData(lKey, lValue);
-            const lChildChangeDetection: ChangeDetection = lParentChangeDetection.createChildDetection('Child');
-
-            // Process.
-            const lResultValue: number = lChildChangeDetection.getZoneData(lKey);
-
-            // Evaluation.
-            expect(lResultValue).to.equal(lValue);
-        });
     });
 
     describe('Method: registerObject', () => {
@@ -412,22 +415,6 @@ describe('ChangeDetection', () => {
 
         // Evaluation.
         expect(lListenerCalled).to.be.false;
-    });
-
-    it('Method: setZoneData', () => {
-        // Setup. Values.
-        const lKey: string = 'key';
-        const lValue: number = 12;
-
-        // Process. Set zone data.
-        const lChangeDetection: ChangeDetection = new ChangeDetection('Name');
-        lChangeDetection.setZoneData(lKey, lValue);
-
-        // Process. Get zone data.
-        const lResultValue: number = lChangeDetection.getZoneData(lKey);
-
-        // Evaluation.
-        expect(lResultValue).to.equal(lValue);
     });
 
     it('Method: silentExecution', () => {

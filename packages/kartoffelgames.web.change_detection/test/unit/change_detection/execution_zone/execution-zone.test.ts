@@ -1,19 +1,8 @@
 import { expect } from 'chai';
-import { ChangeDetection } from '../../../../source/change_detection/change-detection';
 import { ExecutionZone } from '../../../../source/change_detection/execution_zone/execution-zone';
-import { Patcher } from '../../../../source/change_detection/execution_zone/patcher/patcher';
 import '../../../mock/request-animation-frame-mock-session';
 
 describe('ExecutionZone', () => {
-   it('Static Mehod: ExecutionZone', () => {
-      // Process.
-      ExecutionZone.initialize();
-      const lIsPatched: boolean = (<any>Patcher).mIsPatched;
-
-      // Evaluation.
-      expect(lIsPatched).to.be.true;
-   });
-
    it('Static Property: current', () => {
       // Process.
       const lCurrentZone: ExecutionZone = ExecutionZone.current;
@@ -253,55 +242,5 @@ describe('ExecutionZone', () => {
          // Evaluation.
          expect(lInteractionCallbackCalled).to.be.false;
       });
-   });
-
-   it('Method: getZoneData', () => {
-      // Setup. Initialize values.     
-      const lKey: string = 'DataKey';
-      const lValue: string = 'DataValue';
-      const lZone: ExecutionZone = new ExecutionZone('ZoneName');
-
-      // Setup. Add zone data.
-      lZone.setZoneData(lKey, lValue);
-
-      // Process.
-      const lValueResult: string = lZone.getZoneData(lKey);
-
-      // Evaluation.
-      expect(lValueResult).to.equal(lValue);
-   });
-
-   it('Method: setZoneData', () => {
-      // Setup. Initialize values.     
-      const lKey: string = 'DataKey';
-      const lValue: string = 'DataValue';
-      const lZone: ExecutionZone = new ExecutionZone('ZoneName');
-
-      // Process.
-      lZone.setZoneData(lKey, lValue);
-      const lValueResult: string = lZone.getZoneData(lKey);
-
-      // Evaluation.
-      expect(lValueResult).to.equal(lValue);
-   });
-
-   it('Funcionality: ChangeDetection.Silent', () => {
-      // Setup.
-      const lChangeDetection = new ChangeDetection('Name', null, true);
-      const lZone: ExecutionZone = (<any>lChangeDetection).mExecutionZone;
-
-      // Setup. Interaction callback
-      let lInteractionCallbackCalled: boolean = false;
-      lZone.onInteraction = () => {
-         lInteractionCallbackCalled = true;
-      };
-
-      // Process
-      lChangeDetection.execute(() => {
-         lZone.executeInZone(() => { /* Empty */ });
-      });
-
-      // Evaluation.
-      expect(lInteractionCallbackCalled).to.be.false;
    });
 });
