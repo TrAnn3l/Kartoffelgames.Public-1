@@ -57,7 +57,9 @@ export class UpdateHandler {
 
         // Define error handler.
         this.mLoopDetectionHandler.onError = (pError: any) => {
-            this.releaseWaiter(pError);
+            // Supress error of any waiter were waiting.
+            // Error should be handled by the async waiter.
+            return this.releaseWaiter(pError);
         };
     }
 
@@ -165,12 +167,21 @@ export class UpdateHandler {
 
     /**
      * Release all update waiter.
+     * @param pError - Error object.
+     * @returns if any waiter were waiting.
      */
-    private releaseWaiter(pError?: any): void {
+    private releaseWaiter(pError?: any): boolean {
+        const lWaiterExist: boolean = this.mUpdateWaiter.length > 0;
+
+        // Release all waiter.
         for (const lUpdateWaiter of this.mUpdateWaiter) {
             lUpdateWaiter(pError);
         }
+        
+        // Clear waiter list.
         this.mUpdateWaiter.clear();
+
+        return lWaiterExist;
     }
 
     /**

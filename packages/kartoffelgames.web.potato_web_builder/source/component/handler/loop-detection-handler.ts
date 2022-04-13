@@ -72,10 +72,13 @@ export class LoopDetectionHandler {
                     globalThis.cancelAnimationFrame(this.mNextSheduledCall);
 
                     // Execute on error.
-                    this.mOnError?.(pException);
+                    const lSuppressError: boolean = this.mOnError?.(pException) === true;
 
-                    // Rethrow error.
-                    throw pException;
+                    // Rethrow error. Used only for debugging and testing.
+                    /* istanbul ignore if */
+                    if(!lSuppressError){
+                        throw pException;
+                    }     
                 }
             };
 
@@ -86,7 +89,7 @@ export class LoopDetectionHandler {
     }
 }
 
-type ErrorHandler = (pError: any) => void;
+type ErrorHandler = (pError: any) => boolean;
 
 export class LoopError extends Error {
     public readonly chain: Array<ChangeDetectionReason>;
