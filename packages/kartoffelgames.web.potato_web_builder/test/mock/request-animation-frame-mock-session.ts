@@ -1,9 +1,9 @@
 class RequestAnimationFrameMockSession {
     cancelAnimationFrame(pHandle: any) {
-        window.clearTimeout(pHandle);
+        globalThis.clearTimeout(pHandle);
     }
     requestAnimationFrame(pCallback: any) {
-        return window.setTimeout(() => {
+        return globalThis.setTimeout(() => {
             pCallback();
         }, 1);
     }
@@ -11,5 +11,5 @@ class RequestAnimationFrameMockSession {
 
 export const RequestAnimationFrameMock = new RequestAnimationFrameMockSession();
 
-window.requestAnimationFrame = globalThis.requestAnimationFrame = RequestAnimationFrameMock.requestAnimationFrame.bind(RequestAnimationFrameMock);
-window.cancelAnimationFrame = globalThis.cancelAnimationFrame = RequestAnimationFrameMock.cancelAnimationFrame.bind(RequestAnimationFrameMock);
+globalThis.requestAnimationFrame = globalThis.requestAnimationFrame = RequestAnimationFrameMock.requestAnimationFrame.bind(RequestAnimationFrameMock);
+globalThis.cancelAnimationFrame = globalThis.cancelAnimationFrame = RequestAnimationFrameMock.cancelAnimationFrame.bind(RequestAnimationFrameMock);

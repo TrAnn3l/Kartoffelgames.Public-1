@@ -69,7 +69,7 @@ export class LoopDetectionHandler {
                     lAsynchronFunction();
                 } catch (pException) {
                     // Cancel next call cycle.
-                    window.cancelAnimationFrame(this.mNextSheduledCall);
+                    globalThis.cancelAnimationFrame(this.mNextSheduledCall);
 
                     // Execute on error.
                     this.mOnError?.(pException);
@@ -81,14 +81,14 @@ export class LoopDetectionHandler {
 
             // Call on next frame. 
             // Do not call change detection on requestAnimationFrame.
-            this.mNextSheduledCall = ChangeDetection.current.silentExecution(window.requestAnimationFrame, lErrorHandlingFunction);
+            this.mNextSheduledCall = ChangeDetection.current.silentExecution(globalThis.requestAnimationFrame, lErrorHandlingFunction);
         }
     }
 }
 
 type ErrorHandler = (pError: any) => void;
 
-export class LoopError {
+export class LoopError extends Error {
     public readonly chain: Array<ChangeDetectionReason>;
     public readonly message: string;
 
@@ -99,6 +99,7 @@ export class LoopError {
      * @param pChain - Current call chain.
      */
     public constructor(pMessage: string, pChain: Array<ChangeDetectionReason>) {
+        super(pMessage);
         this.message = pMessage;
         this.chain = pChain;
     }
