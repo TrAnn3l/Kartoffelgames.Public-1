@@ -1,21 +1,24 @@
-import { Metadata } from '@kartoffelgames/core.dependency-injection';
 import { ComponentConnection } from '../../source/component/component-connection';
 import { ComponentManager } from '../../source/component/component-manager';
+import { PwbApp } from '../../source/pwb-app';
 
 export class TestUtil {
     /**
      * Create component from selector.
      * @param pSelector - component selector.
      */
-    public static async createComponent(pClass: any): Promise<HTMLElement> {
-        const lSelector: string = Metadata.get(pClass).getMetadata(ComponentManager.METADATA_SELECTOR);
+    public static async createComponent(pClass: any, pSilenceErrors: boolean = false): Promise<HTMLElement> {
+        // Setup. Create app and silence errors.
+        const lPwbApp: PwbApp = new PwbApp('Name');
+        lPwbApp.appendTo(document.body);
+        lPwbApp.addErrorListener(() => {
+            return pSilenceErrors;
+        });
 
         // Create element.
-        const lComponentConstructor: CustomElementConstructor = window.customElements.get(lSelector);
-        const lComponent: HTMLElement = new lComponentConstructor();
+        const lComponent: HTMLElement = lPwbApp.addContent(pClass);
 
         // Add to document and wait for any update to happen.
-        document.body.appendChild(lComponent);
         await ComponentConnection.componentManagerOf(lComponent).updateHandler.waitForUpdate();
 
         return lComponent;
@@ -23,9 +26,18 @@ export class TestUtil {
 
     /**
      * Deconstruct the component.
+     * @param pComponent - Pwb component.
      */
     public static deconstructComponent(pComponent: HTMLElement): void {
         ComponentConnection.componentManagerOf(pComponent).deconstruct();
+    }
+
+    /**
+     * Get component manager of component.
+     * @param pComponent - Pwb component.
+     */
+    public static getComponentManager(pComponent: HTMLElement): ComponentManager {
+        return ComponentConnection.componentManagerOf(pComponent);
     }
 
     /**

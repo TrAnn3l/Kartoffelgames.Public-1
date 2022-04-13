@@ -79,7 +79,7 @@ export class UpdateHandler {
         // Remove all update listener.
         this.mUpdateListener.clear();
 
-        if(this.mUpdateScope !== UpdateScope.Manual){
+        if(this.mUpdateScope !== UpdateScope.Global){
             this.mChangeDetection.deconstruct();
         }
 

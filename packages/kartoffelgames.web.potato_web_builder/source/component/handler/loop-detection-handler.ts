@@ -20,7 +20,7 @@ export class LoopDetectionHandler {
     /**
      * Set callback for asynchron errors.
      */
-    public set onError(pErrorHandler: ErrorHandler){
+    public set onError(pErrorHandler: ErrorHandler) {
         this.mOnError = pErrorHandler;
     }
 
@@ -73,18 +73,15 @@ export class LoopDetectionHandler {
 
                     // Execute on error.
                     this.mOnError?.(pException);
+
+                    // Rethrow error.
+                    throw pException;
                 }
             };
 
             // Call on next frame. 
             // Do not call change detection on requestAnimationFrame.
-            // When no Change detection is available, ignore any scope.
-            const lChangeDetection: ChangeDetection = ChangeDetection.currentNoneSilent;
-            if (lChangeDetection) {
-                this.mNextSheduledCall = ChangeDetection.currentNoneSilent.silentExecution(window.requestAnimationFrame, lErrorHandlingFunction);
-            } else {
-                this.mNextSheduledCall = window.requestAnimationFrame(lErrorHandlingFunction);
-            }
+            this.mNextSheduledCall = ChangeDetection.current.silentExecution(window.requestAnimationFrame, lErrorHandlingFunction);
         }
     }
 }

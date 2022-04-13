@@ -2,11 +2,31 @@ import { Exception } from '@kartoffelgames/core.data';
 import { InjectionConstructor, Metadata } from '@kartoffelgames/core.dependency-injection';
 import { XmlElement } from '@kartoffelgames/core.xml';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
+import { ErrorListener } from '@kartoffelgames/web.change-detection/library/source/change_detection/change-detection';
 import { ComponentManager } from './component/component-manager';
 import { ElementCreator } from './component/content/element-creator';
 
 export class PwbApp {
     public static readonly PUBLIC_APP_KEY: string = '_PWB_APP';
+    private static readonly mChangeDetectionToApp: WeakMap<ChangeDetection, PwbApp> = new WeakMap<ChangeDetection, PwbApp>();
+
+    /**
+     * Get app of change detection.
+     * @param pChangeDetection - Change detection.
+     */
+    public static getChangeDetectionApp(pChangeDetection: ChangeDetection): PwbApp | null {
+        let lCurrent: ChangeDetection = pChangeDetection;
+
+        while (lCurrent) {
+            if (PwbApp.mChangeDetectionToApp.has(lCurrent)) {
+                return PwbApp.mChangeDetectionToApp.get(lCurrent);
+            }
+
+            lCurrent = lCurrent.parent;
+        }
+
+        return null;
+    }
 
     private readonly mAppComponent: Element;
     private readonly mChangeDetection: ChangeDetection;
@@ -25,6 +45,7 @@ export class PwbApp {
      */
     public constructor(pAppName: string) {
         this.mChangeDetection = new ChangeDetection(pAppName);
+        PwbApp.mChangeDetectionToApp.set(this.mChangeDetection, this);
 
         // Create app wrapper template.
         const lAppComponentTemplate: XmlElement = new XmlElement();
@@ -43,7 +64,7 @@ export class PwbApp {
      * Append content to app.
      * @param pContentClass - Content constructor.
      */
-    public addContent(pContentClass: InjectionConstructor): Element {
+    public addContent(pContentClass: InjectionConstructor): HTMLElement {
         // Get content selector.
         const lSelector: string = Metadata.get(pContentClass).getMetadata(ComponentManager.METADATA_SELECTOR);
         if (!lSelector) {
@@ -56,9 +77,9 @@ export class PwbApp {
         lContentTemplate.tagName = lSelector;
 
         // Create content from template inside change detection.
-        let lContent: Element;
+        let lContent: HTMLElement;
         this.mChangeDetection.execute(() => {
-            lContent = ElementCreator.createElement(lContentTemplate);
+            lContent = <HTMLElement>ElementCreator.createElement(lContentTemplate);
 
             // Append content to shadow root
             this.mShadowRoot.appendChild(lContent);
@@ -71,7 +92,7 @@ export class PwbApp {
      * Add error listener that listens for any uncatched error.
      * @param pListener - Error listener.
      */
-    public addErrorListener(pListener: (pError: any) => void): void {
+    public addErrorListener(pListener: ErrorListener): void {
         this.mChangeDetection.addErrorListener(pListener);
     }
 

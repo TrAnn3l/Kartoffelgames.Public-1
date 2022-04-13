@@ -1,14 +1,14 @@
-import { ChangeDetection } from '@kartoffelgames/web.change-detection';
+import { ChangeDetection, ChangeDetectionReason } from '@kartoffelgames/web.change-detection';
 import { expect } from 'chai';
+import { PwbComponent } from '../../source/component/decorator/pwb-component.decorator';
+import { UpdateScope } from '../../source/component/enum/update-scope';
 import { LoopError } from '../../source/component/handler/loop-detection-handler';
+import { IPwbAfterInit, IPwbAfterUpdate, IPwbOnAttributeChange, IPwbOnDeconstruct, IPwbOnInit, IPwbOnUpdate } from '../../source/component/interface/user-class';
+import { PwbExport } from '../../source/default/export/pwb-export.decorator';
 import { ComponentElementReference } from '../../source/injection_reference/component-element-reference';
 import { ComponentUpdateReference } from '../../source/injection_reference/component-update-reference';
-import { PwbExport } from '../../source/default/export/pwb-export.decorator';
-import { PwbComponent } from '../../source/component/decorator/pwb-component.decorator';
 import { PwbExpressionModule } from '../../source/module/decorator/pwb-expression-module.decorator';
-import { UpdateScope } from '../../source/component/enum/update-scope';
 import { IPwbExpressionModuleOnUpdate } from '../../source/module/interface/module';
-import { IPwbAfterInit, IPwbAfterUpdate, IPwbOnAttributeChange, IPwbOnDeconstruct, IPwbOnInit, IPwbOnUpdate } from '../../source/component/interface/user-class';
 import '../mock/request-animation-frame-mock-session';
 import '../utility/chai-helper';
 import { TestUtil } from '../utility/test-util';
@@ -204,8 +204,57 @@ describe('HtmlComponent', () => {
         expect(lComponent.shadowRoot.childNodes).to.have.lengthOf(2);
     });
 
-    it('-- Capsuled update scope', () => {
-        // TODO:
+    it('-- Capsuled update scope', async () => {
+        // Setup.
+        const lCapsuledSelector: string = TestUtil.randomSelector();
+
+        // Setup. Define component.
+        @PwbComponent({
+            selector: lCapsuledSelector,
+            template: '{{this.innerValue}}',
+            updateScope: UpdateScope.Capsuled
+        })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        class CapsuledTestComponent {
+            @PwbExport
+            public innerValue: string = '';
+        }
+
+        // Process. Define component.   
+        @PwbComponent({
+            selector: TestUtil.randomSelector(),
+            template: `<${lCapsuledSelector}/>`,
+            updateScope: UpdateScope.Global
+        })
+        class TestComponent { }
+
+        // Process. Create and initialize element.
+        const lComponent: HTMLElement & TestComponent = await <any>TestUtil.createComponent(TestComponent);
+        await TestUtil.waitForUpdate(lComponent);
+        const lCapsuledContent: HTMLElement & CapsuledTestComponent = <any>lComponent.shadowRoot.childNodes[1];
+        await TestUtil.waitForUpdate(lComponent);
+        await TestUtil.waitForUpdate(lCapsuledContent);
+
+        // Set update listener.
+        let lWasUpdated: boolean = false;
+        TestUtil.getComponentManager(lComponent).updateHandler.addUpdateListener((pReason: ChangeDetectionReason) => {
+            lWasUpdated = pReason.property === 'innerValue' || lWasUpdated;
+        });
+
+        // Set update listener.
+        let lInnerValueWasUpdated: boolean = false;
+        TestUtil.getComponentManager(lCapsuledContent).updateHandler.addUpdateListener((pReason: ChangeDetectionReason) => {
+            lInnerValueWasUpdated = pReason.property === 'innerValue' || lInnerValueWasUpdated;
+        });
+
+        // Proccess. Change Capsuled value.
+        lCapsuledContent.innerValue = '12';
+        await TestUtil.waitForUpdate(lComponent);
+        await TestUtil.waitForUpdate(lCapsuledContent);
+
+        // Evaluation.
+        expect(lWasUpdated).to.be.false;
+        expect(lInnerValueWasUpdated).to.be.true;
     });
 
     it('-- custom expression module', async () => {
@@ -380,6 +429,27 @@ describe('HtmlComponent', () => {
         );
     });
 
+    it('-- Deconstruct Manual', async () => {
+        // Process. Define component.
+        let lWasDeconstructed: boolean = false;
+        @PwbComponent({
+            selector: TestUtil.randomSelector(),
+            updateScope: UpdateScope.Manual
+        })
+        class TestComponent implements IPwbOnDeconstruct {
+            public onPwbDeconstruct(): void {
+                lWasDeconstructed = true;
+            }
+        }
+
+        // Process. Create element indirect callback.
+        const lComponent: HTMLElement & TestComponent = await <any>TestUtil.createComponent(TestComponent);
+        TestUtil.deconstructComponent(lComponent);
+
+        // Evaluation.
+        expect(lWasDeconstructed).to.be.true;
+    });
+
     it('-- Loop detection', async () => {
         // Setup. Define component.
         @PwbComponent({
@@ -408,12 +478,31 @@ describe('HtmlComponent', () => {
         // Process. Create element.
         let lError: any;
         try {
-            await <any>TestUtil.createComponent(TestComponent);
+            await <any>TestUtil.createComponent(TestComponent, true); // TODO: Loop error is printed. Why??
         } catch (e) {
             lError = e;
         }
 
         // Evaluation.
         expect(lError).to.be.instanceOf(LoopError);
+    });
+
+    it('-- Creation without PwbApp', async () => {
+        // Setup.
+        const lSelector: string = TestUtil.randomSelector();
+
+        // Setup. Define component.
+        @PwbComponent({
+            selector: lSelector
+        })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        class TestComponent { }
+
+        // Process. Create element.
+        const lComponentConstructor: CustomElementConstructor = window.customElements.get(lSelector);
+        const lComponent: HTMLElement = new lComponentConstructor();
+
+        // Evaluation.
+        expect(lComponent).to.be.instanceOf(HTMLElement);
     });
 });

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { PwbExport } from '../../../source/default/export/pwb-export.decorator';
 import { PwbComponent } from '../../../source/component/decorator/pwb-component.decorator';
+import { PwbExport } from '../../../source/default/export/pwb-export.decorator';
 import '../../mock/request-animation-frame-mock-session';
 import '../../utility/chai-helper';
 import { TestUtil } from '../../utility/test-util';
@@ -380,7 +380,7 @@ describe('ForOfManipulatorAttributeModule', () => {
         ], true);
     });
 
-    it('Wrong syntax', async () => {
+    it('-- Wrong syntax', async () => {
         // Setup. Define component.
         @PwbComponent({
             selector: TestUtil.randomSelector(),
@@ -391,7 +391,7 @@ describe('ForOfManipulatorAttributeModule', () => {
         // Process. Create element.
         let lErrorMessage: string;
         try {
-            await <any>TestUtil.createComponent(TestComponent);
+            await <any>TestUtil.createComponent(TestComponent, true);
         } catch (e) {
             lErrorMessage = e.message;
         }

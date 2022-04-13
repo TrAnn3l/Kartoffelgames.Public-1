@@ -107,7 +107,7 @@ describe('EventAttributeModule', () => {
         // Setup. Create element.
         let lErrorMessage: string;
         try {
-            await <any>TestUtil.createComponent(TestComponent);
+            await <any>TestUtil.createComponent(TestComponent, true);
         } catch (e) {
             lErrorMessage = e.message;
         }

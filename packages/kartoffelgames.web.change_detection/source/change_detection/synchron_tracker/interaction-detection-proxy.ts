@@ -229,7 +229,7 @@ export class InteractionDetectionProxy<T extends object> {
      */
     private dispatchChangeEvent(pSourceObject: object, pProperty: ObjectFieldPathPart | ((...pArgs: Array<any>) => any), pStacktrace: string) {
         // Only trigger if current change detection is not silent.
-        if (ChangeDetection.current === null || !ChangeDetection.current.isSilent) {
+        if (!ChangeDetection.current.isSilent) {
             this.onChange?.(pSourceObject, pProperty, pStacktrace);
         }
     }

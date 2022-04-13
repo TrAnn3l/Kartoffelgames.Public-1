@@ -46,7 +46,7 @@ describe('Custom Module', () => {
         // Process. Create element.
         let lErrorMessage: string;
         try {
-            await <any>TestUtil.createComponent(TestComponent);
+            await <any>TestUtil.createComponent(TestComponent, true);
         } catch (e) {
             lErrorMessage = e.message;
         }
@@ -73,7 +73,7 @@ describe('Custom Module', () => {
         // Process. Create element.
         let lErrorMessage: string;
         try {
-            await <any>TestUtil.createComponent(TestComponent);
+            await <any>TestUtil.createComponent(TestComponent, true);
         } catch (e) {
             lErrorMessage = e.message;
         }
@@ -90,7 +90,7 @@ describe('Custom Module', () => {
             access: ModuleAccessType.Read
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        class Module  {}
+        class Module { }
 
         // Setup. Define component.
         @PwbComponent({
