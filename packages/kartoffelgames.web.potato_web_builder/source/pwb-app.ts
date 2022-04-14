@@ -32,7 +32,7 @@ export class PwbApp {
     private readonly mAppComponent: HTMLElement;
     private mAppSealed: boolean;
     private readonly mChangeDetection: ChangeDetection;
-    private readonly mComponentList: Array<HTMLElement>;
+    private readonly mComponentList: Array<InjectionConstructor>;
     private mManualSplashScreen: boolean;
     private readonly mShadowRoot: ShadowRoot;
     private readonly mSplashScreen: HTMLElement;
@@ -50,7 +50,7 @@ export class PwbApp {
      */
     public constructor(pAppName: string) {
         this.mAppSealed = false;
-        this.mComponentList = new Array<HTMLElement>();
+        this.mComponentList = new Array<InjectionConstructor>();
         this.mChangeDetection = new ChangeDetection(pAppName);
         PwbApp.mChangeDetectionToApp.set(this.mChangeDetection, this);
 
@@ -70,7 +70,7 @@ export class PwbApp {
 
         // Add splashscreen container. Fullscreen, full opacity with transistion.
         this.mSplashScreen = <HTMLElement>ElementCreator.createElement(lGenericDivTemplate);
-        this.mSplashScreen.style.setProperty('position', 'fixed');
+        this.mSplashScreen.style.setProperty('position', 'absolute');
         this.mSplashScreen.style.setProperty('width', '100%');
         this.mSplashScreen.style.setProperty('height', '100%');
         this.mSplashScreen.style.setProperty('opacity', '1');
@@ -78,7 +78,7 @@ export class PwbApp {
 
         // Set default splash screen.
         this.setSplashScreen({
-            background: 'linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,0,200,1) 53%, rgba(0,12,14,1) 100%)',
+            background: 'linear-gradient(321deg, rgb(64 79 221) 8%, rgb(0 23 255) 70%)',
             content: '<span style="color: #fff;">PWB</span>'
         });
     }
@@ -87,7 +87,7 @@ export class PwbApp {
      * Append content to app.
      * @param pContentClass - Content constructor.
      */
-    public addContent(pContentClass: InjectionConstructor): HTMLElement {
+    public addContent(pContentClass: InjectionConstructor): void {
         // Sealed error.
         if (this.mAppSealed) {
             throw new Exception('App content is sealed after it got append to the DOM', this);
@@ -99,24 +99,8 @@ export class PwbApp {
             throw new Exception('Content is not a component.', this);
         }
 
-        // Create content template content is always inside xhtml namespace.
-        const lContentTemplate: XmlElement = new XmlElement();
-        lContentTemplate.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
-        lContentTemplate.tagName = lSelector;
-
-        // Create content from template inside change detection.
-        let lContent: HTMLElement;
-        this.mChangeDetection.execute(() => {
-            lContent = <HTMLElement>ElementCreator.createElement(lContentTemplate);
-
-            // Append content to shadow root
-            this.mShadowRoot.appendChild(lContent);
-        });
-
         // Add content to content list.
-        this.mComponentList.push(lContent);
-
-        return lContent;
+        this.mComponentList.push(pContentClass);
     }
 
     /**
@@ -160,25 +144,37 @@ export class PwbApp {
         // Seal content.
         this.mAppSealed = true;
 
-        return new Promise<void>((pResolve) => {
+        return new Promise<void>((pResolve, pReject) => {
             // Wait for update and remove splash screen after.
             // Only on initial append and when the splash screen is not manual.
-            if (!lLastSealedState && !this.mManualSplashScreen) {
-                const lUpdateWaiter: Array<Promise<boolean>> = new Array<Promise<boolean>>();
+            if (!lLastSealedState) {
+                globalThis.requestAnimationFrame(() => {
+                    const lUpdateWaiter: Array<Promise<boolean>> = new Array<Promise<boolean>>();
 
-                // Create new update waiter for each component.
-                for (const lComponent of this.mComponentList) {
-                    // Get ComponentManager of component and add update waiter to the waiter list. 
-                    const lComponentManager: ComponentManager = ComponentConnection.componentManagerOf(lComponent);
-                    lUpdateWaiter.push(lComponentManager.updateHandler.waitForUpdate());
-                }
+                    try {
+                        // Create new update waiter for each component.
+                        for (const lComponentConstructor of this.mComponentList) {
+                            const lComponent: HTMLElement = this.createComponent(lComponentConstructor);
 
-                // Remove splash screen when all update waiter are finished. Send unrejected errors to apps change detection.
-                this.mChangeDetection.execute(() => {
-                    Promise.all(lUpdateWaiter).then(async () => {
-                        return this.removeSplashScreen();
-                    }).then(() => {
-                        pResolve();
+                            // Get ComponentManager of component and add update waiter to the waiter list. 
+                            const lComponentManager: ComponentManager = ComponentConnection.componentManagerOf(lComponent);
+                            lUpdateWaiter.push(lComponentManager.updateHandler.waitForUpdate());
+                        }
+                    } catch (pError) {
+                        pReject(pError);
+                    }
+
+                    // Remove splash screen when all update waiter are finished. Send unrejected errors to apps change detection.
+                    this.mChangeDetection.execute(() => {
+                        Promise.all(lUpdateWaiter).then(async () => {
+                            if (!this.mManualSplashScreen) {
+                                return this.removeSplashScreen();
+                            }
+                        }).then(() => {
+                            pResolve();
+                        }).catch((pError) => {
+                            pReject(pError);
+                        });
                     });
                 });
             } else {
@@ -236,12 +232,38 @@ export class PwbApp {
 
         // Create spplash screen content and append to content wrapper.
         const lContent: HTMLElement = <HTMLElement>ElementCreator.createElement(lGenericDivTemplate);
-        lContentWrapper.style.setProperty('width', 'fit-content');
-        lContentWrapper.style.setProperty('height', 'fit-content');
+        lContent.style.setProperty('width', 'fit-content');
+        lContent.style.setProperty('height', 'fit-content');
+        lContent.style.setProperty('margin', '0 auto');
         lContent.innerHTML = pSplashScreen.content;
         lContentWrapper.appendChild(lContent);
 
         this.mSplashScreen.replaceChildren(lContentWrapper);
+    }
+
+    /**
+     * Create component.
+     * @param pContentClass - Component class.
+     */
+    private createComponent(pContentClass: InjectionConstructor): HTMLElement {
+        // Get content selector.
+        const lSelector: string = Metadata.get(pContentClass).getMetadata(ComponentManager.METADATA_SELECTOR);
+
+        // Create content template content is always inside xhtml namespace.
+        const lContentTemplate: XmlElement = new XmlElement();
+        lContentTemplate.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+        lContentTemplate.tagName = lSelector;
+
+        // Create content from template inside change detection.
+        let lContent: HTMLElement;
+        this.mChangeDetection.execute(() => {
+            lContent = <HTMLElement>ElementCreator.createElement(lContentTemplate);
+
+            // Append content to shadow root
+            this.mShadowRoot.appendChild(lContent);
+        });
+
+        return lContent;
     }
 }
 

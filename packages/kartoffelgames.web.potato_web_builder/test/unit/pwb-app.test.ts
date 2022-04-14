@@ -23,6 +23,7 @@ describe('PwbApp', () => {
         it('-- Correct component', async () => {
             // Setup.
             const lApp: PwbApp = new PwbApp('Name');
+            lApp.setSplashScreen({ content: '', background: '', manual: true });
             const lComponentSelector: string = TestUtil.randomSelector();
 
             // Setup. Define component.
@@ -34,6 +35,7 @@ describe('PwbApp', () => {
 
             // Process.
             lApp.addContent(TestComponent);
+            await lApp.appendTo(document.body);
             const lContent: Element = <Element>lApp.content.shadowRoot.childNodes[1];
 
             // Evaluation.
@@ -43,7 +45,8 @@ describe('PwbApp', () => {
         it('-- Initialize component after appendTo', async () => {
             // Setup.
             const lApp: PwbApp = new PwbApp('Name');
-            lApp.appendTo(document.body);
+            lApp.setSplashScreen({ content: '', background: '', manual: true });
+            await lApp.appendTo(document.body);
 
             // Setup. Define component.
             @PwbComponent({
@@ -64,6 +67,7 @@ describe('PwbApp', () => {
         it('-- Initialize component before appendTo', async () => {
             // Setup.
             const lApp: PwbApp = new PwbApp('Name');
+            lApp.setSplashScreen({ content: '', background: '', manual: true });
 
             // Setup. Define component.
             @PwbComponent({
@@ -74,7 +78,7 @@ describe('PwbApp', () => {
 
             // Process.
             lApp.addContent(TestComponent);
-            lApp.appendTo(document.body);
+            await lApp.appendTo(document.body);
             const lContent: HTMLElement & TestComponent = <any>lApp.content.shadowRoot.childNodes[1];
             await TestUtil.waitForUpdate(lContent);
 
@@ -99,14 +103,15 @@ describe('PwbApp', () => {
         });
     });
 
-    it('Method: appendTo', () => {
-        it('-- Default', () => {
+    describe('Method: appendTo', () => {
+        it('-- Default', async () => {
             // Setup.
             const lDummyElement: HTMLDivElement = document.createElement('div');
             const lApp: PwbApp = new PwbApp('Name');
+            lApp.setSplashScreen({ content: '', background: '', manual: true });
 
             // Process.
-            lApp.appendTo(lDummyElement);
+            await lApp.appendTo(lDummyElement);
 
             // Evaluation.
             expect(lDummyElement.childNodes[0]).to.equal(lApp.content);
@@ -133,8 +138,7 @@ describe('PwbApp', () => {
             // Process. Create splash screen.
             lApp.setSplashScreen({
                 background: 'red',
-                content: '',
-                manual: true
+                content: ''
             });
 
             // Process. Append and wait for splash screen remove
@@ -151,7 +155,7 @@ describe('PwbApp', () => {
         });
     });
 
-    it('Method: addErrorListener', () => {
+    it('Method: addErrorListener', async () => {
         // Setup.
         const lErrorMessage: string = 'Custom Error';
 
@@ -167,6 +171,8 @@ describe('PwbApp', () => {
 
         // Setup.
         const lApp: PwbApp = new PwbApp('Name');
+        lApp.setSplashScreen({ content: '', background: '', manual: true });
+        lApp.addContent(TestComponent);
 
         // Process. Lof error.
         let lErrorMessageResult: string;
@@ -176,7 +182,7 @@ describe('PwbApp', () => {
 
         // Trow and catch error.
         try {
-            lApp.addContent(TestComponent);
+            await lApp.appendTo(document.body);
         } catch (pError) {
             window.dispatchEvent(new ErrorEvent('error', {
                 error: pError,
@@ -203,10 +209,11 @@ describe('PwbApp', () => {
             expect(lContent.textContent).to.equal(lStyleContent);
         });
 
-        it('-- Add style after append', () => {
+        it('-- Add style after append', async () => {
             // Setup.
             const lApp: PwbApp = new PwbApp('Name');
-            lApp.appendTo(document.body);
+            lApp.setSplashScreen({ content: '', background: '', manual: true });
+            await lApp.appendTo(document.body);
 
             // Process.
             const lErrorFunction = () => {
@@ -280,10 +287,10 @@ describe('PwbApp', () => {
             expect(lAfterRemoveChildLength).to.equal(0);
         });
 
-        it('-- Add splashscreen after append', () => {
+        it('-- Add splashscreen after append', async () => {
             // Setup.
             const lApp: PwbApp = new PwbApp('Name');
-            lApp.appendTo(document.body);
+            await lApp.appendTo(document.body);
 
             // Process.
             const lErrorFunction = () => {

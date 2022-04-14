@@ -14,13 +14,17 @@ export class TestUtil {
             return pSilenceErrors;
         });
 
-        // Create element.
-        const lComponent: HTMLElement = lPwbApp.addContent(pClass);
+        // Skip wait for splash screen.
+        lPwbApp.setSplashScreen({ content: '', background: '', manual: true });
 
-        // Append app to dom.
-        lPwbApp.appendTo(document.body);     
+        // Add component and append app to dom.
+        lPwbApp.addContent(pClass);
+        await lPwbApp.appendTo(document.body);
 
-        // Add to document and wait for any update to happen.
+        // Get component.
+        const lComponent: HTMLElement = <HTMLElement>lPwbApp.content.shadowRoot.childNodes[1];
+
+        // Wait for any update to happen.
         await ComponentConnection.componentManagerOf(lComponent).updateHandler.waitForUpdate();
 
         return lComponent;
