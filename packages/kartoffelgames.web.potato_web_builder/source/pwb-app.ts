@@ -138,48 +138,48 @@ export class PwbApp {
         // Append app element to specified element.
         pElement.appendChild(this.mAppComponent);
 
-        // Save sealed state before changing.
-        const lLastSealedState: boolean = this.mAppSealed;
+        // Exit if app was already initialized.
+        if (this.mAppSealed) {
+            return;
+        }
 
         // Seal content.
         this.mAppSealed = true;
 
         return new Promise<void>((pResolve, pReject) => {
             // Wait for update and remove splash screen after.
-            // Only on initial append and when the splash screen is not manual.
-            if (!lLastSealedState) {
-                globalThis.requestAnimationFrame(() => {
-                    const lUpdateWaiter: Array<Promise<boolean>> = new Array<Promise<boolean>>();
+            globalThis.requestAnimationFrame(() => {
+                const lUpdateWaiter: Array<Promise<boolean>> = new Array<Promise<boolean>>();
 
+                // Create new update waiter for each component.
+                for (const lComponentConstructor of this.mComponentList) {
+                    // Create component and forward error.
+                    let lComponent: HTMLElement;
                     try {
-                        // Create new update waiter for each component.
-                        for (const lComponentConstructor of this.mComponentList) {
-                            const lComponent: HTMLElement = this.createComponent(lComponentConstructor);
-
-                            // Get ComponentManager of component and add update waiter to the waiter list. 
-                            const lComponentManager: ComponentManager = ComponentConnection.componentManagerOf(lComponent);
-                            lUpdateWaiter.push(lComponentManager.updateHandler.waitForUpdate());
-                        }
+                        lComponent = this.createComponent(lComponentConstructor);
                     } catch (pError) {
                         pReject(pError);
+                        return;
                     }
 
-                    // Remove splash screen when all update waiter are finished. Send unrejected errors to apps change detection.
-                    this.mChangeDetection.execute(() => {
-                        Promise.all(lUpdateWaiter).then(async () => {
-                            if (!this.mManualSplashScreen) {
-                                return this.removeSplashScreen();
-                            }
-                        }).then(() => {
-                            pResolve();
-                        }).catch((pError) => {
-                            pReject(pError);
-                        });
+                    // Get ComponentManager of component and add update waiter to the waiter list. 
+                    const lComponentManager: ComponentManager = ComponentConnection.componentManagerOf(lComponent);
+                    lUpdateWaiter.push(lComponentManager.updateHandler.waitForUpdate());
+                }
+
+                // Promise that waits for all component to finish updating.
+                let lUpdatePromise: Promise<any> = Promise.all(lUpdateWaiter);
+
+                // Remove splash screen if not in manual mode.
+                if (!this.mManualSplashScreen) {
+                    lUpdatePromise = lUpdatePromise.then(async () => {
+                        return this.removeSplashScreen();
                     });
-                });
-            } else {
-                pResolve();
-            }
+                }
+
+                // Forward resolve and rejection.
+                lUpdatePromise.then(() => { pResolve(); }).catch((pError) => { pReject(pError); });
+            });
         });
     }
 
