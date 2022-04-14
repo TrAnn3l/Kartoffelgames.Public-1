@@ -3,6 +3,7 @@ import { InjectionConstructor, Metadata } from '@kartoffelgames/core.dependency-
 import { XmlElement } from '@kartoffelgames/core.xml';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { ErrorListener } from '@kartoffelgames/web.change-detection/library/source/change_detection/change-detection';
+import { ComponentConnection } from './component/component-connection';
 import { ComponentManager } from './component/component-manager';
 import { ElementCreator } from './component/content/element-creator';
 
@@ -28,9 +29,13 @@ export class PwbApp {
         return null;
     }
 
-    private readonly mAppComponent: Element;
+    private readonly mAppComponent: HTMLElement;
+    private mAppSealed: boolean;
     private readonly mChangeDetection: ChangeDetection;
+    private readonly mComponentList: Array<HTMLElement>;
+    private mManualSplashScreen: boolean;
     private readonly mShadowRoot: ShadowRoot;
+    private readonly mSplashScreen: HTMLElement;
 
     /**
      * Get app underlying content.
@@ -44,20 +49,38 @@ export class PwbApp {
      * @param pAppName - name of app zone.
      */
     public constructor(pAppName: string) {
+        this.mAppSealed = false;
+        this.mComponentList = new Array<HTMLElement>();
         this.mChangeDetection = new ChangeDetection(pAppName);
         PwbApp.mChangeDetectionToApp.set(this.mChangeDetection, this);
 
         // Create app wrapper template.
-        const lAppComponentTemplate: XmlElement = new XmlElement();
-        lAppComponentTemplate.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
-        lAppComponentTemplate.tagName = 'div';
+        const lGenericDivTemplate: XmlElement = new XmlElement();
+        lGenericDivTemplate.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+        lGenericDivTemplate.tagName = 'div';
 
         // Create app wrapper add name as data attribute.
-        this.mAppComponent = ElementCreator.createElement(lAppComponentTemplate);
+        this.mAppComponent = <HTMLElement>ElementCreator.createElement(lGenericDivTemplate);
         this.mAppComponent.setAttribute('data-app', pAppName);
+        this.mAppComponent.style.setProperty('width', '100%');
+        this.mAppComponent.style.setProperty('height', '100%');
 
         // Create app shadow root.
         this.mShadowRoot = this.mAppComponent.attachShadow({ mode: 'open' });
+
+        // Add splashscreen container. Fullscreen, full opacity with transistion.
+        this.mSplashScreen = <HTMLElement>ElementCreator.createElement(lGenericDivTemplate);
+        this.mSplashScreen.style.setProperty('position', 'fixed');
+        this.mSplashScreen.style.setProperty('width', '100%');
+        this.mSplashScreen.style.setProperty('height', '100%');
+        this.mSplashScreen.style.setProperty('opacity', '1');
+        this.mShadowRoot.appendChild(this.mSplashScreen);
+
+        // Set default splash screen.
+        this.setSplashScreen({
+            background: 'linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(0,0,200,1) 53%, rgba(0,12,14,1) 100%)',
+            content: '<span style="color: #fff;">PWB</span>'
+        });
     }
 
     /**
@@ -65,6 +88,11 @@ export class PwbApp {
      * @param pContentClass - Content constructor.
      */
     public addContent(pContentClass: InjectionConstructor): HTMLElement {
+        // Sealed error.
+        if (this.mAppSealed) {
+            throw new Exception('App content is sealed after it got append to the DOM', this);
+        }
+
         // Get content selector.
         const lSelector: string = Metadata.get(pContentClass).getMetadata(ComponentManager.METADATA_SELECTOR);
         if (!lSelector) {
@@ -85,6 +113,9 @@ export class PwbApp {
             this.mShadowRoot.appendChild(lContent);
         });
 
+        // Add content to content list.
+        this.mComponentList.push(lContent);
+
         return lContent;
     }
 
@@ -101,6 +132,11 @@ export class PwbApp {
      * @param pStyle - Css style as string.
      */
     public addStyle(pStyle: string): void {
+        // Sealed error.
+        if (this.mAppSealed) {
+            throw new Exception('App content is sealed after it got append to the DOM', this);
+        }
+
         const lStyleTemplate: XmlElement = new XmlElement();
         lStyleTemplate.tagName = 'style';
         lStyleTemplate.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
@@ -114,7 +150,103 @@ export class PwbApp {
      * Append app to element.
      * @param pElement - Element.
      */
-    public appendTo(pElement: Element): void {
+    public async appendTo(pElement: Element): Promise<void> {
+        // Append app element to specified element.
         pElement.appendChild(this.mAppComponent);
+
+        // Save sealed state before changing.
+        const lLastSealedState: boolean = this.mAppSealed;
+
+        // Seal content.
+        this.mAppSealed = true;
+
+        return new Promise<void>((pResolve) => {
+            // Wait for update and remove splash screen after.
+            // Only on initial append and when the splash screen is not manual.
+            if (!lLastSealedState && !this.mManualSplashScreen) {
+                const lUpdateWaiter: Array<Promise<boolean>> = new Array<Promise<boolean>>();
+
+                // Create new update waiter for each component.
+                for (const lComponent of this.mComponentList) {
+                    // Get ComponentManager of component and add update waiter to the waiter list. 
+                    const lComponentManager: ComponentManager = ComponentConnection.componentManagerOf(lComponent);
+                    lUpdateWaiter.push(lComponentManager.updateHandler.waitForUpdate());
+                }
+
+                // Remove splash screen when all update waiter are finished. Send unrejected errors to apps change detection.
+                this.mChangeDetection.execute(() => {
+                    Promise.all(lUpdateWaiter).then(async () => {
+                        return this.removeSplashScreen();
+                    }).then(() => {
+                        pResolve();
+                    });
+                });
+            } else {
+                pResolve();
+            }
+        });
+    }
+
+    /**
+     * Remove splash screen.
+     */
+    public async removeSplashScreen(): Promise<void> {
+        const lTransistionTimerMilliseconds: number = 1000;
+
+        this.mSplashScreen.style.setProperty('transition', `opacity ${(lTransistionTimerMilliseconds / 1000).toString()}s linear`);
+        this.mSplashScreen.style.setProperty('opacity', '0');
+
+        // Remove splashscreen after transition.
+        return new Promise<void>((pResolve) => {
+            // Wait for transition to end.
+            globalThis.setTimeout(() => {
+                this.mSplashScreen.remove();
+
+                // Resolve promise after remove.
+                pResolve();
+            }, lTransistionTimerMilliseconds);
+        });
+    }
+
+    /**
+     * Set new splash screen.
+     * @param pSplashScreen - Splashscreen settings.
+     */
+    public setSplashScreen(pSplashScreen: SplashScreen): void {
+        // Sealed error.
+        if (this.mAppSealed) {
+            throw new Exception('App content is sealed after it got append to the DOM', this);
+        }
+
+        // Set manual state.
+        this.mManualSplashScreen = pSplashScreen.manual === true;
+
+        // Create app wrapper template.
+        const lGenericDivTemplate: XmlElement = new XmlElement();
+        lGenericDivTemplate.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+        lGenericDivTemplate.tagName = 'div';
+
+        // Create content wrapper.
+        const lContentWrapper: HTMLElement = <HTMLElement>ElementCreator.createElement(lGenericDivTemplate);
+        lContentWrapper.style.setProperty('display', 'grid');
+        lContentWrapper.style.setProperty('align-content', 'center');
+        lContentWrapper.style.setProperty('width', '100%');
+        lContentWrapper.style.setProperty('height', '100%');
+        lContentWrapper.style.setProperty('background', pSplashScreen.background);
+
+        // Create spplash screen content and append to content wrapper.
+        const lContent: HTMLElement = <HTMLElement>ElementCreator.createElement(lGenericDivTemplate);
+        lContentWrapper.style.setProperty('width', 'fit-content');
+        lContentWrapper.style.setProperty('height', 'fit-content');
+        lContent.innerHTML = pSplashScreen.content;
+        lContentWrapper.appendChild(lContent);
+
+        this.mSplashScreen.replaceChildren(lContentWrapper);
     }
 }
+
+export type SplashScreen = {
+    background: string,
+    content: string;
+    manual?: boolean;
+};

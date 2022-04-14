@@ -10,13 +10,15 @@ export class TestUtil {
     public static async createComponent(pClass: any, pSilenceErrors: boolean = false): Promise<HTMLElement> {
         // Setup. Create app and silence errors.
         const lPwbApp: PwbApp = new PwbApp('Name');
-        lPwbApp.appendTo(document.body);
         lPwbApp.addErrorListener(() => {
             return pSilenceErrors;
         });
 
         // Create element.
         const lComponent: HTMLElement = lPwbApp.addContent(pClass);
+
+        // Append app to dom.
+        lPwbApp.appendTo(document.body);     
 
         // Add to document and wait for any update to happen.
         await ComponentConnection.componentManagerOf(lComponent).updateHandler.waitForUpdate();
