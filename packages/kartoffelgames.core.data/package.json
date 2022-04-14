@@ -1,7 +1,7 @@
 {
     "name": "@kartoffelgames/core.data",
     "projectName": "KartoffelGames.Core.Data",
-    "version": "0.0.13",
+    "version": "0.0.14",
     "description": "KartoffelGames.Core.Data",
     "author": {
         "name": "KartoffelGames"
