@@ -8,8 +8,6 @@ import { InteractionDetectionProxy } from './synchron_tracker/interaction-detect
  * Merges execution zone and proxy tracking.
  */
 export class ChangeDetection implements IDeconstructable {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    private static readonly CURRENT_CHANGE_DETECTION_ZONE_DATA_KEY: symbol = Symbol('_CD_DATA_KEY');
     private static readonly mZoneConnectedChangeDetections: WeakMap<ExecutionZone, ChangeDetection> = new WeakMap<ExecutionZone, ChangeDetection>();
 
     /**
