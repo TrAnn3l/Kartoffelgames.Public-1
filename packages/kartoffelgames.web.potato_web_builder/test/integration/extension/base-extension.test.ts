@@ -32,4 +32,39 @@ describe('BaseExtension', () => {
         // Evaluation.
         expect(lExtensionCalled).to.be.true;
     });
+
+    it('-- Ignore wrong injections', async () => {
+        // Process. Create extension.
+        let lExtensionCalled: boolean = false;
+        @PwbExtension({
+            type: ExtensionType.Component | ExtensionType.Module,
+            mode: ExtensionMode.Inject
+        })
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        class UselessExtension {
+            public constructor() {
+                lExtensionCalled = true;
+            }
+
+            public onCollectInjections(): Array<object> {
+                const lInjectionList: Array<object> = new Array<object>();
+                lInjectionList.push(null);
+                lInjectionList.push(<any>1);
+                return lInjectionList;
+            }
+        }
+
+        // Process. Define component.   
+        @PwbComponent({
+            selector: TestUtil.randomSelector(),
+            template: '<div #child />' // Module for module injection.
+        })
+        class TestComponent { }
+
+        // Process. Create and initialize element.
+        await <any>TestUtil.createComponent(TestComponent);
+
+        // Evaluation.
+        expect(lExtensionCalled).to.be.true;
+    });
 });

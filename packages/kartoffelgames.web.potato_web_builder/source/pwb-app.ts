@@ -23,7 +23,7 @@ export class PwbApp {
                 return PwbApp.mChangeDetectionToApp.get(lCurrent);
             }
 
-            lCurrent = lCurrent.parent;
+            lCurrent = lCurrent.looseParent;
         }
 
         return null;

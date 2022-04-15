@@ -42,9 +42,9 @@ export class UpdateHandler {
         // Create new change detection if component is not inside change detection or mode is capsuled.
         if (this.mUpdateScope === UpdateScope.Manual) {
             // Manual zone outside every other zone.
-            this.mChangeDetection = new ChangeDetection('Manual Zone', null, true);
+            this.mChangeDetection = new ChangeDetection('Manual Zone', ChangeDetection.current, true, true);
         } else if (this.mUpdateScope === UpdateScope.Capsuled) {
-            this.mChangeDetection = new ChangeDetection('DefaultComponentZone');
+            this.mChangeDetection = new ChangeDetection('DefaultComponentZone', ChangeDetection.current, true);
         } else {
             this.mChangeDetection = ChangeDetection.currentNoneSilent;
         }
@@ -81,7 +81,7 @@ export class UpdateHandler {
         // Remove all update listener.
         this.mUpdateListener.clear();
 
-        if(this.mUpdateScope !== UpdateScope.Global){
+        if (this.mUpdateScope !== UpdateScope.Global) {
             this.mChangeDetection.deconstruct();
         }
 
@@ -177,7 +177,7 @@ export class UpdateHandler {
         for (const lUpdateWaiter of this.mUpdateWaiter) {
             lUpdateWaiter(pError);
         }
-        
+
         // Clear waiter list.
         this.mUpdateWaiter.clear();
 
