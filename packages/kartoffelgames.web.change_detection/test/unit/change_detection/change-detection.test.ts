@@ -36,7 +36,7 @@ describe('ChangeDetection', () => {
             // Setup.
             const lName: string = 'InnerCD';
             const lNoneSilentChangeDetection: ChangeDetection = new ChangeDetection(lName);
-            const lSilentChangeDetection: ChangeDetection = new ChangeDetection('Name', lNoneSilentChangeDetection, true);
+            const lSilentChangeDetection: ChangeDetection = new ChangeDetection('Name', lNoneSilentChangeDetection, false, true);
 
             // Process.
             let lCurrentChangeDetectionName: string;
@@ -61,7 +61,7 @@ describe('ChangeDetection', () => {
         it('-- No none silent zone', () => {
             // Setup.
             const lName: string = 'InnerCD';
-            const lNoneSilentChangeDetection: ChangeDetection = new ChangeDetection(lName, null, true);
+            const lNoneSilentChangeDetection: ChangeDetection = new ChangeDetection(lName, null, false, true);
 
             // Process.
             let lCurrentChangeDetection: ChangeDetection;
@@ -77,7 +77,7 @@ describe('ChangeDetection', () => {
     it('Property: isSilent', () => {
         // Setup.
         const lSilentState: boolean = true;
-        const lChangeDetection: ChangeDetection = new ChangeDetection('Name', null, lSilentState);
+        const lChangeDetection: ChangeDetection = new ChangeDetection('Name', null, false, lSilentState);
 
         // Process.
         const lIsSilent: boolean = lChangeDetection.isSilent;
@@ -96,6 +96,43 @@ describe('ChangeDetection', () => {
 
         // Evaluation.
         expect(lNameResult).to.equal(lName);
+    });
+
+    describe('Property: looseParent', () => {
+        it('-- Set parent', () => {
+            // Setup.
+            const lParentName: string = 'InnerCD';
+            const lParentChangeDetection: ChangeDetection = new ChangeDetection(lParentName);
+            const lChildChangeDetection: ChangeDetection = new ChangeDetection('Name', lParentChangeDetection, true);
+
+            // Process.
+            const lParentChangeDetectionName: string = lChildChangeDetection.looseParent.name;
+
+            // Evaluation.
+            expect(lParentChangeDetectionName).to.equal(lParentName);
+        });
+
+        it('-- No parent', () => {
+            // Setup.
+            const lChildChangeDetection: ChangeDetection = new ChangeDetection('Name');
+
+            // Process.
+            const lParentChangeDetection: ChangeDetection = lChildChangeDetection.looseParent;
+
+            // Evaluation.
+            expect(lParentChangeDetection).to.be.null;
+        });
+
+        it('-- No parent explicit set', () => {
+            // Setup.
+            const lChildChangeDetection: ChangeDetection = new ChangeDetection('Name', null, true);
+
+            // Process.
+            const lParentChangeDetection: ChangeDetection = lChildChangeDetection.looseParent;
+
+            // Evaluation.
+            expect(lParentChangeDetection).to.be.null;
+        });
     });
 
     describe('Property: parent', () => {
@@ -209,7 +246,7 @@ describe('ChangeDetection', () => {
 
         it('-- Silent', () => {
             // Setup.
-            const lChangeDetection: ChangeDetection = new ChangeDetection('Name', null, true);
+            const lChangeDetection: ChangeDetection = new ChangeDetection('Name', null, false, true);
 
             // Process. Add listener.
             let lListenerCalled: boolean = false;

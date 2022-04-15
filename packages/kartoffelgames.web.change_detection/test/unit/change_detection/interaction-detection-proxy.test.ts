@@ -425,7 +425,7 @@ describe('InteractionDetectionProxy', () => {
 
         it('-- ChangeDetection silent mode', () => {
             // Setup.
-            const lChangeDetection = new ChangeDetection('Name', null, true);
+            const lChangeDetection = new ChangeDetection('Name', null, false, true);
             const lOriginalObject: { a: number; } = { a: 1 };
             const lDetectionProxy: InteractionDetectionProxy<{ a: number; }> = new InteractionDetectionProxy(lOriginalObject);
 

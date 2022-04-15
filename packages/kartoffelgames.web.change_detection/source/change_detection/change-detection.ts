@@ -51,6 +51,7 @@ export class ChangeDetection implements IDeconstructable {
     private readonly mChangeListenerList: List<ChangeListener>;
     private readonly mErrorListenerList: List<ErrorListener>;
     private readonly mExecutionZone: ExecutionZone;
+    private readonly mLooseParent: ChangeDetection;
     private readonly mParent: ChangeDetection;
     private readonly mSilent: boolean;
     private readonly mWindowErrorListener: (pEvent: ErrorEvent) => void;
@@ -72,6 +73,14 @@ export class ChangeDetection implements IDeconstructable {
     }
 
     /**
+     * Get change detection loose parent.
+     * A parent not connected by change detection rather than zones.
+     */
+    public get looseParent(): ChangeDetection {
+        return this.mLooseParent ?? null;
+    }
+
+    /**
      * Get change detection parent.
      */
     public get parent(): ChangeDetection {
@@ -90,8 +99,8 @@ export class ChangeDetection implements IDeconstructable {
      * @param pSilent - [Optinal] If change detection triggers any change events.
      */
     public constructor(pChangeDetection: ExecutionZone);
-    public constructor(pName: string, pParentChangeDetection?: ChangeDetection | null, pSilent?: boolean);
-    public constructor(pName: string | ExecutionZone, pParentChangeDetection?: ChangeDetection | null, pSilent?: boolean) {
+    public constructor(pName: string, pParentChangeDetection?: ChangeDetection | null, pLooseParent?: boolean, pSilent?: boolean);
+    public constructor(pName: string | ExecutionZone, pParentChangeDetection?: ChangeDetection | null, pLooseParent?: boolean, pSilent?: boolean) {
         // Patch for execution zone.
         Patcher.patch(globalThis);
 
@@ -100,7 +109,13 @@ export class ChangeDetection implements IDeconstructable {
         this.mErrorListenerList = new List<ErrorListener>();
 
         // Save parent.
-        this.mParent = pParentChangeDetection ?? null;
+        if (pLooseParent) {
+            this.mParent = null;
+            this.mLooseParent = pParentChangeDetection ?? null;
+        } else {
+            this.mParent = pParentChangeDetection ?? null;
+            this.mLooseParent = pParentChangeDetection ?? null;
+        }
 
         // Create new execution zone or use old one.
         if (typeof pName === 'string') {
@@ -261,7 +276,7 @@ export class ChangeDetection implements IDeconstructable {
      * @param pArgs - function execution arguments.
      */
     public silentExecution<T>(pFunction: (...pArgs: Array<any>) => T, ...pArgs: Array<any>): T {
-        const lChangeDetection: ChangeDetection = new ChangeDetection(`${this.name}-SilentCD`, this, true);
+        const lChangeDetection: ChangeDetection = new ChangeDetection(`${this.name}-SilentCD`, this, false, true);
         const lExecutionResult: any = lChangeDetection.execute(pFunction, ...pArgs);
 
         // Deconstruct change detection. Error events are not needed on temporary change detections.
