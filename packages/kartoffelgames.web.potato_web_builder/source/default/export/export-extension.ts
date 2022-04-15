@@ -1,12 +1,14 @@
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
 import { UserObjectHandler } from '../../component/handler/user-object-handler';
 import { PwbExtension } from '../../extension/decorator/pwb-extension.decorator';
+import { ExtensionMode } from '../../extension/enum/extension-mode';
 import { ExtensionType } from '../../extension/enum/extension-type';
 import { ComponentElementReference } from '../../injection_reference/component-element-reference';
 import { ComponentManagerReference } from '../../injection_reference/component-manager-reference';
 
 @PwbExtension({
-    type: ExtensionType.Component
+    type: ExtensionType.Component,
+    mode: ExtensionMode.Patch
 })
 export class ExportExtension {
     public static readonly METADATA_EXPORTED_PROPERTIES: string = 'pwb:exported_properties';
@@ -19,7 +21,7 @@ export class ExportExtension {
      * @param pTargetElementReference - Component html element reference.
      * @param pComponentManagerReference - Component manager reference.
      */
-    public constructor(pTargetElementReference: ComponentElementReference, pComponentManagerReference: ComponentManagerReference, ) {
+    public constructor(pTargetElementReference: ComponentElementReference, pComponentManagerReference: ComponentManagerReference,) {
         this.mHtmlElement = <HTMLElement>pTargetElementReference.value;
         this.mUserObjectHandler = pComponentManagerReference.value.userObjectHandler;
 

@@ -27,13 +27,29 @@ export class BaseExtension {
     }
 
     /**
+     * Collect injections
+     */
+    public collectInjections(): Array<object>{
+        const lInjectionTypeList: Array<object> = new Array<object>();
+
+        for (const lExtension of this.mExtensionObjectList) {
+            const lTypeList: Array<object> = lExtension.onCollectInjections?.();
+            if(lTypeList){
+                lInjectionTypeList.push(...lTypeList);
+            }
+        }
+
+        return lInjectionTypeList;
+    }
+
+    /**
      * Deconstruct module.
      */
     public deconstruct(): void {
         for (const lExtension of this.mExtensionObjectList) {
             lExtension.onDeconstruct?.();
         }
-    }
+    } 
 
     /**
       * Create extension object.

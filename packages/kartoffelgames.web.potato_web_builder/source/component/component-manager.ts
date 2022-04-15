@@ -98,26 +98,36 @@ export class ComponentManager {
             }
         });
 
-        // Create user object handler.
+        // Create element handler.
+        this.mElementHandler = new ElementHandler(pHtmlComponent);
+
+        // Initialize user object injections.
         const lLocalInjections: Array<object> = new Array<object>();
         lLocalInjections.push(new ComponentElementReference(pHtmlComponent));
         lLocalInjections.push(new ComponentUpdateReference(this.mUpdateHandler));
         lLocalInjections.push(PwbApp.getChangeDetectionApp(ChangeDetection.current));
+
+        // Create injection extensions.
+        this.mExtensions = new ComponentExtensions();
+        lLocalInjections.push(...this.mExtensions.executeInjectorExtensions({
+            componentManager: this,
+            componentElement: pHtmlComponent,
+            targetClass: pUserClass
+        }));
+
+        // Create user object handler.
         this.mUserObjectHandler = new UserObjectHandler(pUserClass, this.updateHandler, lLocalInjections);
 
         // After build, before initialization.
         this.mUserObjectHandler.callOnPwbInitialize();
-
-        // Create element handler and export properties.
-        this.mElementHandler = new ElementHandler(pHtmlComponent);
 
         // Connect with this component manager.
         ComponentConnection.connectComponentManagerWith(this.elementHandler.htmlElement, this);
         ComponentConnection.connectComponentManagerWith(this.userObjectHandler.userObject, this);
         ComponentConnection.connectComponentManagerWith(this.userObjectHandler.untrackedUserObject, this);
 
-        // Create extensions.
-        this.mExtensions = new ComponentExtensions({
+        // Create patcher extensions.
+        this.mExtensions.executePatcherExtensions({
             componentManager: this,
             componentElement: pHtmlComponent,
             targetClass: this.mUserObjectHandler.userClass,

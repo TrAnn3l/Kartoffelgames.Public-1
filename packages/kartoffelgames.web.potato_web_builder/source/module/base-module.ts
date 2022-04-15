@@ -116,11 +116,29 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
         const lInjections = new Dictionary<InjectionConstructor, any>(this.mInjections);
         lInjections.set(ModuleExpressionReference, new ModuleExpressionReference(pValue));
 
+        // Create extensions and collect extension injections.
+        const lExtensions: ModuleExtensions = new ModuleExtensions();
+        const lExtensionInjectionList: Array<object> = lExtensions.executeInjectorExtensions({
+            componentManager: this.mComponentManager,
+            targetClass: this.mModuleClass,
+            template: this.mTemplateClone,
+            attribute: this.mTargetAttribute,
+            layerValues: this.mLayerValues,
+            element: this.mTargetNode
+        });
+
+        // Parse and merge extension injections into local injections.
+        for (const lInjectionObject of lExtensionInjectionList) {
+            lInjections.set(<InjectionConstructor>lInjectionObject.constructor, lInjectionObject);
+        }
+
         // Create module object with local injections.
         const lModuleObject: IPwbModuleObject<TModuleObjectResult> = Injection.createObject(this.mModuleClass, lInjections);
         this.mModuleObjectList.push(lModuleObject);
 
-        this.mExtensionList.push(new ModuleExtensions({
+        // Execute patcher extensions and save extension for deconstructing.
+        this.mExtensionList.push(lExtensions);
+        lExtensions.executePatcherExtensions({
             componentManager: this.mComponentManager,
             targetClass: this.mModuleClass,
             targetObject: lModuleObject,
@@ -128,7 +146,7 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
             attribute: this.mTargetAttribute,
             layerValues: this.mLayerValues,
             element: this.mTargetNode
-        }));
+        });
 
         return lModuleObject;
     }

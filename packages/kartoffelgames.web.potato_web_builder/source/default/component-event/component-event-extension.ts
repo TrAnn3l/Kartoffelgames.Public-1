@@ -1,6 +1,7 @@
 import { Dictionary, Exception } from '@kartoffelgames/core.data';
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
 import { PwbExtension } from '../../extension/decorator/pwb-extension.decorator';
+import { ExtensionMode } from '../../extension/enum/extension-mode';
 import { ExtensionType } from '../../extension/enum/extension-type';
 import { ComponentElementReference } from '../../injection_reference/component-element-reference';
 import { ExtensionTargetClassReference } from '../../injection_reference/extension-target-class-reference';
@@ -8,7 +9,8 @@ import { ExtensionTargetObjectReference } from '../../injection_reference/extens
 import { ComponentEventEmitter } from './component-event-emitter';
 
 @PwbExtension({
-    type: ExtensionType.Component
+    type: ExtensionType.Component,
+    mode: ExtensionMode.Patch
 })
 export class ComponentEventExtension {
     public static readonly METADATA_USER_EVENT_PROPERIES: string = 'pwb:user_event_properties';

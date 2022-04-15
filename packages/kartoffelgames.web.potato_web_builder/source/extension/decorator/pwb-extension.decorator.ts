@@ -1,4 +1,5 @@
 import { Injector } from '@kartoffelgames/core.dependency-injection';
+import { ExtensionMode } from '../enum/extension-mode';
 import { ExtensionType } from '../enum/extension-type';
 import { Extensions } from '../extensions';
 import { IPwbExtensionClass } from '../interface/extension';
@@ -13,10 +14,11 @@ export function PwbExtension(pSettings: ExtensionSettings): any {
         Injector.Injectable(pExtensionConstructor);
 
         // Register module.
-        Extensions.add(pExtensionConstructor, pSettings.type);
+        Extensions.add(pExtensionConstructor, pSettings.type, pSettings.mode);
     };
 }
 
 type ExtensionSettings = {
     type: ExtensionType;
+    mode: ExtensionMode;
 };

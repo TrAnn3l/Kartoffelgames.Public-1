@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 
 // Component extension.
-export interface IPwbExtensionObject extends IPwbExtensionOnDeconstruct { }
+export interface IPwbExtensionObject extends IPwbExtensionOnDeconstruct, IPwbExtensionOnCollectInjections { }
 export interface IPwbExtensionClass {
     new(): IPwbExtensionObject;
 }
@@ -12,3 +12,12 @@ export interface IPwbExtensionOnDeconstruct {
      */
     onDeconstruct(): void;
 }
+
+export interface IPwbExtensionOnCollectInjections {
+    /**
+     * Collect all injections.
+     * Injection type is aquired by Object.constructor
+     */
+    onCollectInjections(): Array<object>;
+}
+

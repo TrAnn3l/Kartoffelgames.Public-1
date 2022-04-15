@@ -2,6 +2,7 @@ import { Exception } from '@kartoffelgames/core.data';
 import { Metadata } from '@kartoffelgames/core.dependency-injection';
 import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { PwbExtension } from '../../extension/decorator/pwb-extension.decorator';
+import { ExtensionMode } from '../../extension/enum/extension-mode';
 import { ExtensionType } from '../../extension/enum/extension-type';
 import { IPwbExtensionOnDeconstruct } from '../../extension/interface/extension';
 import { ComponentElementReference } from '../../injection_reference/component-element-reference';
@@ -9,7 +10,8 @@ import { ExtensionTargetClassReference } from '../../injection_reference/extensi
 import { ExtensionTargetObjectReference } from '../../injection_reference/extension-target-object-reference';
 
 @PwbExtension({
-    type: ExtensionType.Component
+    type: ExtensionType.Component,
+    mode: ExtensionMode.Patch
 })
 export class EventListenerComponentExtension implements IPwbExtensionOnDeconstruct {
     public static readonly METADATA_USER_EVENT_LISTENER_PROPERIES: string = 'pwb:user_event_listener_properties';

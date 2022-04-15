@@ -13,20 +13,10 @@ export class ComponentExtensions {
 
     /**
      * Constructor.
-     * @param pParameter - Parameter.
      */
-    public constructor(pParameter: ComponentExtensionsConstructorParameter) {
+    public constructor() {
         // Create all extensions.
         this.mExtensionList = new Array<ComponentExtension>();
-        for (const lExtensionClass of Extensions.componentExtensions) {
-            this.mExtensionList.push(new ComponentExtension({
-                extensionClass: lExtensionClass,
-                componentElement: pParameter.componentElement,
-                componentManager: pParameter.componentManager,
-                targetClass: pParameter.targetClass,
-                targetObject: pParameter.targetObject
-            }));
-        }
     }
 
     /**
@@ -37,11 +27,58 @@ export class ComponentExtensions {
             lExtension.deconstruct();
         }
     }
+
+    /**
+     * Execute patcher extensions.
+     * @param pParameter - Parameter.
+     */
+    public executeInjectorExtensions(pParameter: ComponentExtensionsExecuteInjectorExtensionsParameter): Array<object> {
+        const lInjectionTypeList: Array<object> = new Array<object>();
+
+        for (const lExtensionClass of Extensions.componentInjectorExtensions) {
+            // Create extension and add to extension list.
+            const lExtension: ComponentExtension = new ComponentExtension({
+                extensionClass: lExtensionClass,
+                componentElement: pParameter.componentElement,
+                componentManager: pParameter.componentManager,
+                targetClass: pParameter.targetClass,
+                targetObject: null
+            });
+            this.mExtensionList.push(lExtension);
+
+            // Collect extensions.
+            lInjectionTypeList.push(...lExtension.collectInjections());
+        }
+
+        return lInjectionTypeList;
+    }
+
+    /**
+     * Execute patcher extensions.
+     * @param pParameter - Parameter.
+     */
+    public executePatcherExtensions(pParameter: ComponentExtensionsExecutePatcherExtensionsParameter): void {
+        for (const lExtensionClass of Extensions.componentPatcherExtensions) {
+            this.mExtensionList.push(new ComponentExtension({
+                extensionClass: lExtensionClass,
+                componentElement: pParameter.componentElement,
+                componentManager: pParameter.componentManager,
+                targetClass: pParameter.targetClass,
+                targetObject: pParameter.targetObject
+            }));
+        }
+    }
 }
 
-type ComponentExtensionsConstructorParameter = {
+type ComponentExtensionsExecutePatcherExtensionsParameter = {
     componentManager: ComponentManager;
     targetClass: InjectionConstructor;
     targetObject: object;
+    componentElement: HTMLElement;
+};
+
+type ComponentExtensionsExecuteInjectorExtensionsParameter = {
+    componentManager: ComponentManager;
+    targetClass: InjectionConstructor;
     componentElement: HTMLElement;
 };

@@ -187,7 +187,7 @@ export class PwbApp {
      * Remove splash screen.
      */
     public async removeSplashScreen(): Promise<void> {
-        const lTransistionTimerMilliseconds: number = 1000;
+        const lTransistionTimerMilliseconds: number = 500;
 
         this.mSplashScreen.style.setProperty('transition', `opacity ${(lTransistionTimerMilliseconds / 1000).toString()}s linear`);
         this.mSplashScreen.style.setProperty('opacity', '0');

@@ -13,12 +13,55 @@ export class ModuleExtensions {
 
     /**
      * Constructor.
-     * @param pParameter - Parameter.
      */
-    public constructor(pParameter: ModuleExtensionsConstructorParameter) {
+    public constructor() {
         // Create all extensions.
         this.mExtensionList = new Array<ModuleExtension>();
-        for (const lExtensionClass of Extensions.moduleExtensions) {
+    }
+
+    /**
+     * Deconstruct all extensions.
+     */
+    public deconstruct(): void {
+        for (const lExtension of this.mExtensionList) {
+            lExtension.deconstruct();
+        }
+    }
+
+    /**
+     * Execute patcher extensions.
+     * @param pParameter - Parameter.
+     */
+     public executeInjectorExtensions(pParameter: ModuleExtensionsExecuteInjectorExtensionsParameter): Array<object> {
+        const lInjectionTypeList: Array<object> = new Array<object>();
+
+        for (const lExtensionClass of Extensions.moduleInjectorExtensions) {
+            // Create extension and add to extension list.
+            const lExtension: ModuleExtension = new ModuleExtension({
+                extensionClass: lExtensionClass,
+                componentManager: pParameter.componentManager,
+                template: pParameter.template,
+                attribute: pParameter.attribute,
+                layerValues: pParameter.layerValues,
+                targetClass: pParameter.targetClass,
+                targetObject: null,
+                element: pParameter.element
+            });
+            this.mExtensionList.push(lExtension);
+
+            // Collect extensions.
+            lInjectionTypeList.push(...lExtension.collectInjections());
+        }
+
+        return lInjectionTypeList;
+    }
+
+    /**
+     * Execute patcher extensions.
+     * @param pParameter - Parameter.
+     */
+    public executePatcherExtensions(pParameter: ModuleExtensionsExecutePatcherExtensionsParameter): void {
+        for (const lExtensionClass of Extensions.modulePatcherExtensions) {
             this.mExtensionList.push(new ModuleExtension({
                 extensionClass: lExtensionClass,
                 componentManager: pParameter.componentManager,
@@ -31,21 +74,21 @@ export class ModuleExtensions {
             }));
         }
     }
-
-    /**
-     * Deconstruct all extensions.
-     */
-    public deconstruct(): void {
-        for (const lExtension of this.mExtensionList) {
-            lExtension.deconstruct();
-        }
-    }
 }
 
-type ModuleExtensionsConstructorParameter = {
+type ModuleExtensionsExecutePatcherExtensionsParameter = {
     componentManager: ComponentManager,
     targetClass: InjectionConstructor,
     targetObject: object,
+    template: BaseXmlNode,
+    attribute: XmlAttribute,
+    layerValues: LayerValues,
+    element: Node;
+};
+
+type ModuleExtensionsExecuteInjectorExtensionsParameter = {
+    componentManager: ComponentManager,
+    targetClass: InjectionConstructor,
     template: BaseXmlNode,
     attribute: XmlAttribute,
     layerValues: LayerValues,
