@@ -1,10 +1,8 @@
 import { Dictionary } from '@kartoffelgames/core.data';
 import { XmlDocument, XmlElement } from '@kartoffelgames/core.xml';
-import { ChangeDetection } from '@kartoffelgames/web.change-detection';
 import { ComponentElementReference } from '../injection_reference/component-element-reference';
 import { ComponentUpdateReference } from '../injection_reference/component-update-reference';
 import { IPwbExpressionModuleClass } from '../module/interface/module';
-import { PwbApp } from '../pwb-app';
 import { StaticBuilder } from './builder/static-builder';
 import { ComponentConnection } from './component-connection';
 import { ComponentExtensions } from './component-extensions';
@@ -105,7 +103,6 @@ export class ComponentManager {
         const lLocalInjections: Array<object> = new Array<object>();
         lLocalInjections.push(new ComponentElementReference(pHtmlComponent));
         lLocalInjections.push(new ComponentUpdateReference(this.mUpdateHandler));
-        lLocalInjections.push(PwbApp.getChangeDetectionApp(ChangeDetection.current));
 
         // Create injection extensions.
         this.mExtensions = new ComponentExtensions();

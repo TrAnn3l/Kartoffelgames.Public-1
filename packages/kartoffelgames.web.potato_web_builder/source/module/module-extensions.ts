@@ -7,6 +7,7 @@ import { Extensions } from '../extension/extensions';
 
 // Import default extensions.
 import '../default/event-listener/event-listener-module-extension';
+import '../default/pwb_app_injection/pwb-app-injection-extension';
 
 export class ModuleExtensions {
     private readonly mExtensionList: Array<ModuleExtension>;

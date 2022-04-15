@@ -7,6 +7,7 @@ import { ComponentManager } from './component-manager';
 import '../default/component-event/component-event-extension';
 import '../default/export/export-extension';
 import '../default/event-listener/event-listener-component-extension';
+import '../default/pwb_app_injection/pwb-app-injection-extension';
 
 export class ComponentExtensions {
     private readonly mExtensionList: Array<ComponentExtension>;

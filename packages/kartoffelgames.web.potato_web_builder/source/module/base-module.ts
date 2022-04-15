@@ -129,7 +129,9 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
 
         // Parse and merge extension injections into local injections.
         for (const lInjectionObject of lExtensionInjectionList) {
-            lInjections.set(<InjectionConstructor>lInjectionObject.constructor, lInjectionObject);
+            if (typeof lInjectionObject === 'object' && lInjectionObject !== null) {
+                lInjections.set(<InjectionConstructor>lInjectionObject.constructor, lInjectionObject);
+            }
         }
 
         // Create module object with local injections.
