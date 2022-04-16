@@ -15,7 +15,7 @@ export class TestUtil {
         });
 
         // Skip wait for splash screen.
-        lPwbApp.setSplashScreen({ content: '', background: '', manual: true });
+        lPwbApp.setSplashScreen({ content: '', background: '', manual: true, animationTime: 10 });
 
         // Add component and append app to dom.
         lPwbApp.addContent(pClass);

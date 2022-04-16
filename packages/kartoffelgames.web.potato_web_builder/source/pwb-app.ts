@@ -33,9 +33,9 @@ export class PwbApp {
     private mAppSealed: boolean;
     private readonly mChangeDetection: ChangeDetection;
     private readonly mComponentList: Array<InjectionConstructor>;
-    private mManualSplashScreen: boolean;
     private readonly mShadowRoot: ShadowRoot;
     private readonly mSplashScreen: HTMLElement;
+    private mSplashScreenOptions: SplashScreen;
 
     /**
      * Get app underlying content.
@@ -79,7 +79,8 @@ export class PwbApp {
         // Set default splash screen.
         this.setSplashScreen({
             background: 'linear-gradient(0deg, rgba(47,67,254,1) 8%, rgba(0,23,255,1) 70%);',
-            content: '<span style="color: #fff;">PWB</span>'
+            content: '<span style="color: #fff;">PWB</span>',
+            animationTime: 500
         });
     }
 
@@ -171,7 +172,7 @@ export class PwbApp {
                 let lUpdatePromise: Promise<any> = Promise.all(lUpdateWaiter);
 
                 // Remove splash screen if not in manual mode.
-                if (!this.mManualSplashScreen) {
+                if (!this.mSplashScreenOptions.manual) {
                     lUpdatePromise = lUpdatePromise.then(async () => {
                         return this.removeSplashScreen();
                     });
@@ -187,7 +188,7 @@ export class PwbApp {
      * Remove splash screen.
      */
     public async removeSplashScreen(): Promise<void> {
-        const lTransistionTimerMilliseconds: number = 500;
+        const lTransistionTimerMilliseconds: number = this.mSplashScreenOptions.animationTime ?? 500;
 
         this.mSplashScreen.style.setProperty('transition', `opacity ${(lTransistionTimerMilliseconds / 1000).toString()}s linear`);
         this.mSplashScreen.style.setProperty('opacity', '0');
@@ -215,7 +216,7 @@ export class PwbApp {
         }
 
         // Set manual state.
-        this.mManualSplashScreen = pSplashScreen.manual === true;
+        this.mSplashScreenOptions = pSplashScreen;
 
         // Create app wrapper template.
         const lGenericDivTemplate: XmlElement = new XmlElement();
@@ -271,4 +272,5 @@ export type SplashScreen = {
     background: string,
     content: string;
     manual?: boolean;
+    animationTime?: number;
 };
