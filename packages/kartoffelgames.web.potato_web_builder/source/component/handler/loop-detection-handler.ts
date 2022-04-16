@@ -105,6 +105,6 @@ export class LoopError extends Error {
     public constructor(pMessage: string, pChain: Array<ChangeDetectionReason>) {
         super(pMessage);
         this.message = pMessage;
-        this.chain = pChain;
+        this.chain = [...pChain];
     }
 }
