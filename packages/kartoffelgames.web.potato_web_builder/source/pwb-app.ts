@@ -78,8 +78,8 @@ export class PwbApp {
 
         // Set default splash screen.
         this.setSplashScreen({
-            background: 'linear-gradient(0deg, rgba(47,67,254,1) 8%, rgba(0,23,255,1) 70%);',
-            content: '<span style="color: #fff;">PWB</span>',
+            background: 'linear-gradient(0deg, rgba(47,67,254,1) 8%, rgba(0,23,255,1) 70%)',
+            content: '<span style="color: #fff; font-family: arial; font-weight: bold;">PWB</span>',
             animationTime: 500
         });
     }
