@@ -65,19 +65,22 @@ export class LoopDetectionHandler {
                         throw new LoopError('Call loop detected', this.mCurrentCallChain);
                     }
                 } catch (pException) {
-                    // Unblock further calls and clear call chain.       
-                    this.mCurrentCallChain.clear();
-                    // this.mInActiveChain = false; TODO: Breaks test. Why?
-
                     // Execute on error.
                     const lSuppressError: boolean = this.mOnError?.(pException) === true;
+
+                    // Unblock further calls and clear call chain.
+                    this.mInActiveChain = false;
+                    this.mCurrentCallChain.clear();
 
                     // Cancel next call cycle.
                     globalThis.cancelAnimationFrame(this.mNextSheduledCall);
 
                     // Rethrow error. Used only for debugging and testing.
-                    /* istanbul ignore if */
-                    if (!lSuppressError) {
+                    /* istanbul ignore else */
+                    if (lSuppressError) {
+                        // Prevent any other updates. Debug only.
+                        this.mInActiveChain = true;
+                    } else {
                         throw pException;
                     }
                 }
