@@ -582,7 +582,7 @@ describe('ChangeDetection', () => {
 
         // Setup. Set error listener.
         lChangeDetection.addErrorListener((pError: string) => {
-            return true;
+            return false;
         });
 
         // Process. Global error listener.

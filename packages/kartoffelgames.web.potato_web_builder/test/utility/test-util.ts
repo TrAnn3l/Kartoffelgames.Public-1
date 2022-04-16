@@ -11,7 +11,7 @@ export class TestUtil {
         // Setup. Create app and silence errors.
         const lPwbApp: PwbApp = new PwbApp('Name');
         lPwbApp.addErrorListener(() => {
-            return pSilenceErrors;
+            return !pSilenceErrors;
         });
 
         // Skip wait for splash screen.

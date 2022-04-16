@@ -143,8 +143,8 @@ export class ChangeDetection implements IDeconstructable {
                 // Check if error change detection is child of the change detection.
                 if (lChangeDetection.isChildOf(this)) {
                     // Suppress console error message if error should be suppressed
-                    const lSuppressError: boolean = this.dispatchErrorEvent(pError);
-                    if (lSuppressError) {
+                    const lExecuteDefault: boolean = this.dispatchErrorEvent(pError);
+                    if (!lExecuteDefault) {
                         pErrorEvent.preventDefault();
                     }
                 }
@@ -303,14 +303,16 @@ export class ChangeDetection implements IDeconstructable {
      * Call all registered error listener.
      */
     private callErrorListener(pError: any): boolean {
-        let lSuppressError: boolean = false;
+        let lExecuteDefault: boolean = true;
 
         // Dispatch error event.
         for (const lListener of this.mErrorListenerList) {
-            lSuppressError = lListener(pError) || lSuppressError;
+            if (lListener(pError) === false) {
+                lExecuteDefault = false;
+            }
         }
 
-        return lSuppressError;
+        return lExecuteDefault;
     }
 
     /**
