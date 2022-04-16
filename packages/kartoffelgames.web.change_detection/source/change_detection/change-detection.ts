@@ -277,10 +277,14 @@ export class ChangeDetection implements IDeconstructable {
      */
     public silentExecution<T>(pFunction: (...pArgs: Array<any>) => T, ...pArgs: Array<any>): T {
         const lChangeDetection: ChangeDetection = new ChangeDetection(`${this.name}-SilentCD`, this, false, true);
-        const lExecutionResult: any = lChangeDetection.execute(pFunction, ...pArgs);
 
-        // Deconstruct change detection. Error events are not needed on temporary change detections.
-        lChangeDetection.deconstruct();
+        let lExecutionResult: any;
+        try {
+            lExecutionResult = lChangeDetection.execute(pFunction, ...pArgs);
+        } finally {
+            // Deconstruct change detection. Error events are not needed on temporary change detections.
+            lChangeDetection.deconstruct();
+        }
 
         return lExecutionResult;
     }

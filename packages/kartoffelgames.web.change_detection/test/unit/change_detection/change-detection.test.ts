@@ -670,4 +670,32 @@ describe('ChangeDetection', () => {
         expect(lErrorResult).to.equal(lError);
         expect(lErrorCatched).to.equal(lError);
     });
+
+    it('Functionality: Continue detection after error', () => {
+        // Setup.
+        const lChangeDetection: ChangeDetection = new ChangeDetection('Name');
+        const lEventTarget: EventTarget = new EventTarget();
+
+        // Process. Track object.
+        const lTrackedEventTarget: EventTarget = lChangeDetection.registerObject(lEventTarget);
+
+        // Process. Track change event.
+        let lChangeEventCalled: boolean = false;
+        lChangeDetection.addChangeListener(() => {
+            lChangeEventCalled = true;
+        });
+
+        // Process. Trow error.
+        try {
+            lChangeDetection.execute(() => {
+                throw '';
+            });
+        } catch (_pError) { /* Empty */ }
+
+        // Process. Call input event.
+        lTrackedEventTarget.dispatchEvent(new Event('input'));
+
+        // Evaluation.
+        expect(lChangeEventCalled).to.be.true;
+    });
 });
