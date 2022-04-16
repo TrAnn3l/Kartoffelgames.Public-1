@@ -35,56 +35,57 @@ export class LoopDetectionHandler {
     /**
      * Calls function asynchron. Checks for loops and
      * Throws error if stack overflows.
+     * @param pUserFunction - Function that should be called.
      * @param pReason - Stack reason.
      */
-    public callAsynchron<T>(pFunction: () => T, pReason: ChangeDetectionReason): void {
+    public callAsynchron<T>(pUserFunction: () => T, pReason: ChangeDetectionReason): void {
         if (!this.mInActiveChain) {
             this.mInActiveChain = true;
 
             // Create and expand call stack.
             this.mCurrentCallChain.push(pReason);
 
+            // Function for asynchron call.
             const lAsynchronFunction = () => {
+                // Call function. User can decide on none silent zone inside function.
                 // Set component to not updating so new changes doesn't get ignnored.
                 this.mInActiveChain = false;
                 const lLastLength: number = this.mCurrentCallChain.length;
 
-                // Call function after saving last chain length.
-                // If no other call was sheduled during this call, the length will be the same after. 
-                pFunction();
-
-                // Clear call chain list if no other call in this cycle was made.
-                if (lLastLength === this.mCurrentCallChain.length) {
-                    this.mCurrentCallChain.clear();
-                } else if (this.mCurrentCallChain.length > this.mMaxStackSize) {
-                    // Throw if too many calles were chained. 
-                    throw new LoopError('Call loop detected', this.mCurrentCallChain);
-                }
-            };
-
-            // Function for asynchron call.
-            const lErrorHandlingFunction = () => {
                 try {
-                    // Call function. User can decide on none silent zone inside function.
-                    lAsynchronFunction();
+                    // Call function after saving last chain length.
+                    // If no other call was sheduled during this call, the length will be the same after. 
+                    pUserFunction();
+
+                    // Clear call chain list if no other call in this cycle was made.
+                    if (lLastLength === this.mCurrentCallChain.length) {
+                        this.mCurrentCallChain.clear();
+                    } else if (this.mCurrentCallChain.length > this.mMaxStackSize) {
+                        // Throw if too many calles were chained. 
+                        throw new LoopError('Call loop detected', this.mCurrentCallChain);
+                    }
                 } catch (pException) {
                     // Cancel next call cycle.
                     globalThis.cancelAnimationFrame(this.mNextSheduledCall);
+
+                    // Unblock further calls and clear call chain.
+                    this.mInActiveChain = false;
+                    this.mCurrentCallChain.clear();
 
                     // Execute on error.
                     const lSuppressError: boolean = this.mOnError?.(pException) === true;
 
                     // Rethrow error. Used only for debugging and testing.
                     /* istanbul ignore if */
-                    if(!lSuppressError){
+                    if (!lSuppressError) {
                         throw pException;
-                    }     
+                    }
                 }
             };
 
             // Call on next frame. 
             // Do not call change detection on requestAnimationFrame.
-            this.mNextSheduledCall = ChangeDetection.current.silentExecution(globalThis.requestAnimationFrame, lErrorHandlingFunction);
+            this.mNextSheduledCall = ChangeDetection.current.silentExecution(globalThis.requestAnimationFrame, lAsynchronFunction);
         }
     }
 }
