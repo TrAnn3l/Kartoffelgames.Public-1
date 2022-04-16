@@ -1,7 +1,7 @@
 {
     "name": "@kartoffelgames/web.potato-web-builder",
     "projectName": "Kartoffelgames.Web.Potato_Web_Builder",
-    "version": "0.0.6",
+    "version": "0.0.7",
     "description": "Kartoffelgames.Web.Potato_Web_Builder",
     "author": {
         "name": "KartoffelGames"
@@ -38,10 +38,10 @@
         "webpack-cli": "^4.8.0"
     },
     "dependencies": {
-        "@kartoffelgames/core.data": "^0.0.15",
-        "@kartoffelgames/core.dependency-injection": "^0.0.12",
-        "@kartoffelgames/core.xml": "^0.0.15",
-        "@kartoffelgames/web.change-detection": "^0.0.12"
+        "@kartoffelgames/core.data": "^0.0.16",
+        "@kartoffelgames/core.dependency-injection": "^0.0.13",
+        "@kartoffelgames/core.xml": "^0.0.16",
+        "@kartoffelgames/web.change-detection": "^0.0.13"
     },
     "scripts": {
         "script:build": "npm run pre:build && webpack-cli --config ../../enviroment/configuration/webpack.config.js",
