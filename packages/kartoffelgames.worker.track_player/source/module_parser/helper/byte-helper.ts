@@ -9,7 +9,7 @@ export class ByteHelper {
 
         // Sign word.
         if (pSigned) {
-            lByte = (lByte > 127) ? (lByte - 127) * -1 : lByte;
+            lByte = (lByte > 127) ? (lByte - 0x100) : lByte;
         }
 
         return lByte;
@@ -26,8 +26,8 @@ export class ByteHelper {
 
         // Sign both nibbles.
         if (pSigned) {
-            lHighNibble = (lHighNibble > 7) ? (lHighNibble - 7) * -1 : lHighNibble;
-            lLowNibble = (lLowNibble > 7) ? (lLowNibble - 7) * -1 : lLowNibble;
+            lHighNibble = (lHighNibble > 7) ? (lHighNibble - 0x10) * -1 : lHighNibble;
+            lLowNibble = (lLowNibble > 7) ? (lLowNibble - 0x10) * -1 : lLowNibble;
         }
 
         return [lHighNibble, lLowNibble];
@@ -56,7 +56,7 @@ export class ByteHelper {
 
         // Sign word.
         if (pSigned) {
-            lWord = (lWord > 32767) ? (lWord - 32767) * -1 : lWord;
+            lWord = (lWord > 32767) ? (lWord - 0x10000) * -1 : lWord;
         }
 
         return lWord;
