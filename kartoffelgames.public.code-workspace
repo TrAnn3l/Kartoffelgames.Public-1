@@ -1,6 +1,10 @@
 {
     "folders": [
         {
+            "name": "KartoffelGames.Worker.Track_Player",
+            "path": "./packages/kartoffelgames.worker.track_player"
+        },
+        {
             "name": "Kartoffelgames.Core.Data",
             "path": "./packages/kartoffelgames.core.data"
         },

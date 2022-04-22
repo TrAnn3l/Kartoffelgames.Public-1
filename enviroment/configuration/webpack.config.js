@@ -73,7 +73,7 @@ const gGetDefaultFileLoader = () => {
     const lDeclarationFilepath = gPath.resolve(__dirname, '..', '..', 'declaration', 'module-declaration.d.ts');
     const lFileContent = gFilereader.readFileSync(lDeclarationFilepath, 'utf8');
 
-    const lFileExtensionRegex = /declare\s+module\s+(?:"|')\*([.a-zA-Z0-9]+)(?:"|')\s*{.*?\/\*\s*LOADER::([a-zA-Z-]+)\s*\*\/.*?}/gms;
+    const lFileExtensionRegex = /declare\s+module\s+(?:"|')\*([.a-zA-Z0-9]+)(?:"|')\s*{.*?\/\*\s*LOADER::([a-zA-Z-]+)(\{.*})?\s*\*\/.*?}/gms;
 
     // Get all declaration informations by reading the extension and the loader information from the comment.
     const lDefaultLoader = [];
@@ -81,14 +81,26 @@ const gGetDefaultFileLoader = () => {
     while (lMatch = lFileExtensionRegex.exec(lFileContent)) {
         const lExtension = lMatch[1];
         const lLoaderType = lMatch[2];
+        const lLoaderOptions = lMatch[3] ? JSON.parse(lMatch[3]) : null;
 
         // Create regex from extension.
         const lExtensionRegex = new RegExp(lExtension.replace('.', '\\.') + '$');
 
+
+        let lLoaderDefinition;
+        if (lLoaderOptions) {
+            lLoaderDefinition = {
+                loader: lLoaderType,
+                options: lLoaderOptions
+            };
+        } else {
+            lLoaderDefinition = lLoaderType;
+        }
+
         // Add loader config.
         lDefaultLoader.push({
             test: lExtensionRegex,
-            use: lLoaderType
+            use: lLoaderDefinition
         });
     }
 
@@ -163,6 +175,13 @@ module.exports = (pEnviroment) => {
             lEntryFile = './source/index.ts';
             lBuildMode = 'development';
             lFileName = `${lProjectName}.debug.js`;
+            lOutputDirectory = './library/build';
+            break;
+
+        case 'worker':
+            lEntryFile = './source/index.ts';
+            lBuildMode = 'production';
+            lFileName = `${lProjectName}.jsworker`;
             lOutputDirectory = './library/build';
             break;
 
