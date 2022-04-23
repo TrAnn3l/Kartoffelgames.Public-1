@@ -1,8 +1,8 @@
 {
     "name": "@kartoffelgames/web.potato-web-builder",
-    "projectName": "Kartoffelgames.Web.Potato_Web_Builder",
-    "version": "0.0.7",
-    "description": "Kartoffelgames.Web.Potato_Web_Builder",
+    "projectName": "KartoffelGames.Web.Potato_Web_Builder",
+    "version": "0.0.6",
+    "description": "KartoffelGames.Web.Potato_Web_Builder",
     "author": {
         "name": "KartoffelGames"
     },
