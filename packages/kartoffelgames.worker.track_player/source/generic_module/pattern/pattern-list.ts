@@ -1,31 +1,31 @@
-import { Pattern } from './Pattern';
+import { Pattern } from './pattern';
 
 /**
  * Complete pattern data.
  */
 export class PatternList {
-    private readonly mPatternData: Array<Pattern>;
-    private mPatternOrder: Array<number>;
+    private readonly mPattern: Array<Pattern>;
+    private mSongPositionList: Array<number>;
 
     /**
      * Get pattern count.
      */
     public get patternCount(): number {
-        return this.mPatternData.length;
+        return this.mPattern.length;
     }
 
     /**
-     * Get pattern order.
+     * Get song positions.
      */
-    public get patternOrder(): Array<number> {
-        return this.mPatternOrder;
+    public get songPositions(): Array<number> {
+        return this.mSongPositionList;
     }
 
     /**
-     * Set pattern order.
+     * Set song positions.
      */
-    public set patternOrder(pPatternOrder: Array<number>) {
-        this.mPatternOrder = pPatternOrder;
+    public set songPositions(pPatternOrder: Array<number>) {
+        this.mSongPositionList = pPatternOrder;
     }
 
     /**
@@ -33,7 +33,7 @@ export class PatternList {
      * Initialize lists.
      */
     public constructor() {
-        this.mPatternData = new Array<Pattern>();
+        this.mPattern = new Array<Pattern>();
     }
 
     /**
@@ -43,9 +43,9 @@ export class PatternList {
      */
     public addPattern(pPattern: Pattern, pIndex?: number): void {
         if (typeof pIndex === 'number') {
-            this.mPatternData[pIndex] = pPattern;
+            this.mPattern[pIndex] = pPattern;
         } else {
-            this.mPatternData.push(pPattern);
+            this.mPattern.push(pPattern);
         }
     }
 
@@ -54,6 +54,6 @@ export class PatternList {
      * @param pIndex - Index of pattern.
      */
     public getPattern(pIndex: number): Pattern {
-        return this.mPatternData[pIndex];
+        return this.mPattern[pIndex];
     }
 }

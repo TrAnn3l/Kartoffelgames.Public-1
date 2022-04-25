@@ -1,12 +1,11 @@
 import { Exception } from '@kartoffelgames/core.data';
-import { PatternDevision } from './pattern_devision';
+import { Division } from './division';
 
 export class Pattern {
     private readonly mChannelCount: number;
-    private readonly mEmptyRow: Array<PatternDevision>;
+    private readonly mEmptyRow: Array<Division>;
     private readonly mRowCount: number;
-    private readonly mRows: Array<Array<PatternDevision>>;
-
+    private readonly mRows: Array<Array<Division>>;
 
     /**
      * Get row count.
@@ -23,11 +22,12 @@ export class Pattern {
     public constructor(pChannelCount: number, pRowCount: number) {
         this.mChannelCount = pChannelCount;
         this.mRowCount = pRowCount;
+        this.mRows = new Array<Array<Division>>();
 
         // Create default empty row.
-        this.mEmptyRow = new Array<PatternDevision>();
+        this.mEmptyRow = new Array<Division>();
         for (let lIndex: number = 0; lIndex < pChannelCount; lIndex++) {
-            this.mEmptyRow.push(new PatternDevision());
+            this.mEmptyRow.push(new Division());
         }
     }
 
@@ -35,7 +35,7 @@ export class Pattern {
      * Get pattern row information.
      * @param pRowIndex - Row index.
      */
-    public getRow(pRowIndex: number): Array<PatternDevision> {
+    public getRow(pRowIndex: number): Array<Division> {
         // Catch wrong index.
         if (pRowIndex > (this.mRowCount - 1)) {
             throw new Exception(`Pattern has only ${this.mRowCount} rows.`, this);
@@ -50,9 +50,9 @@ export class Pattern {
         return this.mRows[pRowIndex];
     }
 
-    public setRow(pRow: Array<PatternDevision>, pRowIndex: number = null): void {
+    public setRow(pRow: Array<Division>, pRowIndex: number = null): void {
         // Catch wrong channel index.
-        if (pRow.length !== (this.mChannelCount - 1)) {
+        if (pRow.length !== this.mChannelCount) {
             throw new Exception(`Pattern row needs ${this.mChannelCount} channels.`, this);
         }
 

@@ -2,7 +2,7 @@
  * Sample information.
  */
 export class Sample {
-    private mData: Int16Array;
+    private mData: Float32Array;
     private mFineTune: number;
     private mName: string;
     private mRepeatLength: number;
@@ -26,14 +26,14 @@ export class Sample {
     /**
      * Get sample byte data.
      */
-    public get data(): Int16Array {
+    public get data(): Float32Array {
         return this.mData;
     }
 
     /**
      * Set sample byte data.
      */
-    public set data(pData: Int16Array) {
+    public set data(pData: Float32Array) {
         this.mData = pData;
     }
 
@@ -86,7 +86,7 @@ export class Sample {
     public constructor() {
         // Default values.
         this.mName = '';
-        this.mData = new Int16Array(1);
+        this.mData = new Float32Array(1);
         this.mVolume = 0;
         this.mFineTune = 0;
         this.mRepeatLength = 1;

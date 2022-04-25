@@ -1,9 +1,9 @@
 import { GenericModule } from '../generic_module/generic-module';
-import { ModParser } from '../module_parser/ModParser';
+import { ModParser } from '../module_parser/mod-parser';
+import { Player } from '../player/player';
 
 export class TrackPlayerProcessor extends AudioWorkletProcessor {
-    private mModule: GenericModule;
-    private readonly mSampleRate: number;
+    private mMixer: Player;
 
     /**
      * Constructor.
@@ -13,10 +13,7 @@ export class TrackPlayerProcessor extends AudioWorkletProcessor {
         super();
 
         // Set module as unloaded.
-        this.mModule = null;
-
-        // Save globals.
-        this.mSampleRate = sampleRate;
+        this.mMixer = null;
 
         // Set port listener for receiving messages.
         this.port.addEventListener('message', (pEvent: MessageEvent) => {
@@ -45,11 +42,23 @@ export class TrackPlayerProcessor extends AudioWorkletProcessor {
      * @param pParameters - Processor parameter.
      */
     public process(pInputs: Array<Array<Float32Array>>, pOutputs: Array<Array<Float32Array>>, pParameters: Record<string, Float32Array>): boolean {
-        if (this.mModule !== null) {
-            const lOutput = pOutputs[0];
-            for (const lOutputChannel of lOutput) {
-                for (let lIndex = 0; lIndex < lOutputChannel.length; ++lIndex) {
-                    lOutputChannel[lIndex] = (Math.random() - 0.5);
+        if (this.mMixer !== null) {
+
+            // Get block length and mix this block.
+            const lAudioBlockLength = pOutputs[0][0].length;
+            const lModuleChannelList: Array<Float32Array> = this.mMixer.next(lAudioBlockLength);
+            if(lModuleChannelList === null){
+                // Exit and set disposeable if no output is generated.
+                return false;
+            }
+
+            // Processor has one output for each module channel. Each output has only one channel.  
+            for (let lChannelIndex: number = 0; lChannelIndex < lModuleChannelList.length; lChannelIndex++) {
+                // Copy channel data into output.
+                const lProcessChannel: Float32Array = pOutputs[lChannelIndex][0];
+                const lModuleChannel: Float32Array = lModuleChannelList[lChannelIndex];
+                for (let lSampleIndex: number = 0; lSampleIndex < lProcessChannel.length; lSampleIndex++) {
+                    lProcessChannel[lSampleIndex] = lModuleChannel[lSampleIndex];
                 }
             }
         }
@@ -65,13 +74,16 @@ export class TrackPlayerProcessor extends AudioWorkletProcessor {
         const lFile: Uint8Array = new Uint8Array(pFile);
 
         // Parse with correct data.
+        let lModule: GenericModule = null;
         switch (pType.toUpperCase()) {
             case 'MOD':
-                this.mModule = new ModParser(lFile).parse();
+                lModule = new ModParser(lFile).parse();
         }
 
-        console.log('SAMPLE-RATE', this.mSampleRate);
-        console.log('MODULE', this.mModule);
+        // Create mixer when module is loaded.
+        if (lModule !== null) {
+            this.mMixer = new Player(lModule, sampleRate);
+        }
     }
 
     /**

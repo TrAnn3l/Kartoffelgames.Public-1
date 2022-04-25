@@ -1,5 +1,4 @@
 import { PatternList } from './pattern/pattern-list';
-import { Sample } from './sample/sample';
 import { SampleList } from './sample/sample-list';
 
 export class GenericModule {
