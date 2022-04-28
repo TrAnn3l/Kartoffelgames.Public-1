@@ -43,7 +43,6 @@ export class TrackPlayerProcessor extends AudioWorkletProcessor {
      */
     public process(pInputs: Array<Array<Float32Array>>, pOutputs: Array<Array<Float32Array>>, pParameters: Record<string, Float32Array>): boolean {
         if (this.mMixer !== null) {
-
             // Get block length and mix this block.
             const lAudioBlockLength = pOutputs[0][0].length;
             const lModuleChannelList: Array<Float32Array> = this.mMixer.next(lAudioBlockLength);

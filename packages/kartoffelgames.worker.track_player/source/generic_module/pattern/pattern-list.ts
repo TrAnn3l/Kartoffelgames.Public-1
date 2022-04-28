@@ -29,6 +29,13 @@ export class PatternList {
     }
 
     /**
+     * Get pattern length.
+     */
+    public get patternLength(): number {
+        return this.mPattern[0]?.rowsCount ?? 0;
+    }
+
+    /**
      * Constructor.
      * Initialize lists.
      */
@@ -54,6 +61,6 @@ export class PatternList {
      * @param pIndex - Index of pattern.
      */
     public getPattern(pIndex: number): Pattern {
-        return this.mPattern[pIndex];
+        return this.mPattern[pIndex] ?? null;
     }
 }

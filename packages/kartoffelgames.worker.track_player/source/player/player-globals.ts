@@ -1,78 +1,40 @@
+import { GenericModule } from '../generic_module/generic-module';
+import { PlayerCursor } from './player-cursor';
+import { PlayerLengthCalculator } from './player-length-calculator';
+
 export class PlayerGlobals {
-    private mBeatsPerMinute: number;
-    private mCurrentDivisionIndex: number;
-    private readonly mSampleRate: number;
-    private mSpeedUp: number;
-    private mTicksPerDivision: number;
+    private readonly mCursor: PlayerCursor;
+    private readonly mLengthInformation: PlayerLengthCalculator;
+    private readonly mModule: GenericModule;
 
     /**
-     * Get beats per minute.
+     * Get cursor.
      */
-    public get beatsPerMinute(): number {
-        return this.mBeatsPerMinute;
+    public get cursor(): PlayerCursor {
+        return this.mCursor;
     }
 
     /**
-     * Get beats per minute.
+     * Get length information.
      */
-    public set beatsPerMinute(pBeatsPerMinute: number) {
-        this.mBeatsPerMinute = pBeatsPerMinute;
+    public get lengthInformation(): PlayerLengthCalculator {
+        return this.mLengthInformation;
     }
 
     /**
-     * Get current playing division index.
+     * Get module.
      */
-    public get currentDivision(): number {
-        return this.mCurrentDivisionIndex;
-    }
-
-    /**
-     * Get current playing division index.
-     */
-    public set currentDivision(pCurrentDivisionIndex: number) {
-        this.mCurrentDivisionIndex = pCurrentDivisionIndex;
-    }
-
-    /**
-     * Get global sample rape.
-     */
-    public get sampleRate(): number {
-        return this.mSampleRate;
-    }
-
-    /**
-     * Get ticks per division.
-     */
-    public get ticksPerDivision(): number {
-        return this.mTicksPerDivision;
-    }
-
-    /**
-     * Get ticks per division.
-     */
-    public set ticksPerDivision(pTicksPerDivision: number) {
-        this.mTicksPerDivision = pTicksPerDivision;
-    }
-
-    /**
-     * Get global speed up.
-     */
-    public get speedUp(): number {
-        return this.mSpeedUp;
-    }
-
-    /**
-     * Get global speed up.
-     */
-    public set speedUp(pSpeedUp: number) {
-        this.mSpeedUp = pSpeedUp;
+    public get module(): GenericModule {
+        return this.mModule;
     }
 
     /**
      * Constructor.
      * @param pSampleRate - Global sample rate.
      */
-    public constructor(pSampleRate: number) {
-        this.mSampleRate = pSampleRate;
+    public constructor(pModule: GenericModule, pSampleRate: number) {
+        this.mModule = pModule;
+        this.mLengthInformation = new PlayerLengthCalculator(pModule, pSampleRate);
+        this.mCursor = new PlayerCursor(this.mLengthInformation);
     }
 }

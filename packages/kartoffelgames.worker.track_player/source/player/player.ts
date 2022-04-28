@@ -1,12 +1,12 @@
 import { GenericModule } from '../generic_module/generic-module';
 import { PlayerChannel } from './player-channel';
+import { CursorChange } from './player-cursor';
 import { PlayerGlobals } from './player-globals';
 
 export class Player {
     private readonly mChannelList: Array<PlayerChannel>;
     private readonly mGlobals: PlayerGlobals;
     private readonly mModule: GenericModule;
-    private readonly mTickCounter: TickCounter;
 
     /**
      * Constructor.
@@ -18,18 +18,8 @@ export class Player {
         this.mModule = pModule;
         this.mChannelList = new Array<PlayerChannel>();
 
-        // Setup tick counter.
-        this.mTickCounter = {
-            sampleCounter: 0,
-            tickCounter: 0,
-            songFinished: false
-        };
-
         // Set globals.
-        this.mGlobals = new PlayerGlobals(pSampleRate);
-        this.mGlobals.beatsPerMinute = 125;
-        this.mGlobals.ticksPerDivision = 6;
-        this.mGlobals.speedUp = 1;
+        this.mGlobals = new PlayerGlobals(pModule, pSampleRate);
     }
 
     /**
@@ -38,7 +28,7 @@ export class Player {
      */
     public next(pAudioBlockLength: number): Array<Float32Array> | null {
         // Exit if song is finished.
-        if (this.mTickCounter.songFinished) {
+        if (this.mGlobals.cursor.songPosition >= this.mGlobals.lengthInformation.songPositions) {
             return null;
         }
 
@@ -49,7 +39,7 @@ export class Player {
         } else if (this.mChannelList.length < this.mModule.channelCount) {
             // Create new channel for each missing.
             for (let lChannelIndex: number = this.mChannelList.length; lChannelIndex < this.mModule.channelCount; lChannelIndex++) {
-                this.mChannelList.push(new PlayerChannel(this.mModule, this.mGlobals, lChannelIndex));
+                this.mChannelList.push(new PlayerChannel(this.mGlobals, lChannelIndex));
             }
         }
 
@@ -63,7 +53,6 @@ export class Player {
         for (let lAudioSampleIndex: number = 0; lAudioSampleIndex < pAudioBlockLength; lAudioSampleIndex++) {
             // Tick next. Exit if no other pattern can be played.
             if (!this.tick()) {
-                this.mTickCounter.songFinished = true;
                 return lOutputBufferList;
             }
 
@@ -84,46 +73,38 @@ export class Player {
      * returns 
      */
     private tick(): boolean {
-        // TODO: Set current tick, division and songposition  as global, so that new channels get these informations.
+        // Move cursor one sample
+        const lChangeOn: CursorChange = this.mGlobals.cursor.next();
 
+        // TODO: Check for jump action.
 
-        // divisions/minute = 24 * BeatsPerMinute / TicksPerDivision
-        // SamplesPerMinute / BeatsPerMinute
-        const lSamplesPerTick = ((this.mGlobals.sampleRate * 60) / (this.mGlobals.beatsPerMinute * this.mGlobals.speedUp)) / 24;
+        // Check song end.
+        if (this.mGlobals.cursor.songPosition >= this.mGlobals.lengthInformation.songPositions) {
+            return false;
+        }
 
-        this.mTickCounter.sampleCounter++;
+        // Call next division for each channel on new division.
+        if (lChangeOn.songPosition) {
+            for (const lChannel of this.mChannelList) {
+                lChannel.nextPattern();
+            }
+        }
 
-        // Check for next tick.
-        let lPlaying: boolean = true;
-        if (this.mTickCounter.sampleCounter >= lSamplesPerTick) {
-            // Reset sample count and increment tick.
-            this.mTickCounter.sampleCounter = 0;
-            this.mTickCounter.tickCounter++;
+        // Call next division for each channel on new division.
+        if (lChangeOn.division) {
+            for (const lChannel of this.mChannelList) {
+                lChannel.nextDivision();
+            }
+        }
 
+        // Call next tick for each channel on new tick
+        if (lChangeOn.tick) {
             // Call next tick for each channel.
             for (const lChannel of this.mChannelList) {
                 lChannel.nextTick();
             }
-
-            // Check for next division.
-            if (this.mTickCounter.tickCounter >= this.mGlobals.ticksPerDivision) {
-                this.mTickCounter.tickCounter = 0;
-
-                // Call next division for each channel.
-                for (const lChannel of this.mChannelList) {
-                    if (!lChannel.nextDivision()) {
-                        lPlaying = false;
-                    }
-                }
-            }
         }
 
-        return lPlaying;
+        return true;
     }
-}
-
-interface TickCounter {
-    sampleCounter: number;
-    tickCounter: number;
-    songFinished: boolean;
 }

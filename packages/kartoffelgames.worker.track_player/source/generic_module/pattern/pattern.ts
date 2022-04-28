@@ -3,7 +3,6 @@ import { Division } from './division';
 
 export class Pattern {
     private readonly mChannelCount: number;
-    private readonly mEmptyRow: Array<Division>;
     private readonly mRowCount: number;
     private readonly mRows: Array<Array<Division>>;
 
@@ -11,7 +10,7 @@ export class Pattern {
      * Get row count.
      */
     public get rowsCount(): number {
-        return this.mRows.length;
+        return this.mRowCount;
     }
 
     /**
@@ -23,12 +22,6 @@ export class Pattern {
         this.mChannelCount = pChannelCount;
         this.mRowCount = pRowCount;
         this.mRows = new Array<Array<Division>>();
-
-        // Create default empty row.
-        this.mEmptyRow = new Array<Division>();
-        for (let lIndex: number = 0; lIndex < pChannelCount; lIndex++) {
-            this.mEmptyRow.push(new Division());
-        }
     }
 
     /**
@@ -36,18 +29,8 @@ export class Pattern {
      * @param pRowIndex - Row index.
      */
     public getRow(pRowIndex: number): Array<Division> {
-        // Catch wrong index.
-        if (pRowIndex > (this.mRowCount - 1)) {
-            throw new Exception(`Pattern has only ${this.mRowCount} rows.`, this);
-        }
-
-        // Return default row.
-        if (pRowIndex > (this.mRows.length - 1)) {
-            return this.mEmptyRow;
-        }
-
         // Return real row.
-        return this.mRows[pRowIndex];
+        return this.mRows[pRowIndex] ?? null;
     }
 
     public setRow(pRow: Array<Division>, pRowIndex: number = null): void {

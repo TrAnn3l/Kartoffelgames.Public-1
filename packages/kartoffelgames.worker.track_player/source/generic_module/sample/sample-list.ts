@@ -2,29 +2,19 @@ import { Exception } from '@kartoffelgames/core.data';
 import { Sample } from './sample';
 
 export class SampleList {
-    private mSampleCount: number;
     private readonly mSampleList: Array<Sample>;
 
     /**
      * Get sample count.
      */
     public get sampleCount(): number {
-        return this.mSampleCount;
-    }
-
-    /**
-     * Get sample count.
-     */
-    public set sampleCount(pSampleCount: number) {
-        this.mSampleCount = pSampleCount;
+        return this.mSampleList.length;
     }
 
     /**
      * Constructor.
-     * @param pSampleCount - Sample count.
      */
     public constructor() {
-        this.mSampleCount = 0;
         this.mSampleList = new Array<Sample>();
     }
 
@@ -33,20 +23,8 @@ export class SampleList {
      * @param pIndex - Index of sample.
      */
     public getSample(pIndex: number): Sample | null {
-        // Restrict sample range.
-        if (pIndex > this.mSampleCount - 1) {
-            return null;
-        }
-
         // Read sample.
-        const lSample: Sample = this.mSampleList[pIndex];
-
-        // Return empty sample when sample is not set.
-        if (!(lSample instanceof Sample)) {
-            return new Sample();
-        }
-
-        return lSample;
+        return this.mSampleList[pIndex] ?? null;
     }
 
     /**
@@ -54,13 +32,13 @@ export class SampleList {
      * @param pIndex - Index of sample.
      */
     public removeSample(pIndex: number): void {
-        // Restrict sample range.
-        if (pIndex > this.mSampleCount - 1) {
-            return;
+        // Remove last element if index is last element.
+        if (pIndex === (this.mSampleList.length - 1)) {
+            this.mSampleList.pop();
+        } else {
+            // Replace with empty sample if any gap would be produced.
+            this.mSampleList[pIndex] = new Sample();
         }
-
-        // Reset sample.
-        this.mSampleList[pIndex] = new Sample();
     }
 
     /**
@@ -68,13 +46,18 @@ export class SampleList {
      * @param pIndex - Index of sample.
      * @param pSample - New sample.
      */
-    public setSample(pIndex: number, pSample: Sample): void {
-        // Restrict sample range.
-        if (pIndex > this.mSampleCount - 1) {
-            throw new Exception(`Sample is out of range. Maximum ${this.mSampleCount + 1} samples are allowed.`, this);
-        }
+    public setSample(pSample: Sample, pIndex?: number): void {
+        // Add new when no index is specified.
+        if (pIndex === null || pIndex === this.mSampleList.length) {
+            this.mSampleList.push(pSample);
+        } else {
+            // Check if index would produce gaps.
+            if (pIndex > this.mSampleList.length) {
+                throw new Exception(`Sample index would produce gaps with missing samples.`, this);
+            }
 
-        // Set sample to index.
-        this.mSampleList[pIndex] = pSample;
+            // Set sample to index.
+            this.mSampleList[pIndex] = pSample;
+        }
     }
 }

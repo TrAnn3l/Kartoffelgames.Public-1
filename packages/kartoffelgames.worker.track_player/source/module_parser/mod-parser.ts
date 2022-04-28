@@ -37,7 +37,7 @@ export class ModParser extends BaseParser {
 
     /**
      * Parse module name.
-    * @param pModuleExtension - Module extension name.
+     * @param pModuleExtension - Module extension name.
      */
     private getChannelCount(pModuleExtension: ModuleExtension): number {
         switch (pModuleExtension) {
@@ -187,7 +187,6 @@ export class ModParser extends BaseParser {
 
         // Check for 31 or 15 Samples
         const lSampleCount: number = (pModuleExtension !== '') ? 31 : 15;
-        pModule.samples.sampleCount = lSampleCount;
 
         // Sample header offsets.
         const lSampleNameOffset: number = 0; // String
@@ -251,12 +250,11 @@ export class ModParser extends BaseParser {
                 lSample.data = new Float32Array(0);
             }
 
-
             // Count previous sample body data length.
             lPreviousSampleBodyDataLength += lSampleLength;
 
             // Append to module samples.
-            pModule.samples.setSample(lSampleIndex, lSample);
+            pModule.samples.setSample(lSample, lSampleIndex);
         }
     }
 }
