@@ -132,7 +132,7 @@ const gGetDefaultTypescriptLoader = (pIncludeCoverage) => {
         }
     });
     lTsLoader.push({
-        loader: 'ts-loader',
+        loader: 'ts-loader'
     });
 
     return lTsLoader;
@@ -217,7 +217,12 @@ module.exports = (pEnviroment) => {
         module: {
             rules: [{
                     test: /\.ts?$/,
-                    use: gGetDefaultTypescriptLoader(!!pEnviroment.coverage)
+                    use: gGetDefaultTypescriptLoader(!!pEnviroment.coverage),
+                    exclude: /node_modules|\.d\.ts$/
+                },
+                {
+                    test: /\.d\.ts$/,
+                    loader: 'ignore-loader'
                 },
                 ...gGetDefaultFileLoader()
             ]
