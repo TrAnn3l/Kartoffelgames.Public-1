@@ -2,7 +2,7 @@
 while read oldrev newrev refname
 do
     branch=$(git rev-parse --symbolic --abbrev-ref $refname)
-    if [ "master" == "$branch" ] || [ "development" == "$branch" ] then
+    if [ "master" == "$branch" ] || [ "development" == "$branch" ]; then
 
         echo -e "********** Stash files"
         git add -A
@@ -19,19 +19,19 @@ do
         RED='\033[0;31m' # Red
         NC='\033[0m' # No Color
 
-        if [[ $statusTest -eq 1 ]] || [[ $statusRemote -eq 1 ]] then
+        if [[ $statusTest -eq 1 ]] || [[ $statusRemote -eq 1 ]]; then
         echo -e "********** Error log"
         fi
 
-        if [[ $statusTest -eq 1 ]] then
+        if [[ $statusTest -eq 1 ]]; then
             echo -e "${RED}Test failed${NC}"
         fi
 
-        if [[ $statusRemote -eq 1 ]] then
+        if [[ $statusRemote -eq 1 ]]; then
             echo -e "${RED}Dependency validation failed${NC}"
         fi
 
-        if [[ $statusTest -eq 1 ]] || [[ $statusRemote -eq 1 ]] then
+        if [[ $statusTest -eq 1 ]] || [[ $statusRemote -eq 1 ]]; then
             exit 1
         fi
 
