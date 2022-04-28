@@ -22,7 +22,7 @@ import { LayerValues } from './values/layer-values';
 export class ComponentManager {
     public static readonly METADATA_SELECTOR: string = 'pwb:selector';
 
-    private static readonly mComponentCache: Dictionary<UserClass, [ComponentModules, XmlDocument]> = new Dictionary<UserClass, [ComponentModules, XmlDocument]>();
+    private static readonly mComponentCache: Dictionary<UserClass, XmlDocument> = new Dictionary<UserClass, XmlDocument>();
     private static readonly mXmlParser: TemplateParser = new TemplateParser();
 
     private readonly mElementHandler: ElementHandler;
@@ -69,17 +69,13 @@ export class ComponentManager {
      */
     public constructor(pUserClass: UserClass, pTemplateString: string, pExpressionModule: IPwbExpressionModuleClass, pHtmlComponent: HTMLElement, pUpdateScope: UpdateScope) {
         // Load cached or create new module handler and template.
-        const lCache: [ComponentModules, XmlDocument] = ComponentManager.mComponentCache.get(pUserClass);
-        let lModules: ComponentModules;
-        let lTemplate: XmlDocument;
-        if (!lCache) {
-            const lTemplateString = pTemplateString ?? '';
-            lTemplate = ComponentManager.mXmlParser.parse(lTemplateString);
-            lModules = new ComponentModules(this, pExpressionModule);
-            ComponentManager.mComponentCache.set(pUserClass, [lModules, lTemplate]);
-        } else {
-            [lModules, lTemplate] = lCache;
+        let lTemplate: XmlDocument = ComponentManager.mComponentCache.get(pUserClass);
+        if (!lTemplate) {
+            lTemplate = ComponentManager.mXmlParser.parse(pTemplateString ?? '');
+            ComponentManager.mComponentCache.set(pUserClass, lTemplate);
         }
+
+        const lModules: ComponentModules = new ComponentModules(this, pExpressionModule);
 
         // Create update handler.
         const lUpdateScope: UpdateScope = pUpdateScope ?? UpdateScope.Global;
@@ -106,11 +102,15 @@ export class ComponentManager {
 
         // Create injection extensions.
         this.mExtensions = new ComponentExtensions();
-        lLocalInjections.push(...this.mExtensions.executeInjectorExtensions({
-            componentManager: this,
-            componentElement: pHtmlComponent,
-            targetClass: pUserClass
-        }));
+
+        // Create local injections with extensions.
+        this.mUpdateHandler.executeInZone(() => {
+            lLocalInjections.push(...this.mExtensions.executeInjectorExtensions({
+                componentManager: this,
+                componentElement: pHtmlComponent,
+                targetClass: pUserClass
+            }));
+        });
 
         // Create user object handler.
         this.mUserObjectHandler = new UserObjectHandler(pUserClass, this.updateHandler, lLocalInjections);
@@ -124,11 +124,13 @@ export class ComponentManager {
         ComponentConnection.connectComponentManagerWith(this.userObjectHandler.untrackedUserObject, this);
 
         // Create patcher extensions.
-        this.mExtensions.executePatcherExtensions({
-            componentManager: this,
-            componentElement: pHtmlComponent,
-            targetClass: this.mUserObjectHandler.userClass,
-            targetObject: this.mUserObjectHandler.userObject
+        this.mUpdateHandler.executeInZone(() => {
+            this.mExtensions.executePatcherExtensions({
+                componentManager: this,
+                componentElement: pHtmlComponent,
+                targetClass: this.mUserObjectHandler.userClass,
+                targetObject: this.mUserObjectHandler.userObject
+            });
         });
 
         // Create component builder.

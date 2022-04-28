@@ -8,7 +8,6 @@ import { ComponentManager } from './component/component-manager';
 import { ElementCreator } from './component/content/element-creator';
 
 export class PwbApp {
-    public static readonly PUBLIC_APP_KEY: string = '_PWB_APP';
     private static readonly mChangeDetectionToApp: WeakMap<ChangeDetection, PwbApp> = new WeakMap<ChangeDetection, PwbApp>();
 
     /**

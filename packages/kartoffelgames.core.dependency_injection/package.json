@@ -1,7 +1,7 @@
 {
     "name": "@kartoffelgames/core.dependency-injection",
     "projectName": "KartoffelGames.Core.Dependency_Injection",
-    "version": "0.0.13",
+    "version": "0.0.18",
     "description": "KartoffelGames.Core.Dependency_Injection",
     "author": {
         "name": "KartoffelGames"
@@ -22,7 +22,7 @@
         "chai": "^4.3.4",
         "copyfiles": "^2.4.1",
         "eslint": "^7.32.0",
-        "istanbul-instrumenter-loader": "^3.0.1",
+        "istanbul-instrumenter-loader": "^2.0.0",
         "jsdom": "^19.0.0",
         "jsdom-global": "^3.0.2",
         "lite-server": "^2.6.1",
@@ -38,7 +38,7 @@
         "webpack-cli": "^4.8.0"
     },
     "dependencies": {
-        "@kartoffelgames/core.data": "^0.0.16"
+        "@kartoffelgames/core.data": "^0.0.21"
     },
     "scripts": {
         "script:build": "npm run pre:build && webpack-cli --config ../../enviroment/configuration/webpack.config.js",
