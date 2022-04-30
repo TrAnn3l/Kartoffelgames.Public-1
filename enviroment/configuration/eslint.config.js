@@ -213,8 +213,7 @@ module.exports = {
             {
                 "selector": "classProperty",
                 "format": ["UPPER_CASE"],
-                "modifiers": ["static", "readonly"],
-                "types": ["boolean", "string", "number"]
+                "modifiers": ["static", "readonly"]
             },
 
             // Class accessors and methods
