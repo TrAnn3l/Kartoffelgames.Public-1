@@ -110,6 +110,11 @@ module.exports = {
                         "protected-static-field",
                         "private-static-field",
 
+                        // Static accessors.
+                        ["public-static-get", "public-static-set"],
+                        ["private-static-get", "private-static-set"],
+                        ["protected-static-get", "protected-static-set"],
+
                         // Static methods
                         "public-static-method",
                         "protected-static-method",
@@ -125,6 +130,17 @@ module.exports = {
                         "public-abstract-field",
                         "protected-abstract-field",
                         "private-abstract-field",
+
+                        // Accessors.
+                        ["public-decorated-get", "public-decorated-set"],
+                        ["protected-decorated-get", "protected-decorated-set"],
+                        ["private-decorated-get", "private-decorated-set"],
+                        ["public-instance-get", "public-instance-set"],
+                        ["protected-instance-get", "protected-instance-set"],
+                        ["private-instance-get", "private-instance-set"],
+                        ["public-abstract-get", "public-abstract-set"],
+                        ["protected-abstract-get", "protected-abstract-set"],
+                        ["private-abstract-get", "private-abstract-set"],
 
                         // Constructors
                         "public-constructor",

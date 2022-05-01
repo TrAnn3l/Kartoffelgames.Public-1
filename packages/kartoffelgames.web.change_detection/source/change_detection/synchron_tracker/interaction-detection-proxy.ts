@@ -54,13 +54,6 @@ export class InteractionDetectionProxy<T extends object> {
     private readonly mProxyObject: T;
 
     /**
-     * Get proxy object for target.
-     */
-    public get proxy(): T {
-        return this.mProxyObject;
-    }
-
-    /**
      * Get change callback.
      */
     public get onChange(): ChangeCallback {
@@ -72,6 +65,13 @@ export class InteractionDetectionProxy<T extends object> {
      */
     public set onChange(pChangeCallback: ChangeCallback) {
         this.mChangeCallback = pChangeCallback;
+    }
+
+    /**
+     * Get proxy object for target.
+     */
+    public get proxy(): T {
+        return this.mProxyObject;
     }
 
     /**

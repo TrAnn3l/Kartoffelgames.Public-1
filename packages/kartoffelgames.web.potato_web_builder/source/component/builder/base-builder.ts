@@ -42,11 +42,10 @@ export abstract class BaseBuilder {
     }
 
     /**
-     * Shadow parent of all template elements.
-     * Not actuall parent for 
+     * Get component content of builder.
      */
-    protected get shadowParent(): BaseXmlNode {
-        return this.mShadowParent;
+    protected get contentManager(): ContentManager {
+        return this.mContentManager;
     }
 
     /**
@@ -63,10 +62,11 @@ export abstract class BaseBuilder {
     }
 
     /**
-     * Get component content of builder.
+     * Shadow parent of all template elements.
+     * Not actuall parent for 
      */
-    protected get contentManager(): ContentManager {
-        return this.mContentManager;
+    protected get shadowParent(): BaseXmlNode {
+        return this.mShadowParent;
     }
 
     /**

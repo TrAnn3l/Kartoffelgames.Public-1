@@ -9,17 +9,17 @@ export class XmlDocument extends BaseXmlNode {
     private readonly mDefaultNamespace: string;
 
     /**
-     * Get nodes namespace.
-     */
-    public get defaultNamespace(): string {
-        return this.mDefaultNamespace;
-    }
-
-    /**
      * Get all document xml nodes.
      */
     public get body(): Array<BaseXmlNode> {
         return this.mBodyElementList.clone();
+    }
+
+    /**
+     * Get nodes namespace.
+     */
+    public get defaultNamespace(): string {
+        return this.mDefaultNamespace;
     }
 
     /**
