@@ -7,7 +7,7 @@ import { InjectionConstructor } from '../../source/type';
  * Decorator.
  * @param pArgs - I can be anything you want.
  */
-const gPlaceholderDecorator = (...pArgs: Array<any>): any => {
+const gPlaceholderDecorator = (..._pArgs: Array<any>): any => {
     // Nothing.
 };
 
@@ -30,11 +30,11 @@ describe('ReflectInitializer', () => {
             // Setup.
             class TestA {
                 @gPlaceholderDecorator
-                public property: string;
+                public property: string = '';
             }
 
             // Process. Get type information.
-            const lMemberType: InjectionConstructor = Metadata.get(TestA).getProperty('property').type;
+            const lMemberType: InjectionConstructor | null = Metadata.get(TestA).getProperty('property').type;
 
             // Process.
             expect(lMemberType).to.equal(String);
@@ -48,7 +48,7 @@ describe('ReflectInitializer', () => {
             }
 
             // Process. Get type information.
-            const lParameterTypeList: Array<InjectionConstructor> = Metadata.get(TestA).getProperty('function').parameterTypeList;
+            const lParameterTypeList: Array<InjectionConstructor> | null = Metadata.get(TestA).getProperty('function').parameterTypes;
 
             // Process.
             expect(lParameterTypeList).to.have.ordered.members([Number, String]);
@@ -62,7 +62,7 @@ describe('ReflectInitializer', () => {
             }
 
             // Process. Get type information.
-            const lResultType: InjectionConstructor = Metadata.get(TestA).getProperty('function').returnType;
+            const lResultType: InjectionConstructor | null = Metadata.get(TestA).getProperty('function').returnType;
 
             // Process.
             expect(lResultType).to.equal(String);
@@ -72,11 +72,11 @@ describe('ReflectInitializer', () => {
             // Setup.
             @gPlaceholderDecorator
             class TestA {
-                public constructor(_pFirst: string, pSecond: number) { /* Nothing */ }
+                public constructor(_pFirst: string, _pSecond: number) { /* Nothing */ }
             }
 
             // Process. Get type information.
-            const lConstructorParameterTypeList: Array<InjectionConstructor> = Metadata.get(TestA).parameterTypeList;
+            const lConstructorParameterTypeList: Array<InjectionConstructor> | null = Metadata.get(TestA).parameterTypeList;
 
             // Process.
             expect(lConstructorParameterTypeList).to.have.ordered.members([String, Number]);
@@ -87,11 +87,11 @@ describe('ReflectInitializer', () => {
             class TestA {
                 @gPlaceholderDecorator
                 public set value(_pNumber: number) { /* Nothing */ }
-                public get value(): number { return null; }
+                public get value(): number { return 0; }
             }
 
             // Process. Get type information.
-            const lAccessorReturnType: InjectionConstructor = Metadata.get(TestA).getProperty('value').type;
+            const lAccessorReturnType: InjectionConstructor | null = Metadata.get(TestA).getProperty('value').type;
 
             // Process.
             expect(lAccessorReturnType).to.equal(Number);
@@ -102,11 +102,11 @@ describe('ReflectInitializer', () => {
             class TestA {
                 @gPlaceholderDecorator
                 public set value(_pNumber: number) { /* Nothing */ }
-                public get value(): number { return null; }
+                public get value(): number { return 0; }
             }
 
             // Process. Get type information.
-            const lAccessorParameterTypeList: Array<InjectionConstructor> = Metadata.get(TestA).getProperty('value').parameterTypeList;
+            const lAccessorParameterTypeList: Array<InjectionConstructor> | null = Metadata.get(TestA).getProperty('value').parameterTypes;
 
             // Process.
             expect(lAccessorParameterTypeList).to.have.ordered.members([Number]);
@@ -172,7 +172,7 @@ describe('ReflectInitializer', () => {
             const lPrototypeKey: unique symbol = Symbol('prototypeKey');
 
             // Setup.   
-            let lResultParameterName: symbol;
+            let lResultParameterName: symbol | null = null;
             const lDecorator = (_pPrototype: object, pPropertyKey: symbol) => {
                 lResultParameterName = pPropertyKey;
             };
@@ -191,7 +191,7 @@ describe('ReflectInitializer', () => {
         it('-- Decorate Function Keep Original', () => {
             // Setup.   
             const lNewValue: number = 12;
-            const lDecorator = (_pPrototype: object, pPropertyKey: string, pDescriptor: PropertyDescriptor) => {
+            const lDecorator = (_pPrototype: object, _pPropertyKey: string, pDescriptor: PropertyDescriptor) => {
                 pDescriptor.value = lNewValue;
             };
 
@@ -208,8 +208,8 @@ describe('ReflectInitializer', () => {
         it('-- Decorate Function Replace Original', () => {
             // Setup.   
             const lNewValue: number = 12;
-            const lDecorator = (pPrototype: object, pPropertyKey: string, pDescriptor: PropertyDescriptor) => {
-                const lDescriptor: PropertyDescriptor = Object.getOwnPropertyDescriptor(pPrototype, pPropertyKey);
+            const lDecorator = (pPrototype: object, pPropertyKey: string, _pDescriptor: TypedPropertyDescriptor<any>) => {
+                const lDescriptor: TypedPropertyDescriptor<any> = <TypedPropertyDescriptor<any>>Object.getOwnPropertyDescriptor(pPrototype, pPropertyKey);
                 lDescriptor.value = () => {
                     return lNewValue;
                 };
@@ -220,7 +220,7 @@ describe('ReflectInitializer', () => {
             // Process.
             class TestA {
                 @lDecorator
-                public function(): number { return null; }
+                public function(): number { return 0; }
             }
             const lCreatedClass = new TestA();
 
@@ -239,7 +239,7 @@ describe('ReflectInitializer', () => {
                 // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 class TestA {
                     @lDecorator
-                    public function(): number { return null; }
+                    public function(): number { return 0; }
                 }
             };
 
@@ -250,7 +250,7 @@ describe('ReflectInitializer', () => {
         it('-- Decorate Accessor Keep Original', () => {
             // Setup.   
             const lNewValue: number = 12;
-            const lDecorator = (_pPrototype: object, pPropertyKey: string, pDescriptor: PropertyDescriptor) => {
+            const lDecorator = (_pPrototype: object, _pPropertyKey: string, pDescriptor: PropertyDescriptor) => {
                 pDescriptor.get = () => {
                     return lNewValue;
                 };
@@ -260,7 +260,7 @@ describe('ReflectInitializer', () => {
             class TestA {
                 @lDecorator
                 public set value(_pNumber: number) { /* Nothing */ }
-                public get value(): number { return null; }
+                public get value(): number { return 0; }
             }
             const lCreatedClass = new TestA();
 
@@ -271,8 +271,8 @@ describe('ReflectInitializer', () => {
         it('-- Decorate Accessor Replace Original', () => {
             // Setup.   
             const lNewValue: number = 12;
-            const lDecorator = (pPrototype: object, pPropertyKey: string, pDescriptor: PropertyDescriptor) => {
-                const lDescriptor: PropertyDescriptor = Object.getOwnPropertyDescriptor(pPrototype, pPropertyKey);
+            const lDecorator = (pPrototype: object, pPropertyKey: string, _pDescriptor: TypedPropertyDescriptor<any>) => {
+                const lDescriptor: TypedPropertyDescriptor<any> = <TypedPropertyDescriptor<any>>Object.getOwnPropertyDescriptor(pPrototype, pPropertyKey);
                 lDescriptor.get = () => {
                     return lNewValue;
                 };
@@ -284,7 +284,7 @@ describe('ReflectInitializer', () => {
             class TestA {
                 @lDecorator
                 public set value(_pNumber: number) { /* Nothing */ }
-                public get value(): number { return null; }
+                public get value(): number { return 0; }
             }
             const lCreatedClass = new TestA();
 
@@ -304,7 +304,7 @@ describe('ReflectInitializer', () => {
                 class TestA {
                     @lDecorator
                     public set value(_pNumber: number) { /* Nothing */ }
-                    public get value(): number { return null; }
+                    public get value(): number { return 0; }
                 }
             };
 
@@ -314,7 +314,7 @@ describe('ReflectInitializer', () => {
 
         it('-- Decorate Parameter', () => {
             // Process.   
-            let lParameterIndex: number;
+            let lParameterIndex: number | null = null;
             const lDecorator = (_pPrototype: object, _pPropertyKey: string, pParameterIndex: number): any => {
                 lParameterIndex = pParameterIndex;
             };
@@ -322,7 +322,7 @@ describe('ReflectInitializer', () => {
             // Process. Create class and decorate parameter.
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             class TestA {
-                public function(_pFirst: number, @lDecorator _pSecond: number): number { return null; }
+                public function(_pFirst: number, @lDecorator _pSecond: number): number { return 0; }
             }
 
             // Evaluate.

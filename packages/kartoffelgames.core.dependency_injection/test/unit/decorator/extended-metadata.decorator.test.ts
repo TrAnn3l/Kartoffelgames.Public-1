@@ -47,7 +47,7 @@ describe('ExtendedMetadata', () => {
             // Process.         
             class TestA {
                 @ExtendedMetadata(lMetadataKey, lMetadataValue)
-                public function(): string { return null; }
+                public function(): string { return ''; }
             }
 
             // Process. Read metadata.
@@ -66,7 +66,7 @@ describe('ExtendedMetadata', () => {
             // Process.         
             class TestA {
                 @ExtendedMetadata(lMetadataKey, lMetadataValue)
-                public get [lPropertyName](): string { return null; }
+                public get [lPropertyName](): string { return ''; }
             }
 
             // Process. Read metadata.

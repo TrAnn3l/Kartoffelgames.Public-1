@@ -27,13 +27,13 @@ export class ReflectInitializer {
      * @param pPropertyKey - Key of property on member decorator.
      * @param pDescriptor - Descriptor of member on member decorator.
      */
-    private static decorate(pDecoratorList: Array<Decorator>, pTarget: any, pPropertyKey?: string | symbol, pDescriptor?: PropertyDescriptor): any {
+    private static decorate(pDecoratorList: Array<Decorator>, pTarget: any, pPropertyKey?: string | symbol, pDescriptor?: TypedPropertyDescriptor<any>): any {
         let lDecoratorResult: any;
         if (pPropertyKey && pDescriptor) {
             // Decorate accessor, function. Returns new descriptor.
             lDecoratorResult = ReflectInitializer.decorateMethod(<Array<MethodDecorator>>pDecoratorList, pTarget, pPropertyKey, pDescriptor);
         } else if (pPropertyKey && !pDescriptor) {
-            // Decorate property pr parameter. Has no return value.
+            // Decorate property or parameter. Has no return value.
             ReflectInitializer.decorateProperty(<Array<PropertyDecorator | ParameterDecorator>>pDecoratorList, pTarget, pPropertyKey);
             lDecoratorResult = null; // Is ignored.
         } else { // Only target set.
@@ -54,7 +54,7 @@ export class ReflectInitializer {
 
         // Run all metadata decorator first.
         for (const lDecorator of pDecoratorList) {
-            if (lDecorator.isMetadata) {
+            if ((<Decorator>lDecorator).isMetadata) {
                 // Metadata decorator doesn't return values.
                 lDecorator(pConstructor);
             }
@@ -63,7 +63,7 @@ export class ReflectInitializer {
         // For each decorator included metadata decorator.
         for (const lDecorator of pDecoratorList) {
             // If the decorator was a metadata decorator use the original class as target.
-            if (!lDecorator.isMetadata) {
+            if (!(<Decorator>lDecorator).isMetadata) {
                 // Execute decorator.
                 const lNewConstructor = lDecorator(pConstructor);
 
@@ -90,8 +90,8 @@ export class ReflectInitializer {
      * @param pPropertyKey - Key of property decorator. 
      * @param pDescriptor - Descriptor of property
      */
-    private static decorateMethod(pDecoratorList: Array<MethodDecorator>, pTarget: object, pPropertyKey: string | symbol, pDescriptor: PropertyDescriptor | undefined): PropertyDescriptor | undefined {
-        let lCurrentDescriptor: PropertyDescriptor = pDescriptor;
+    private static decorateMethod(pDecoratorList: Array<MethodDecorator>, pTarget: object, pPropertyKey: string | symbol, pDescriptor: TypedPropertyDescriptor<any> | undefined): PropertyDescriptor | undefined {
+        let lCurrentDescriptor: TypedPropertyDescriptor<any> = <TypedPropertyDescriptor<any>>pDescriptor;
 
         // For each decorator.
         for (const lDecorator of pDecoratorList) {
@@ -101,7 +101,7 @@ export class ReflectInitializer {
             // Check if decorator does return different PropertyDescriptor.
             if (lDecoratedMember) {
                 if (typeof lDecoratedMember === 'object') {
-                    lCurrentDescriptor = <PropertyDescriptor>lDecoratedMember;
+                    lCurrentDescriptor = lDecoratedMember;
                 } else {
                     throw new Exception('Member decorator does not return supported value.', lDecorator);
                 }
@@ -121,7 +121,7 @@ export class ReflectInitializer {
         // For each decorator.
         for (const lDecorator of pDecoratorList) {
             // Execute decorator. Doesn't return any value.
-            lDecorator(pTarget, pPropertyKey);
+            lDecorator(pTarget, pPropertyKey, <any>undefined); // Index number gets overriden for parameter decorator.
         }
     }
 
@@ -175,11 +175,11 @@ export class ReflectInitializer {
 
                 // If not parameter index.
                 /* istanbul ignore else */
-                if (typeof pDescriptorOrIndex !== 'number') { 
+                if (typeof pDescriptorOrIndex !== 'number') {
                     // Property decorator.
                     /* istanbul ignore else */
                     if (pMetadataKey === 'design:paramtypes') {
-                        lPropertyMetadata.parameterTypeList = <Array<InjectionConstructor>>pMetadataValue;
+                        lPropertyMetadata.parameterTypes = <Array<InjectionConstructor>>pMetadataValue;
                     } else if (pMetadataKey === 'design:type') {
                         lPropertyMetadata.type = <InjectionConstructor>pMetadataValue;
                     } else if (pMetadataKey === 'design:returntype') {
@@ -208,36 +208,5 @@ export class ReflectInitializer {
 /**
  * Allround decorator with custom isMetadata property.
  */
-interface Decorator {
-    // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-    (pConstructor: InjectionConstructor | object, pPropertyKey?: string | symbol, pDescriptorOrIndex?: TypedPropertyDescriptor<any> | number): void | PropertyDescriptor | InjectionConstructor;
-    isMetadata?: boolean;
-}
+type Decorator = (ClassDecorator | PropertyDecorator | MethodDecorator | ParameterDecorator) & { isMetadata: boolean; };
 
-/**
- * Property decorator.
- */
-interface PropertyDecorator extends Decorator {
-    (pConstructor: InjectionConstructor | object, pPropertyKey: string | symbol): void;
-}
-
-/**
- * Class decorator.
- */
-interface ClassDecorator extends Decorator {
-    (pConstructor: InjectionConstructor | object): InjectionConstructor;
-}
-
-/**
- * Method decorator for method, functions and accessors.
- */
-interface MethodDecorator extends Decorator {
-    (pConstructor: InjectionConstructor | object, pPropertyKey: string | symbol, pDescriptor: TypedPropertyDescriptor<any>): PropertyDescriptor;
-}
-
-/**
- * Parameter decorator.
- */
-interface ParameterDecorator extends Decorator {
-    (pConstructor: InjectionConstructor | object, pPropertyKey: string | symbol): PropertyDescriptor;
-}

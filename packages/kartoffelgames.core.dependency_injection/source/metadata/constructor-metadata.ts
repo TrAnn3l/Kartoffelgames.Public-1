@@ -7,20 +7,20 @@ import { PropertyMetadata } from './property-metadata';
  */
 export class ConstructorMetadata {
     private readonly mCustomMetadata: Dictionary<string, any>;
-    private mParameterTypes: Array<InjectionConstructor>;
+    private mParameterTypes: Array<InjectionConstructor> | null;
     private readonly mPropertyMetadata: Dictionary<string | symbol, PropertyMetadata>;
 
     /**
      * Get parameter type information.
      */
-    public get parameterTypeList(): Array<InjectionConstructor> {
-        return this.mParameterTypes ?? null;
+    public get parameterTypeList(): Array<InjectionConstructor> | null {
+        return this.mParameterTypes;
     }
 
     /**
      * Set parameter type information.
      */
-    public set parameterTypeList(pParameterTypes: Array<InjectionConstructor>) {
+    public set parameterTypeList(pParameterTypes: Array<InjectionConstructor> | null) {
         // Copy array.
         this.mParameterTypes = pParameterTypes;
     }
@@ -32,6 +32,7 @@ export class ConstructorMetadata {
     public constructor() {
         this.mCustomMetadata = new Dictionary<string, any>();
         this.mPropertyMetadata = new Dictionary<string | symbol, PropertyMetadata>();
+        this.mParameterTypes = null;
     }
 
     /**
@@ -53,7 +54,7 @@ export class ConstructorMetadata {
             this.mPropertyMetadata.add(pPropertyKey, new PropertyMetadata());
         }
 
-        return this.mPropertyMetadata.get(pPropertyKey);
+        return <PropertyMetadata>this.mPropertyMetadata.get(pPropertyKey);
     }
 
     /**

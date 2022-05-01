@@ -19,11 +19,12 @@ export class Metadata {
 
         // Create new or get metadata.
         let lMetadata: ConstructorMetadata;
-        if (!this.mConstructorMetadata.has(lRegisteredConstructor)) {
+        if (this.mConstructorMetadata.has(lRegisteredConstructor)) {
+            lMetadata = <ConstructorMetadata>Metadata.mConstructorMetadata.get(lRegisteredConstructor);
+        } else {
             lMetadata = new ConstructorMetadata();
             Metadata.mConstructorMetadata.add(lRegisteredConstructor, lMetadata);
-        } else {
-            lMetadata = Metadata.mConstructorMetadata.get(lRegisteredConstructor);
+
         }
 
         return lMetadata;

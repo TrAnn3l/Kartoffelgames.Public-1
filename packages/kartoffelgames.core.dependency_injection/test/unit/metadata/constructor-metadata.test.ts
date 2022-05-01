@@ -23,7 +23,7 @@ describe('ConstructorMetadata', () => {
             const lMetadata: ConstructorMetadata = new ConstructorMetadata();
 
             // Process.
-            const lResultParameterList: Array<InjectionConstructor> = lMetadata.parameterTypeList;
+            const lResultParameterList: Array<InjectionConstructor> | null = lMetadata.parameterTypeList;
 
             // Evaluation.
             expect(lResultParameterList).to.be.null;
