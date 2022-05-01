@@ -36,6 +36,17 @@ export class ContentManager {
     }
 
     /**
+     * Get all linked module lists.
+     */
+     public get linkedModuleList(): Array<BaseModule<boolean, any>> {
+        const lAllModuleList: Array<BaseModule<boolean, any>> = new Array<BaseModule<boolean, any>>();
+        for (const lNodeModuleList of this.mLinkedModules.values()) {
+            lAllModuleList.push(...lNodeModuleList);
+        }
+        return lAllModuleList;
+    }
+
+    /**
      * Get all child builder.
      */
     public get modules(): ComponentModules {
@@ -54,17 +65,6 @@ export class ContentManager {
      */
     public set multiplicatorModule(pModule: MultiplicatorModule) {
         this.mMultiplicatorModule = pModule;
-    }
-
-    /**
-     * Get all linked module lists.
-     */
-    public get linkedModuleList(): Array<BaseModule<boolean, any>> {
-        const lAllModuleList: Array<BaseModule<boolean, any>> = new Array<BaseModule<boolean, any>>();
-        for (const lNodeModuleList of this.mLinkedModules.values()) {
-            lAllModuleList.push(...lNodeModuleList);
-        }
-        return lAllModuleList;
     }
 
     /**

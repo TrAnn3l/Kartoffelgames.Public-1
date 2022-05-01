@@ -39,20 +39,6 @@ export class XmlAttribute {
     }
 
     /**
-     * Xml element of attribute.
-     */
-    public get xmlElement(): XmlElement {
-        return this.mXmlElement;
-    }
-
-    /**
-     * Xml element of attribute.
-     */
-    public set xmlElement(pXmlElement: XmlElement) {
-        this.mXmlElement = pXmlElement;
-    }
-
-    /**
      * Get attribute name with namespace prefix.
      */
     public get qualifiedName(): string {
@@ -93,6 +79,20 @@ export class XmlAttribute {
      */
     public get valueList(): Array<string> {
         return this.mValues.clone();
+    }
+
+    /**
+     * Xml element of attribute.
+     */
+    public get xmlElement(): XmlElement {
+        return this.mXmlElement;
+    }
+
+    /**
+     * Xml element of attribute.
+     */
+    public set xmlElement(pXmlElement: XmlElement) {
+        this.mXmlElement = pXmlElement;
     }
 
     /**

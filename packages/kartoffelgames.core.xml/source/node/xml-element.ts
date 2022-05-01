@@ -27,6 +27,14 @@ export class XmlElement extends BaseXmlNode {
     }
 
     /**
+     * Get default namespace.
+     */
+    public get defaultNamespace(): string {
+        // Get default namespace.
+        return this.getNamespace() ?? null;
+    }
+
+    /**
      * Namespace of xml node.
      */
     public get namespace(): string {
@@ -37,14 +45,6 @@ export class XmlElement extends BaseXmlNode {
 
         // Default namespace.
         return this.defaultNamespace;
-    }
-
-    /**
-     * Get default namespace.
-     */
-    public get defaultNamespace(): string {
-        // Get default namespace.
-        return this.getNamespace() ?? null;
     }
 
     /**
@@ -225,7 +225,7 @@ export class XmlElement extends BaseXmlNode {
             }
 
             // Get parent mapping.
-            return this.parent?.defaultNamespace ?? null; 
+            return this.parent?.defaultNamespace ?? null;
         }
 
         return null;

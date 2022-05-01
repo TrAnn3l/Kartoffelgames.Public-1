@@ -1,7 +1,7 @@
 {
     "name": "@kartoffelgames/web.change-detection",
     "projectName": "KartoffelGames.Web.Change_Detection",
-    "version": "0.0.18",
+    "version": "0.0.19",
     "description": "KartoffelGames.Web.Change_Detection",
     "author": {
         "name": "KartoffelGames"
@@ -39,7 +39,7 @@
         "ignore-loader": "^0.1.0"
     },
     "dependencies": {
-        "@kartoffelgames/core.data": "^0.0.21"
+        "@kartoffelgames/core.data": "^0.0.22"
     },
     "scripts": {
         "script:build": "npm run pre:build && webpack-cli --config ../../enviroment/configuration/webpack.config.js",

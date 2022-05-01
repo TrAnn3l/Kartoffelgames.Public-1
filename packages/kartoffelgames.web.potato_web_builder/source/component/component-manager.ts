@@ -39,13 +39,6 @@ export class ComponentManager {
     }
 
     /**
-     * Get user class object.
-     */
-    public get userObjectHandler(): UserObjectHandler {
-        return this.mUserObjectHandler;
-    }
-
-    /**
      * Get component values of the root builder. 
      */
     public get rootValues(): LayerValues {
@@ -57,6 +50,13 @@ export class ComponentManager {
      */
     public get updateHandler(): UpdateHandler {
         return this.mUpdateHandler;
+    }
+
+    /**
+     * Get user class object.
+     */
+    public get userObjectHandler(): UserObjectHandler {
+        return this.mUserObjectHandler;
     }
 
     /**
