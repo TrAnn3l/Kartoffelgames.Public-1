@@ -1,20 +1,26 @@
-name: Development Test
+name: Pull Request Test
 
 on:
-  push:
+  pull_request:
     branches:
       - 'development'
+      - 'master'
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:  
+          token: ${{ secrets.CI_GITHUB_TOKEN }}
       - uses: actions/setup-node@v2
         with:
           node-version: 16
       - run: npm ci --ignore-scripts
       - run: npx turbo run test --force
+        env:
+          GITHUB\_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
+
 
 
       
