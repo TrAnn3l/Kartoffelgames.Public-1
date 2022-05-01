@@ -7,16 +7,16 @@ export abstract class BaseXmlNode {
     private mParent: BaseXmlNode;
 
     /**
+     * Get nodes namespace.
+     */
+    public abstract readonly defaultNamespace: string;
+
+    /**
      * Get xml nodes document.
      */
     public get document(): XmlDocument {
         return this.parent?.document ?? null;
     }
-
-    /**
-     * Get nodes namespace.
-     */
-    public abstract readonly defaultNamespace: string 
 
     /**
      * Get Parent of node.

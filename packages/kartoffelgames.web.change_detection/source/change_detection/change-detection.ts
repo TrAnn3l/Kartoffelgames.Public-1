@@ -66,18 +66,18 @@ export class ChangeDetection implements IDeconstructable {
     }
 
     /**
-     * Get change detection name.
-     */
-    public get name(): string {
-        return this.mExecutionZone.name;
-    }
-
-    /**
      * Get change detection loose parent.
      * A parent not connected by change detection rather than zones.
      */
     public get looseParent(): ChangeDetection {
         return this.mLooseParent ?? null;
+    }
+
+    /**
+     * Get change detection name.
+     */
+    public get name(): string {
+        return this.mExecutionZone.name;
     }
 
     /**

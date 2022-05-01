@@ -8,17 +8,17 @@ export class ListTree<TKey, TValue> extends BaseTree<ListTree<TKey, TValue>, TKe
     private readonly mItemList: List<TValue>;
 
     /**
-     * Get item of this branch
-     */
-    public get itemList(): Array<TValue> {
-        return this.mItemList.clone();
-    }
-
-    /**
      * Get all items of this branch and all of its childs.
      */
     public get deepItemList(): Array<TValue> {
         return this.getDeepItemList();
+    }
+
+    /**
+     * Get item of this branch
+     */
+    public get itemList(): Array<TValue> {
+        return this.mItemList.clone();
     }
 
     /**

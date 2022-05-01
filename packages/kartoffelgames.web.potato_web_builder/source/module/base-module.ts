@@ -26,13 +26,6 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
     private readonly mTemplateClone: BaseXmlNode;
 
     /**
-     * Get module definition.
-     */
-    public get moduleDefinition(): ModuleDefinition {
-        return this.mModuleDefinition;
-    }
-
-    /**
      * If modules reads data into the view.
      */
     public get isReading(): boolean {
@@ -47,10 +40,10 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
     }
 
     /**
-     * Get target node.
+     * Get module definition.
      */
-    protected get node(): Node {
-        return this.mTargetNode;
+    public get moduleDefinition(): ModuleDefinition {
+        return this.mModuleDefinition;
     }
 
     /**
@@ -58,6 +51,13 @@ export abstract class BaseModule<TModuleResult, TModuleObjectResult> {
      */
     protected get attribute(): XmlAttribute {
         return this.mTargetAttribute;
+    }
+
+    /**
+     * Get target node.
+     */
+    protected get node(): Node {
+        return this.mTargetNode;
     }
 
     /**

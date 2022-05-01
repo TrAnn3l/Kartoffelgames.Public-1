@@ -17,17 +17,17 @@ export class Extensions {
     }
 
     /**
-     * Get all module extensions that inject neew types.
-     */
-    public static get moduleInjectorExtensions(): Array<IPwbExtensionClass> {
-        return List.newListWith(...Extensions.mModuleInjectorExtensions);
-    }
-
-    /**
      * Get all component extensions that only patches.
      */
     public static get componentPatcherExtensions(): Array<IPwbExtensionClass> {
         return List.newListWith(...Extensions.mComponentPatcherExtensions);
+    }
+
+    /**
+     * Get all module extensions that inject neew types.
+     */
+    public static get moduleInjectorExtensions(): Array<IPwbExtensionClass> {
+        return List.newListWith(...Extensions.mModuleInjectorExtensions);
     }
 
     /**
