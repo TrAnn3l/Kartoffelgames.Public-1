@@ -85,7 +85,7 @@ export class List<T> extends Array<T> implements ICloneable<List<T>> {
      * @param pOldValue - Target value to replace.
      * @param pNewValue - Replacement value.
      */
-    public replace(pOldValue: T, pNewValue: T): T {
+    public replace(pOldValue: T, pNewValue: T): T | undefined {
         const lFoundIndex: number = this.indexOf(pOldValue);
 
         // Only replace if found.
@@ -103,7 +103,7 @@ export class List<T> extends Array<T> implements ICloneable<List<T>> {
     /**
      * List to string.
      */
-    public toString(): string {
+    public override toString(): string {
         return `[${super.join(', ')}]`;
     }
 }

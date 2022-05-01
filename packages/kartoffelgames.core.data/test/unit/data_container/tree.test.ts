@@ -22,10 +22,10 @@ describe('Tree', () => {
             const lBranch: Tree<string> = lTree.addBranch(...lPath);
 
             // Process.
-            const lParentBranch: Tree<string> = lBranch.parent;
+            const lParentBranch: Tree<string> | null = lBranch.parent;
 
             // Evaluation.
-            expect(lParentBranch.branchList[0]).to.equals(lBranch);
+            expect(lParentBranch?.branchList[0]).to.equals(lBranch);
         });
 
         it('-- Read: Has no parent', () => {
@@ -33,7 +33,7 @@ describe('Tree', () => {
             const lTree: Tree<string> = new Tree<string>();
 
             // Process.
-            const lParentBranch: Tree<string> = lTree.parent;
+            const lParentBranch: Tree<string> | null = lTree.parent;
 
             // Evaluation.
             expect(lParentBranch).to.be.null;
@@ -84,7 +84,7 @@ describe('Tree', () => {
             const lBranch: Tree<string> = lTree.addBranch(...lBranchPath);
 
             // Process.
-            const lFoundBranch: Tree<string> = lTree.getBranch(...lBranchPath);
+            const lFoundBranch: Tree<string> | undefined = lTree.getBranch(...lBranchPath);
 
             // Evaluation.
             expect(lFoundBranch).to.equal(lBranch);
@@ -96,7 +96,7 @@ describe('Tree', () => {
             lTree.addBranch('Branch1', 'Branch1.1', 'Branch1.1.1');
 
             // Process.
-            const lFoundBranch: Tree<string> = lTree.getBranch('Branch2');
+            const lFoundBranch: Tree<string> | undefined = lTree.getBranch('Branch2');
 
             // Evaluation.
             expect(lFoundBranch).to.be.undefined;
@@ -107,7 +107,7 @@ describe('Tree', () => {
             const lTree: Tree<string> = new Tree<string>();
 
             // Process.
-            const lFoundBranch: Tree<string> = lTree.getBranch();
+            const lFoundBranch: Tree<string> | undefined = lTree.getBranch();
 
             // Evaluation.
             expect(lFoundBranch).to.equal(lTree);
@@ -148,7 +148,7 @@ describe('Tree', () => {
             const lBranch: Tree<string> = lTree.addBranch('Branch1');
 
             // Process.
-            const lRemovedBranch: Tree<string> = lTree.removeBranch('Branch1');
+            const lRemovedBranch: Tree<string> | undefined = lTree.removeBranch('Branch1');
 
             // Evaluation.
             expect(lRemovedBranch).to.equal(lBranch);
@@ -161,7 +161,7 @@ describe('Tree', () => {
             const lBranch: Tree<string> = lTree.addBranch(...lBranchPath);
 
             // Process.
-            const lRemovedBranch: Tree<string> = lTree.removeBranch(...lBranchPath);
+            const lRemovedBranch: Tree<string> | undefined = lTree.removeBranch(...lBranchPath);
 
             // Evaluation.
             expect(lRemovedBranch).to.equal(lBranch);
@@ -173,7 +173,7 @@ describe('Tree', () => {
             lTree.addBranch('Branch1');
 
             // Process.
-            const lRemovedBranch: Tree<string> = lTree.removeBranch('Branch2');
+            const lRemovedBranch: Tree<string> | undefined = lTree.removeBranch('Branch2');
 
             // Evaluation.
             expect(lRemovedBranch).to.be.undefined;
@@ -185,7 +185,7 @@ describe('Tree', () => {
             lTree.addBranch('Branch1');
 
             // Process.
-            const lRemovedBranch: Tree<string> = lTree.removeBranch();
+            const lRemovedBranch: Tree<string> | undefined = lTree.removeBranch();
 
             // Evaluation.
             expect(lRemovedBranch).to.be.undefined;

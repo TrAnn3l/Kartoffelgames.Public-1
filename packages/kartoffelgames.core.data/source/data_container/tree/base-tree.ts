@@ -7,7 +7,7 @@ import { List } from '../list/list';
 export abstract class BaseTree<TBranch extends BaseTree<TBranch, TBranchValue>, TBranchValue> {
     private readonly mBranches: Dictionary<TBranchValue, TBranch>;
     // eslint-disable-next-line @typescript-eslint/prefer-readonly
-    private mParent: TBranch;
+    private mParent: TBranch | null;
 
     /**
      * Get all child branches of branch.
@@ -19,8 +19,8 @@ export abstract class BaseTree<TBranch extends BaseTree<TBranch, TBranchValue>, 
     /**
      * Get parent branch.
      */
-    public get parent(): TBranch {
-        return this.mParent ?? null;
+    public get parent(): TBranch | null {
+        return this.mParent;
     }
 
     /**
@@ -29,6 +29,7 @@ export abstract class BaseTree<TBranch extends BaseTree<TBranch, TBranchValue>, 
      */
     public constructor() {
         this.mBranches = new Dictionary<TBranchValue, TBranch>();
+        this.mParent = null;
     }
 
     /**
@@ -52,7 +53,8 @@ export abstract class BaseTree<TBranch extends BaseTree<TBranch, TBranchValue>, 
             }
 
             // Add next branch path.
-            return this.mBranches.get(lCurrentBranchKey).addBranch(...pBranchPath);
+            const lCurrentBranch: TBranch = <TBranch>this.mBranches.get(lCurrentBranchKey);
+            return lCurrentBranch.addBranch(...pBranchPath);
         }
 
         return <TBranch><any>this;
@@ -70,7 +72,7 @@ export abstract class BaseTree<TBranch extends BaseTree<TBranch, TBranchValue>, 
      * Get Tree by branch path. Return undefined if no branch was found.
      * @param pBranchPath - Branch path.
      */
-    public getBranch(...pBranchPath: Array<TBranchValue>): TBranch {
+    public getBranch(...pBranchPath: Array<TBranchValue>): TBranch | undefined {
         // If no path was specified. Return this tree.
         if (pBranchPath.length === 0) {
             return <TBranch><any>this;
@@ -79,10 +81,11 @@ export abstract class BaseTree<TBranch extends BaseTree<TBranch, TBranchValue>, 
         // Check if this tree has branch
         if (this.mBranches.has(pBranchPath[0])) {
             // remove first item in branch and safe.
-            const lCurrentLocation: TBranchValue = pBranchPath.splice(0, 1)[0];
+            const lCurrentLocationBranchValue: TBranchValue = pBranchPath.splice(0, 1)[0];
+            const lCurrentLocationBranch: TBranch = <TBranch>this.mBranches.get(lCurrentLocationBranchValue);
 
             // Seach branch in next tree with modified path.
-            return this.mBranches.get(lCurrentLocation).getBranch(...pBranchPath);
+            return lCurrentLocationBranch.getBranch(...pBranchPath);
         }
 
         // No branch found.
@@ -104,24 +107,27 @@ export abstract class BaseTree<TBranch extends BaseTree<TBranch, TBranchValue>, 
      * @param pBranchPath - Path to branch.
      */
     public removeBranch(...pBranchPath: Array<TBranchValue>): TBranch | undefined {
-        const lFoundBranch: TBranch = this.getBranch(...pBranchPath);
+        const lFoundBranch: TBranch | undefined = this.getBranch(...pBranchPath);
 
         // Check if parameter or branch exists.
         if (pBranchPath.length === 0 || !lFoundBranch) {
             return undefined;
         } else if (pBranchPath.length === 1) {
+            const lFirstBranchPathValue: TBranchValue = pBranchPath[0];
+
             // Remove branch if path has only one level.
             // Does not throw if no element was found.
-            const lRemovedBranch: TBranch = this.mBranches.get(pBranchPath[0]);
-            this.mBranches.delete(pBranchPath[0]);
+            const lRemovedBranch: TBranch = <TBranch>this.mBranches.get(lFirstBranchPathValue);
+            this.mBranches.delete(lFirstBranchPathValue);
 
             // Remove parent and return.
-            lRemovedBranch.mParent = undefined;
+            lRemovedBranch.mParent = null;
             return lRemovedBranch;
         }
 
-        // Get Parent and remove branch last path element.
-        return lFoundBranch.parent.removeBranch(pBranchPath.pop());
+        // Get parent and remove branch last path element. Parent of child is always set.
+        const lParentBranch: TBranch = <TBranch>lFoundBranch.parent;
+        return lParentBranch.removeBranch(<TBranchValue>pBranchPath.pop());
     }
 
     /**
@@ -139,7 +145,7 @@ export abstract class BaseTree<TBranch extends BaseTree<TBranch, TBranchValue>, 
             lExtendedPaths.push(lBranchPath);
 
             // Get all paths of branch.
-            const lBranch: TBranch = this.mBranches.get(lBranchKey);
+            const lBranch: TBranch = <TBranch>this.mBranches.get(lBranchKey);
             lExtendedPaths.push(...lBranch.extendPath(lBranchPath));
         }
 
