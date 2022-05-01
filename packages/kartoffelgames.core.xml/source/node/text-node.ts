@@ -9,7 +9,7 @@ export class TextNode extends BaseXmlNode {
     /**
      * Get nodes namespace.
      */
-    public get defaultNamespace(): string {
+    public get defaultNamespace(): string | null {
         return this.parent?.defaultNamespace ?? null;
     }
 
@@ -33,7 +33,7 @@ export class TextNode extends BaseXmlNode {
      */
     public constructor() {
         super();
-        this.text = '';
+        this.mText = '';
     }
 
     /**

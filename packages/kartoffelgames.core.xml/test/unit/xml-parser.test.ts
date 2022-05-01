@@ -150,10 +150,10 @@ describe('XmlParser', () => {
                 const lXmlElement: XmlElement = <XmlElement>lParser.parse(lXmlString).body[0];
 
                 // Process.
-                const lNamespacedAttribute: XmlAttribute = lXmlElement.getAttribute(`${lNamespacePrefix}:${lNamespacedAttributeName}`);
+                const lNamespacedAttribute: XmlAttribute | undefined = lXmlElement.getAttribute(`${lNamespacePrefix}:${lNamespacedAttributeName}`);
 
                 // Evaluation.
-                expect(lNamespacedAttribute.namespacePrefix).to.equal(lNamespacePrefix);
+                expect(lNamespacedAttribute?.namespacePrefix).to.equal(lNamespacePrefix);
             });
         });
 
@@ -169,10 +169,10 @@ describe('XmlParser', () => {
             const lXmlElement: XmlElement = <XmlElement>lParser.parse(lXmlString).body[0];
 
             // Process.
-            const lNamespacedAttribute: XmlAttribute = lXmlElement.getAttribute(lNamespacedAttributeName);
+            const lNamespacedAttribute: XmlAttribute | undefined = lXmlElement.getAttribute(lNamespacedAttributeName);
 
             // Evaluation.
-            expect(lNamespacedAttribute.value).to.equal(lAttributeValue.replace('\n', ' '));
+            expect(lNamespacedAttribute?.value).to.equal(lAttributeValue.replace('\n', ' '));
         });
 
         it('-- Multiline text node', () => {

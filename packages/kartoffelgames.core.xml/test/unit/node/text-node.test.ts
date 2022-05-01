@@ -18,7 +18,7 @@ describe('TextNode', () => {
             lXmlElement.appendChild(lTextNode);
 
             // Process.
-            const lTextNodeDefaultNamespace: string = lTextNode.defaultNamespace;
+            const lTextNodeDefaultNamespace: string  | null= lTextNode.defaultNamespace;
 
             // Evaluation.
             expect(lTextNodeDefaultNamespace).to.equal(lNamespace);
@@ -29,7 +29,7 @@ describe('TextNode', () => {
             const lTextNode: TextNode = new TextNode();
 
             // Process.
-            const lTextNodeDefaultNamespace: string = lTextNode.defaultNamespace;
+            const lTextNodeDefaultNamespace: string  | null= lTextNode.defaultNamespace;
 
             // Evaluation.
             expect(lTextNodeDefaultNamespace).to.be.null;

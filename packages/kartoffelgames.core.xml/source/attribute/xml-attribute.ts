@@ -6,10 +6,10 @@ import { XmlElement } from '../node/xml-element';
  */
 export class XmlAttribute {
     private readonly mName: string;
-    private readonly mNamespacePrefix: string;
+    private readonly mNamespacePrefix: string | null;
     private readonly mSeperator: string;
     private readonly mValues: List<string>;
-    private mXmlElement: XmlElement;
+    private mXmlElement: XmlElement | null;
 
     /**
      * Get attribute name without namespace prefix.
@@ -21,7 +21,7 @@ export class XmlAttribute {
     /**
      * Namespace.
      */
-    public get namespace(): string {
+    public get namespace(): string | null {
         // Check if attribute is append and has an prefix.
         if (this.xmlElement && this.namespacePrefix) {
             return this.xmlElement.getNamespace(this.namespacePrefix);
@@ -34,7 +34,7 @@ export class XmlAttribute {
     /**
      * Namespace key of attribute.
      */
-    public get namespacePrefix(): string {
+    public get namespacePrefix(): string | null {
         return this.mNamespacePrefix;
     }
 
@@ -84,14 +84,14 @@ export class XmlAttribute {
     /**
      * Xml element of attribute.
      */
-    public get xmlElement(): XmlElement {
+    public get xmlElement(): XmlElement | null {
         return this.mXmlElement;
     }
 
     /**
      * Xml element of attribute.
      */
-    public set xmlElement(pXmlElement: XmlElement) {
+    public set xmlElement(pXmlElement: XmlElement | null) {
         this.mXmlElement = pXmlElement;
     }
 
@@ -103,12 +103,13 @@ export class XmlAttribute {
      * @param pSeperator - Seperator values get joined.
      */
     public constructor(pName: string);
-    public constructor(pName: string, pNamespacePrefix: string);
-    public constructor(pName: string, pNamespacePrefix: string, pSeperator: string);
-    public constructor(pName: string, pNamespacePrefix: string = null, pSeperator: string = ' ') {
+    public constructor(pName: string, pNamespacePrefix: string | null);
+    public constructor(pName: string, pNamespacePrefix: string | null, pSeperator: string);
+    public constructor(pName: string, pNamespacePrefix: string | null = null, pSeperator: string = ' ') {
         this.mValues = new List<string>();
         this.mName = pName;
         this.mSeperator = pSeperator;
         this.mNamespacePrefix = pNamespacePrefix;
+        this.mXmlElement = null;
     }
 }

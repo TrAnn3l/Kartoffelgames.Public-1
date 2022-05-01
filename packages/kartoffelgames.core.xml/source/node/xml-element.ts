@@ -9,7 +9,7 @@ import { List } from '@kartoffelgames/core.data';
 export class XmlElement extends BaseXmlNode {
     private readonly mAttributeDictionary: Dictionary<string, XmlAttribute>;
     private readonly mChildList: Array<BaseXmlNode>;
-    private mNamespacePrefix: string;
+    private mNamespacePrefix: string | null;
     private mTagName: string;
 
     /**
@@ -29,7 +29,7 @@ export class XmlElement extends BaseXmlNode {
     /**
      * Get default namespace.
      */
-    public get defaultNamespace(): string {
+    public get defaultNamespace(): string | null {
         // Get default namespace.
         return this.getNamespace() ?? null;
     }
@@ -37,7 +37,7 @@ export class XmlElement extends BaseXmlNode {
     /**
      * Namespace of xml node.
      */
-    public get namespace(): string {
+    public get namespace(): string | null {
         // Prefix has high priority.
         if (this.namespacePrefix) {
             return this.getNamespace(this.namespacePrefix);
@@ -50,14 +50,14 @@ export class XmlElement extends BaseXmlNode {
     /**
      * Get namespace prefix of xml node.
      */
-    public get namespacePrefix(): string {
-        return this.mNamespacePrefix ?? null;
+    public get namespacePrefix(): string | null {
+        return this.mNamespacePrefix;
     }
 
     /**
      * Set namespace prefix of xml node.
      */
-    public set namespacePrefix(pNamespacePrefix: string) {
+    public set namespacePrefix(pNamespacePrefix: string | null) {
         this.mNamespacePrefix = pNamespacePrefix;
     }
 
@@ -76,7 +76,7 @@ export class XmlElement extends BaseXmlNode {
      * Get tagname without namespace prefix.
      */
     public get tagName(): string {
-        return this.mTagName ?? '';
+        return this.mTagName;
     }
 
     /**
@@ -93,6 +93,9 @@ export class XmlElement extends BaseXmlNode {
         super();
         this.mAttributeDictionary = new Dictionary<string, XmlAttribute>();
         this.mChildList = Array<BaseXmlNode>();
+
+        this.mNamespacePrefix = null;
+        this.mTagName = '';
     }
 
     /**
@@ -156,7 +159,7 @@ export class XmlElement extends BaseXmlNode {
         // Check all attributes.
         for (const lAttribute of pBaseNode.mAttributeDictionary.values()) {
             // This checks also for wrong namespace prefix by checking for qualified attribute name.
-            const lAttributeTwo: XmlAttribute = this.mAttributeDictionary.get(lAttribute.qualifiedName);
+            const lAttributeTwo: XmlAttribute = <XmlAttribute>this.mAttributeDictionary.get(lAttribute.qualifiedName);
 
             if (!lAttributeTwo || lAttributeTwo.value !== lAttribute.value) {
                 return false;
@@ -183,24 +186,20 @@ export class XmlElement extends BaseXmlNode {
      * Returns null if attribute does not exist.
      * @param pKey - Full qualified name of attribute.
      */
-    public getAttribute(pKey: string): XmlAttribute {
-        if (this.mAttributeDictionary.has(pKey)) {
-            return this.mAttributeDictionary.get(pKey);
-        } else {
-            return undefined;
-        }
+    public getAttribute(pKey: string): XmlAttribute | undefined {
+        return this.mAttributeDictionary.get(pKey);
     }
 
     /**
      * Get namespace of prefix or if no prefix is set, get the default namespace.
      */
-    public getNamespace(pPrefix: string = null): string {
+    public getNamespace(pPrefix: string | null = null): string | null {
         // Get namespace from prefix or default namespace.
         if (pPrefix) {
             const lPrefixLowerCase: string = pPrefix.toLowerCase();
 
             // Check for local prefix namespace.
-            const lPrefixNamespaceAttribute: XmlAttribute = this.attributeList.find((pAttribute: XmlAttribute) => {
+            const lPrefixNamespaceAttribute: XmlAttribute | undefined = this.attributeList.find((pAttribute: XmlAttribute) => {
                 return pAttribute.namespacePrefix?.toLowerCase() === 'xmlns' && pAttribute.name.toLowerCase() === lPrefixLowerCase;
             });
 
@@ -215,7 +214,7 @@ export class XmlElement extends BaseXmlNode {
             }
         } else {
             // Check for local default namespace.
-            const lDefaultNamespaceAttribute: XmlAttribute = this.attributeList.find((pAttribute: XmlAttribute) => {
+            const lDefaultNamespaceAttribute: XmlAttribute | undefined = this.attributeList.find((pAttribute: XmlAttribute) => {
                 return pAttribute.qualifiedName === 'xmlns';
             });
 
@@ -249,16 +248,16 @@ export class XmlElement extends BaseXmlNode {
      * Return removed child.
      * @param pNode - Child to remove.
      */
-    public removeChild(pNode: BaseXmlNode): BaseXmlNode {
+    public removeChild(pNode: BaseXmlNode): BaseXmlNode | undefined {
         const lIndex: number = this.mChildList.indexOf(pNode);
-        let lRemovedChild: BaseXmlNode = undefined;
+        let lRemovedChild: BaseXmlNode | undefined = undefined;
 
         // If list contains node.
         if (lIndex !== -1) {
             lRemovedChild = this.mChildList.splice(lIndex, 1)[0];
 
             // If xml node remove parent connection.
-            lRemovedChild.parent = undefined;
+            (<BaseXmlNode>lRemovedChild).parent = null;
         }
 
         return lRemovedChild;
@@ -277,7 +276,7 @@ export class XmlElement extends BaseXmlNode {
      * @param pValue - Name of attribute.
      * @param pNamespacePrefix - Namespace prefix of attribute.
      */
-    public setAttribute(pKey: string, pValue: string, pNamespacePrefix: string): XmlAttribute;
+    public setAttribute(pKey: string, pValue: string, pNamespacePrefix: string | null): XmlAttribute;
 
     /**
      * Set and get Attribute of xml node. Creates new one if attribute does not exist.
@@ -285,7 +284,7 @@ export class XmlElement extends BaseXmlNode {
      * @param pValue - Name of attribute.
      * @param pNamespacePrefix - Namespace prefix of attribute.
      */
-    public setAttribute(pKey: string, pValue: string, pNamespacePrefix: string = null): XmlAttribute {
+    public setAttribute(pKey: string, pValue: string, pNamespacePrefix: string | null = null): XmlAttribute {
         let lAttribute: XmlAttribute;
 
         // Create qualifed attribute name.
@@ -297,7 +296,7 @@ export class XmlElement extends BaseXmlNode {
         }
 
         if (this.mAttributeDictionary.has(lQualifiedTagName)) {
-            lAttribute = this.mAttributeDictionary.get(lQualifiedTagName);
+            lAttribute = <XmlAttribute>this.mAttributeDictionary.get(lQualifiedTagName);
         } else {
             lAttribute = new XmlAttribute(pKey, pNamespacePrefix);
             this.mAttributeDictionary.add(lQualifiedTagName, lAttribute);
