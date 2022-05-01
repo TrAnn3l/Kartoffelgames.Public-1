@@ -3,7 +3,7 @@ name: Github Package Release
 on:
   push:
     branches:
-      - 'master'
+      - 'development'
 
 jobs:
   test:
@@ -50,14 +50,14 @@ jobs:
       - run: npm publish -ws
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB\_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
 
   empty-job:
     runs-on: ubuntu-latest
     if: success()
     steps:
       - name: Catch no job
-        run: |
-          echo "Catch no job"
+        run: echo "Catch no job"
 
 
       

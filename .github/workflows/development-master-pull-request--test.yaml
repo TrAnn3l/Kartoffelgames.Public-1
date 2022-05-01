@@ -18,6 +18,9 @@ jobs:
           node-version: 16
       - run: npm ci --ignore-scripts
       - run: npx turbo run test --force
+        env:
+          GITHUB\_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
+
 
 
       
