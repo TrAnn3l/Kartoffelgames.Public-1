@@ -2,52 +2,70 @@ import { Exception } from '@kartoffelgames/core.data';
 import { Division } from './division';
 
 export class Pattern {
-    private readonly mChannelCount: number;
-    private readonly mRowCount: number;
-    private readonly mRows: Array<Array<Division>>;
+    private readonly mDivisionList: Array<Division>;
 
     /**
-     * Get row count.
+     * Get division count.
      */
-    public get rowsCount(): number {
-        return this.mRowCount;
+    public get divisionCount(): number {
+        return this.mDivisionList.length;
     }
 
     /**
      * Constructor.
-     * @param pChannelCount - Channel count.
-     * @param pRowCount - Row count.
      */
-    public constructor(pChannelCount: number, pRowCount: number) {
-        this.mChannelCount = pChannelCount;
-        this.mRowCount = pRowCount;
-        this.mRows = new Array<Array<Division>>();
+    public constructor() {
+        this.mDivisionList = new Array<Division>();
+    }
+
+    /**
+     * Add new division. Appends if no index is specified.
+     * @param pIndex - Index of new division.
+     */
+    public addDivision(pIndex?: number): Division {
+        const lNewDivision: Division = new Division();
+
+        // Add new when no index is specified.
+        if (pIndex === null || pIndex === this.mDivisionList.length) {
+            this.mDivisionList.push(lNewDivision);
+        } else {
+            // Check if index would produce gaps.
+            if (pIndex > this.mDivisionList.length) {
+                throw new Exception(`Division index would produce gaps with missing dicisions.`, this);
+            }
+
+            // Set pattern to index.
+            this.mDivisionList[pIndex] = lNewDivision;
+        }
+
+        return lNewDivision;
     }
 
     /**
      * Get pattern row information.
-     * @param pRowIndex - Row index.
+     * @param pDivisionIndex - Division index.
      */
-    public getRow(pRowIndex: number): Array<Division> {
+    public getDivision(pDivisionIndex: number): Division {
         // Return real row.
-        return this.mRows[pRowIndex] ?? null;
+        return this.mDivisionList[pDivisionIndex] ?? new Division();
     }
 
-    public setRow(pRow: Array<Division>, pRowIndex: number = null): void {
-        // Catch wrong channel index.
-        if (pRow.length !== this.mChannelCount) {
-            throw new Exception(`Pattern row needs ${this.mChannelCount} channels.`, this);
+    /**
+     * Remove sample by index.
+     * @param pIndex - Index of sample.
+     */
+    public removeDivision(pIndex: number): void {
+        // Exit if index is out of bound.
+        if (pIndex >= (this.mDivisionList.length - 1)) {
+            return;
         }
 
-        // Catch wrong row index.
-        if (pRowIndex > (this.mRowCount - 1)) {
-            throw new Exception(`Pattern has only ${this.mRowCount} rows.`, this);
-        }
-
-        if (pRowIndex !== null) {
-            this.mRows[pRowIndex] = pRow;
+        // Remove last element if index is last element.
+        if (pIndex === (this.mDivisionList.length - 1)) {
+            this.mDivisionList.pop();
         } else {
-            this.mRows.push(pRow);
+            // Replace with empty division if any gap would be produced.
+            this.mDivisionList[pIndex] = new Division();
         }
     }
 }

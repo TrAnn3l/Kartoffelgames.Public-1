@@ -19,37 +19,16 @@ export class SampleList {
     }
 
     /**
-     * Get sample by index.
-     * @param pIndex - Index of sample.
-     */
-    public getSample(pIndex: number): Sample | null {
-        // Read sample.
-        return this.mSampleList[pIndex] ?? null;
-    }
-
-    /**
-     * Remove sample by index.
-     * @param pIndex - Index of sample.
-     */
-    public removeSample(pIndex: number): void {
-        // Remove last element if index is last element.
-        if (pIndex === (this.mSampleList.length - 1)) {
-            this.mSampleList.pop();
-        } else {
-            // Replace with empty sample if any gap would be produced.
-            this.mSampleList[pIndex] = new Sample();
-        }
-    }
-
-    /**
      * Add sample to list.
      * @param pIndex - Index of sample.
      * @param pSample - New sample.
      */
-    public setSample(pSample: Sample, pIndex?: number): void {
+    public addSample(pIndex?: number): Sample {
+        const lNewSample: Sample = new Sample();
+
         // Add new when no index is specified.
         if (pIndex === null || pIndex === this.mSampleList.length) {
-            this.mSampleList.push(pSample);
+            this.mSampleList.push(lNewSample);
         } else {
             // Check if index would produce gaps.
             if (pIndex > this.mSampleList.length) {
@@ -57,7 +36,37 @@ export class SampleList {
             }
 
             // Set sample to index.
-            this.mSampleList[pIndex] = pSample;
+            this.mSampleList[pIndex] = lNewSample;
+        }
+
+        return lNewSample;
+    }
+
+    /**
+     * Get sample by index.
+     * @param pIndex - Index of sample.
+     */
+    public getSample(pIndex: number): Sample | null {
+        // Read sample.
+        return this.mSampleList[pIndex] ?? new Sample();
+    }
+
+    /**
+     * Remove sample by index.
+     * @param pIndex - Index of sample.
+     */
+    public removeSample(pIndex: number): void {
+        // Exit if index is out of bound.
+        if (pIndex >= (this.mSampleList.length - 1)) {
+            return;
+        }
+
+        // Remove last element if index is last element.
+        if (pIndex === (this.mSampleList.length - 1)) {
+            this.mSampleList.pop();
+        } else {
+            // Replace with empty sample if any gap would be produced.
+            this.mSampleList[pIndex] = new Sample();
         }
     }
 }

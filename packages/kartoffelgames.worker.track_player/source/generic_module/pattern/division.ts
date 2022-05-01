@@ -1,49 +1,70 @@
-import { DivisionEffect } from './division_effect';
+import { Exception } from '@kartoffelgames/core.data';
+import { DivisionChannel } from './division-channel';
 
 export class Division {
-    private mEffect: DivisionEffect;
-    private mPeriod: number;
-    private mSampleIndex: number;
+    private readonly mChannelList: Array<DivisionChannel>;
 
     /**
-     * Set effect.
+     * Get channel count.
      */
-    public get effect(): DivisionEffect {
-        return this.mEffect;
+    public get channelCount(): number {
+        return this.mChannelList.length;
     }
 
     /**
-     * Set effect.
+     * Constructor.
      */
-    public set effect(pEffect: DivisionEffect) {
-        this.mEffect = pEffect;
+    public constructor() {
+        this.mChannelList = new Array<DivisionChannel>();
     }
 
     /**
-     * Set period.
+     * Add channel data.
+     * @param pIndex - Channel index.
      */
-    public get period(): number {
-        return this.mPeriod;
+    public addChannel(pIndex: number): DivisionChannel {
+        const lNewChannel: DivisionChannel = new DivisionChannel();
+
+        // Add new when no index is specified.
+        if (pIndex === null || pIndex === this.mChannelList.length) {
+            this.mChannelList.push(lNewChannel);
+        } else {
+            // Check if index would produce gaps.
+            if (pIndex > this.mChannelList.length) {
+                throw new Exception(`Channel index would produce gaps with missing channels.`, this);
+            }
+
+            // Set channel to index.
+            this.mChannelList[pIndex] = lNewChannel;
+        }
+
+        return lNewChannel;
     }
 
     /**
-     * Set period.
+     * Get channel data.
+     * @param pChannelIndex - Channel index.
      */
-    public set period(pPeriod: number) {
-        this.mPeriod = pPeriod;
+    public getChannel(pChannelIndex: number): DivisionChannel {
+        return this.mChannelList[pChannelIndex] ?? new DivisionChannel();
     }
 
     /**
-     * Set sample index.
+     * Remove sample by index.
+     * @param pIndex - Index of sample.
      */
-    public get sampleIndex(): number {
-        return this.mSampleIndex;
-    }
+    public removeChannel(pIndex: number): void {
+        // Exit if index is out of bound.
+        if (pIndex >= (this.mChannelList.length - 1)) {
+            return;
+        }
 
-    /**
-     * Set sample index.
-     */
-    public set sampleIndex(pSampleIndex: number) {
-        this.mSampleIndex = pSampleIndex;
+        // Remove last element if index is last element.
+        if (pIndex === (this.mChannelList.length - 1)) {
+            this.mChannelList.pop();
+        } else {
+            // Replace with empty channel if any gap would be produced.
+            this.mChannelList[pIndex] = new DivisionChannel();
+        }
     }
 }

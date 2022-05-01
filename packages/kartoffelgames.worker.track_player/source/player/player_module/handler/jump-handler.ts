@@ -1,19 +1,19 @@
-import { PlayerCursor } from './player-cursor';
+import { CursorHandler } from './cursor-handler';
 
-export class PlayerJump {
-    private mJumpPosition: number;
+export class JumpHandler {
+    private mJumpSongPosition: number;
     private readonly mLoopPosition: LoopPosition;
-    private readonly mPlayerCursor: PlayerCursor;
+    private readonly mPlayerCursor: CursorHandler;
 
     /**
      * Constructor.
      * @param pCursor - Player cursor.
      */
-    public constructor(pCursor: PlayerCursor) {
+    public constructor(pCursor: CursorHandler) {
         this.mPlayerCursor = pCursor;
 
         // Initialize with none working jump position. 
-        this.mJumpPosition = null;
+        this.mJumpSongPosition = null;
         this.mLoopPosition = {
             division: -1,
             counter: 0,
@@ -22,16 +22,16 @@ export class PlayerJump {
     }
 
     /**
-     * Try to execute jump and retunr success.
+     * Try to execute jump and return success.
      */
     public executeJump(): boolean {
         // Look for existing jump.
-        if (this.mJumpPosition !== null) {
+        if (this.mJumpSongPosition !== null) {
             // Execute jump.
-            this.mPlayerCursor.jumpTo(this.mJumpPosition, 0);
+            this.mPlayerCursor.jumpTo(this.mJumpSongPosition, 0);
 
             // Reset jump.
-            this.mJumpPosition = null;
+            this.mJumpSongPosition = null;
 
             return true;
         }
@@ -43,7 +43,7 @@ export class PlayerJump {
         // Look for existing jump.
         if (this.mLoopPosition.counter > 0 && this.mLoopPosition.active) {
             // Execute jump.
-            this.mPlayerCursor.jumpTo(this.mPlayerCursor.songPosition, this.mLoopPosition.division);
+            this.mPlayerCursor.jumpTo(this.mPlayerCursor.songPositionIndex, this.mLoopPosition.division);
 
             // Reset jump.
             this.mLoopPosition.counter--;
@@ -68,7 +68,7 @@ export class PlayerJump {
      * @param pSongPosition - Song position for jump.
      */
     public setJumpPosition(pSongPosition: number): void {
-        this.mJumpPosition = pSongPosition;
+        this.mJumpSongPosition = pSongPosition;
     }
 
     public setLoopPosition(pDivision: number, pCounter: number): void {

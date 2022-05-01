@@ -2,24 +2,9 @@ import { PatternList } from './pattern/pattern-list';
 import { SampleList } from './sample/sample-list';
 
 export class GenericModule {
-    private mChannelCount: number;
     private readonly mPattern: PatternList;
     private readonly mSamples: SampleList;
     private mSongName: string;
-
-    /**
-     * Get module channel count.
-     */
-    public get channelCount(): number {
-        return this.mChannelCount;
-    }
-
-    /**
-     * set module channel count.
-     */
-    public set channelCount(pCount: number) {
-        this.mChannelCount = pCount;
-    }
 
     /**
      * Get module pattern list.

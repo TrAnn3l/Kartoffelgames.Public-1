@@ -1,6 +1,6 @@
-import { GenericModule } from '../generic_module/generic-module';
-import { ModParser } from '../module_parser/mod-parser';
-import { Player } from '../player/player';
+import { GenericModule } from './generic_module/generic-module';
+import { ModParser } from './module_parser/mod-parser';
+import { Player } from './player/player';
 
 export class TrackPlayerProcessor extends AudioWorkletProcessor {
     private mMixer: Player;
@@ -82,6 +82,7 @@ export class TrackPlayerProcessor extends AudioWorkletProcessor {
         // Create mixer when module is loaded.
         if (lModule !== null) {
             this.mMixer = new Player(lModule, sampleRate);
+            console.log(lModule)
         }
     }
 

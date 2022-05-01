@@ -84,7 +84,7 @@ export class Sample {
      * Set defaults.
      */
     public constructor() {
-        // Default values.
+        // Empty values.
         this.mName = '';
         this.mData = new Float32Array(1);
         this.mVolume = 0;

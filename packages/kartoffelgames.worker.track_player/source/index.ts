@@ -1,1 +1,1 @@
-export { TrackPlayerProcessor } from './audio_processor/track-player-processor';
+export { TrackPlayerProcessor } from './track-player-processor';

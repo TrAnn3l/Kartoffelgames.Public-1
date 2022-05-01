@@ -1,16 +1,92 @@
+import { Pitch } from '../enum/pitch';
+import { BaseEffect } from '../generic_module/effect/base-effect';
+import { EmptyEffect } from '../generic_module/effect/empty-effect';
 import { GenericModule } from '../generic_module/generic-module';
-import { Pattern } from '../generic_module/pattern/pattern';
 import { Division } from '../generic_module/pattern/division';
+import { DivisionChannel } from '../generic_module/pattern/division-channel';
+import { Pattern } from '../generic_module/pattern/pattern';
 import { Sample } from '../generic_module/sample/sample';
 import { BaseParser } from './base-parser';
 import { ByteHelper } from './helper/byte-helper';
-import { DivisionEffect, Effect } from '../generic_module/pattern/division_effect';
 
 /**
  * MOD file parser.
  */
 export class ModParser extends BaseParser {
     private static readonly NAME_BYTE_LENGTH: number = 20;
+    private static readonly PITCH_TABLE: { [SourcePitch: number]: number; } = {
+        0: Pitch.Empty,
+
+        // Octave 0
+        1712: Pitch.Octave0C,
+        1616: Pitch.Octave0Csharp,
+        1525: Pitch.Octave0D,
+        1440: Pitch.Octave0Dsharp,
+        1357: Pitch.Octave0E,
+        1281: Pitch.Octave0F,
+        1209: Pitch.Octave0Fsharp,
+        1141: Pitch.Octave0G,
+        1077: Pitch.Octave0Gsharp,
+        1017: Pitch.Octave0A,
+        961: Pitch.Octave0Asharp,
+        907: Pitch.Octave0B,
+
+        // Octave 1
+        856: Pitch.Octave1C,
+        808: Pitch.Octave1Csharp,
+        762: Pitch.Octave1D,
+        720: Pitch.Octave1Dsharp,
+        678: Pitch.Octave1E,
+        640: Pitch.Octave1F,
+        604: Pitch.Octave1Fsharp,
+        570: Pitch.Octave1G,
+        538: Pitch.Octave1Gsharp,
+        508: Pitch.Octave1A,
+        480: Pitch.Octave1Asharp,
+        453: Pitch.Octave1B,
+
+        // Octave 2
+        428: Pitch.Octave2C,
+        404: Pitch.Octave2Csharp,
+        381: Pitch.Octave2D,
+        360: Pitch.Octave2Dsharp,
+        339: Pitch.Octave2E,
+        320: Pitch.Octave2F,
+        302: Pitch.Octave2Fsharp,
+        285: Pitch.Octave2G,
+        269: Pitch.Octave2Gsharp,
+        254: Pitch.Octave2A,
+        240: Pitch.Octave2Asharp,
+        226: Pitch.Octave2B,
+
+        // Octave 3
+        214: Pitch.Octave3C,
+        202: Pitch.Octave3Csharp,
+        190: Pitch.Octave3D,
+        180: Pitch.Octave3Dsharp,
+        170: Pitch.Octave3E,
+        160: Pitch.Octave3F,
+        151: Pitch.Octave3Fsharp,
+        143: Pitch.Octave3G,
+        135: Pitch.Octave3Gsharp,
+        127: Pitch.Octave3A,
+        120: Pitch.Octave3Asharp,
+        113: Pitch.Octave3B,
+
+        // Octave 4
+        107: Pitch.Octave4C,
+        101: Pitch.Octave4Csharp,
+        95: Pitch.Octave4D,
+        90: Pitch.Octave4Dsharp,
+        85: Pitch.Octave4E,
+        80: Pitch.Octave4F,
+        76: Pitch.Octave4Fsharp,
+        71: Pitch.Octave4G,
+        67: Pitch.Octave4Gsharp,
+        64: Pitch.Octave4A,
+        60: Pitch.Octave4Asharp,
+        57: Pitch.Octave4B
+    };
     private static readonly SAMPLE_HEADER_BYTE_LENGTH: number = 30;
 
     /**
@@ -23,9 +99,6 @@ export class ModParser extends BaseParser {
         const lExtensionName: ModuleExtension = this.getExtensionName();
         const lChannelCount: number = this.getChannelCount(lExtensionName);
         const lPatternCount: number = this.getPatternCount(lExtensionName);
-
-        // Set core values.
-        lModule.channelCount = lChannelCount;
 
         // Decode module parts.
         this.parseName(lModule);
@@ -86,6 +159,17 @@ export class ModParser extends BaseParser {
     }
 
     /**
+     * Parse effect numbers to effect object.
+     * @param pEffect - Effect number.
+     * @param pParameterX - Effect first parameter.
+     * @param pParameterY - Effect second parameter.
+     */
+    private parseEffect(pEffect: number, pParameterX: number, pParameterY: number): BaseEffect {
+        // TODO: Parse Effect.
+        return new EmptyEffect();
+    }
+
+    /**
      * Parse module name.
      * @param pModule - Generic module.
      */
@@ -125,11 +209,11 @@ export class ModParser extends BaseParser {
 
         // Create new pattern.
         for (let lPatternIndex: number = 0; lPatternIndex < pPatternCount; lPatternIndex++) {
-            const lPattern: Pattern = new Pattern(pChannelCount, 64);
+            const lPattern: Pattern = pModule.pattern.addPattern(lPatternIndex);
 
             // Fill each division row.
-            for (let lRowIndex: number = 0; lRowIndex < 64; lRowIndex++) {
-                const lRow: Array<Division> = new Array<Division>();
+            for (let lDivisionIndex: number = 0; lDivisionIndex < 64; lDivisionIndex++) {
+                const lDivision: Division = lPattern.addDivision(lDivisionIndex);
 
                 // Create new pattern division for each channel.
                 for (let lChannelIndex: number = 0; lChannelIndex < pChannelCount; lChannelIndex++) {
@@ -148,30 +232,17 @@ export class ModParser extends BaseParser {
                     const lSampleEffectParameterX: number = Number(ByteHelper.pickBits(lBufferNumber, 32, [24, 25, 26, 27]));
                     const lSampleEffectParameterY: number = Number(ByteHelper.pickBits(lBufferNumber, 32, [28, 29, 30, 31]));
 
-                    // Create division effect.
-                    const lEffect: DivisionEffect = new DivisionEffect();
-                    lEffect.effect = <Effect>lSampleEffect; // TODO: Create switch case with all variants.
-                    lEffect.parameterX = lSampleEffectParameterX;
-                    lEffect.parameterY = lSampleEffectParameterY;
-
-                    // Create division.
-                    const lDevision: Division = new Division();
-                    lDevision.period = lSamplePeriod;
-                    lDevision.sampleIndex = lSampleNumber - 1;
-                    lDevision.effect = lEffect;
-
-                    // Add division to row.
-                    lRow.push(lDevision);
+                    // Add division.
+                    const lDivisionChannel: DivisionChannel = lDivision.addChannel(lChannelIndex);
+                    lDivisionChannel.period = ModParser.PITCH_TABLE[lSamplePeriod] ?? 0;
+                    lDivisionChannel.sampleIndex = lSampleNumber - 1;
+                    lDivisionChannel.effect = this.parseEffect(lSampleEffect, lSampleEffectParameterX, lSampleEffectParameterY);
 
                     // Set next divison position.
                     lNextPatternDevisionPosition += 4;
                 }
 
-                // Set row to pattern.
-                lPattern.setRow(lRow, lRowIndex);
             }
-
-            pModule.pattern.addPattern(lPattern, lPatternIndex);
         }
     }
 
@@ -206,7 +277,7 @@ export class ModParser extends BaseParser {
         let lPreviousSampleBodyDataLength: number = 0;
         for (let lSampleIndex: number = 0; lSampleIndex < lSampleCount; lSampleIndex++) {
             const lSampleHeaderOffset = (lSampleIndex * ModParser.SAMPLE_HEADER_BYTE_LENGTH) + lStartingOffset;
-            const lSample: Sample = new Sample();
+            const lSample: Sample = pModule.samples.addSample(lSampleIndex);
 
             // Read sample name.
             const lSampleNameBuffer: Uint8Array = ByteHelper.readBytes(this.data, lSampleHeaderOffset + lSampleNameOffset, 22);
@@ -252,9 +323,6 @@ export class ModParser extends BaseParser {
 
             // Count previous sample body data length.
             lPreviousSampleBodyDataLength += lSampleLength;
-
-            // Append to module samples.
-            pModule.samples.setSample(lSample, lSampleIndex);
         }
     }
 }

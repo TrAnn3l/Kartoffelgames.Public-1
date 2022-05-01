@@ -1,127 +1,119 @@
-import { Division } from '../generic_module/pattern/division';
+import { Pitch } from '../enum/pitch';
+import { BaseEffect } from '../generic_module/effect/base-effect';
+import { DivisionChannel } from '../generic_module/pattern/division-channel';
 import { Pattern } from '../generic_module/pattern/pattern';
 import { Sample } from '../generic_module/sample/sample';
-import { PlayerGlobals } from './player-globals';
+import { BasePlayerEffect } from './effect/base-player-effect';
+import { PlayerModule } from './player_module/player-module';
 
 export class PlayerChannel {
     private readonly mChannelIndex: number;
     private readonly mContinuingInformation: ContinuingInformation;
-    private readonly mGlobals: PlayerGlobals;
-    private mSamplePositionIndex: number;
-
-    private mSample: Sample;
-    private mPeriod: number;
-
-
+    private readonly mPlayerModule: PlayerModule;
 
     /**
      * Get current division.
      */
-    public get division(): Division {
-        return this.pattern.getRow(this.mGlobals.cursor.division)[this.mChannelIndex];
-    }
-
-    /**
-     * Get current playing sample.
-     */
-    public get sample(): Sample {
-        return this.mSample;
+    public get division(): DivisionChannel {
+        return this.pattern.getDivision(this.mPlayerModule.cursor.divisionIndex).getChannel(this.mChannelIndex);
     }
 
     /**
      * Get current playing pattern.
      */
     public get pattern(): Pattern {
-        const lSongPosition: number = this.mGlobals.module.pattern.songPositions[this.mGlobals.cursor.songPosition];
-        return this.mGlobals.module.pattern.getPattern(lSongPosition);
+        const lSongPosition: number = this.mPlayerModule.module.pattern.songPositions[this.mPlayerModule.cursor.songPositionIndex];
+        return this.mPlayerModule.module.pattern.getPattern(lSongPosition);
     }
 
     /**
      * Constructor.
      */
-    public constructor(pGlobals: PlayerGlobals, pChannelIndex: number) {
+    public constructor(pPlayerModule: PlayerModule, pChannelIndex: number) {
         this.mChannelIndex = pChannelIndex;
-        this.mGlobals = pGlobals;
+        this.mPlayerModule = pPlayerModule;
 
-        // Set channel startup defaults.
-        this.mSamplePositionIndex = 0;
-
-        // Default continuing information.
+        // Set empty continuing information.
         this.mContinuingInformation = {
+            period: Pitch.Empty,
             sample: null,
-            period: 0
+            samplePosition: 0,
+            effects: new Array<BasePlayerEffect<BaseEffect>>()
         };
-
-        // Get firt sample. // FIXME:
-        this.mSample = this.mGlobals.module.samples.getSample(this.division.sampleIndex);
-        this.mPeriod = this.division.period;
-    }
-
-    /**
-     * Start next division.
-     * Returns false if no pattern are left
-     */
-    public nextDivision(): void {
-        // Reset sample position if new sample should be played.
-        if (this.division.sampleIndex !== -1) {
-            // Only change and reset sample if period is set or sample has changed.
-            const lNewSample: Sample = this.mGlobals.module.samples.getSample(this.division.sampleIndex);
-            if (lNewSample !== this.mSample || this.division.period !== 0) {
-                this.mSamplePositionIndex = 0;
-                this.mPeriod = this.division.period;
-            }
-
-            this.mSample = lNewSample;
-        }
-    }
-
-    /**
-     * Reset sample on new pattern.
-     */
-    public nextPattern(): void {
-        // Reset sample.
-        this.mSample = null;
-        this.mSamplePositionIndex = 0;
-        this.mPeriod = 0;
     }
 
     /**
      * Play next tick and get sample position value.
      */
-    public nextSample(): number {
-        const lSample: Sample = this.sample;
+    public nextSample(pSongPositionChanged: boolean, pDivisionChanged: boolean, pTickChanged: boolean): number {
+        // Call on change methods.
+        if (pSongPositionChanged) {
+            this.onPatternChange();
+        }
+        if (pDivisionChanged) {
+            this.onDivisionChange();
+        }
+
+        // Get current sample.
+        const lSample: Sample = this.mContinuingInformation.sample;
 
         // Exit if no sample exists or sample finished playing.
-        if (lSample === null || lSample.data.length === 0 || (this.mSamplePositionIndex + 1) > lSample.data.length) {
+        if (lSample === null || lSample.data.length === 0 || (this.mContinuingInformation.samplePosition + 1) > lSample.data.length) {
             return 0;
         }
 
         // Get next sample position value.
-        const lNextSamplePosition = Math.floor(this.mSamplePositionIndex);
+        const lNextSamplePosition = Math.floor(this.mContinuingInformation.samplePosition);
         const lSamplePositionValue: number = lSample.data[lNextSamplePosition];
 
         // Calculate next sample position.
-        const lSampleSpeed = 7093789.2 / ((this.mPeriod * 2) * this.mGlobals.lengthInformation.speed.sampleRate);
-        this.mSamplePositionIndex += lSampleSpeed;
+        const lSampleSpeed = 7093789.2 / ((this.mContinuingInformation.period * 2) * this.mPlayerModule.speed.speed.sampleRate);
+        this.mContinuingInformation.samplePosition += lSampleSpeed;
+
+        // TODO: Exceute effects.
 
         // Check for loop information.
         if (lSample.repeatLength > 0) {
             // Check if sample cursor is after the repeat range.
-            if ((this.mSamplePositionIndex + 1) > (lSample.repeatOffset + lSample.repeatLength)) {
+            if ((this.mContinuingInformation.samplePosition + 1) > (lSample.repeatOffset + lSample.repeatLength)) {
                 // Move back as long as not inside repeat length.
-                this.mSamplePositionIndex = lSample.repeatOffset;
+                this.mContinuingInformation.samplePosition = lSample.repeatOffset;
             }
         }
 
         return lSamplePositionValue;
     }
 
-    public nextTick(): void {
-        // TODO: 
+    public onDivisionChange(): void {
+        const lDivision: DivisionChannel = this.division;
+
+        // Reset sample position if new sample should be played.
+        if (lDivision.sampleIndex !== -1) {
+            // Only change and reset sample if period is set or sample has changed.
+            const lNewSample: Sample = this.mPlayerModule.module.samples.getSample(this.division.sampleIndex);
+            if (lNewSample !== this.mContinuingInformation.sample || lDivision.period !== Pitch.Empty) {
+                this.mContinuingInformation.samplePosition = 0;
+                this.mContinuingInformation.period = this.division.period;
+            }
+
+            this.mContinuingInformation.sample = lNewSample;
+        }
+
+        // TODO: Add effect to ContinuingInformation.
+    }
+
+    public onPatternChange(): void {
+        // Reset every continuing information.
+        this.mContinuingInformation.period = 0;
+        this.mContinuingInformation.sample = null;
+        this.mContinuingInformation.samplePosition = 0;
+        this.mContinuingInformation.effects = new Array<BasePlayerEffect<BaseEffect>>();
     }
 }
 
 interface ContinuingInformation {
-    sample: Sample;
     period: number;
+    sample: Sample;
+    samplePosition: number;
+    effects: Array<BasePlayerEffect<BaseEffect>>;
 }
