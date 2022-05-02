@@ -21,7 +21,7 @@ export class ErrorAllocation {
      * Get execution zone of error.
      * @param pError - Error.
      */
-    public static getExecutionZoneOfError(pError: any): ExecutionZone {
+    public static getExecutionZoneOfError(pError: any): ExecutionZone | null {
         if (pError === ErrorAllocation.mError) {
             return ErrorAllocation.mExecutionZone;
         }

@@ -70,6 +70,10 @@ export class DifferenceSearch<TA, TB> {
                 }
             }
         }
+
+        // Empty array for typescript. This area is never reached.
+        /* istanbul ignore next */
+        return new Array<HistoryItem<TA, TB>>();
     }
 }
 

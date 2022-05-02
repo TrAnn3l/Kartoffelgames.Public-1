@@ -139,7 +139,7 @@ describe('InteractionDetectionProxy', () => {
 
                 // Setup. ChangeDetection.
                 let lPropertyChanged: boolean = false;
-                lChangeDetection.onChange = (_pTargetObject: { a: number; }, pPropertyName: string) => {
+                lChangeDetection.onChange = (_pTargetObject: object, pPropertyName: any) => {
                     if (pPropertyName === 'a') {
                         lPropertyChanged = true;
                     }
@@ -202,7 +202,7 @@ describe('InteractionDetectionProxy', () => {
 
                 // Setup. ChangeDetection.
                 let lPropertyChanged: boolean = false;
-                lChangeDetection.onChange = (_pTargetObject: { a: { b: number; }; }, pPropertyName: string) => {
+                lChangeDetection.onChange = (_pTargetObject: object, pPropertyName: any) => {
                     if (pPropertyName === 'b') {
                         lPropertyChanged = true;
                     }
@@ -219,8 +219,8 @@ describe('InteractionDetectionProxy', () => {
         describe('-- DELETE', () => {
             it('-- Default', () => {
                 // Setup.
-                const lOriginalObject: { a: number; } = { a: 1 };
-                const lChangeDetection: InteractionDetectionProxy<{ a: number; }> = new InteractionDetectionProxy(lOriginalObject);
+                const lOriginalObject: { a?: number; } = { a: 1 };
+                const lChangeDetection: InteractionDetectionProxy<{ a?: number; }> = new InteractionDetectionProxy(lOriginalObject);
 
                 // Process.
                 delete lChangeDetection.proxy.a;
@@ -231,12 +231,12 @@ describe('InteractionDetectionProxy', () => {
 
             it('-- Hook', () => {
                 // Setup.
-                const lOriginalObject: { a: number; } = { a: 1 };
-                const lChangeDetection: InteractionDetectionProxy<{ a: number; }> = new InteractionDetectionProxy(lOriginalObject);
+                const lOriginalObject: { a?: number; } = { a: 1 };
+                const lChangeDetection: InteractionDetectionProxy<{ a?: number; }> = new InteractionDetectionProxy(lOriginalObject);
 
                 // Setup. ChangeDetection.
                 let lPropertyChanged: boolean = false;
-                lChangeDetection.onChange = (_pTargetObject: { a: number; }, pPropertyName: string) => {
+                lChangeDetection.onChange = (_pTargetObject: object, pPropertyName: any) => {
                     if (pPropertyName === 'a') {
                         lPropertyChanged = true;
                     }
@@ -272,7 +272,7 @@ describe('InteractionDetectionProxy', () => {
 
                 // Setup. ChangeDetection.
                 let lPropertyChanged: boolean = false;
-                lChangeDetection.onChange = (_pTargetObject: { a: number; }, pPropertyName: any) => {
+                lChangeDetection.onChange = (_pTargetObject: object, pPropertyName: any) => {
                     if (pPropertyName === lFunction) {
                         lPropertyChanged = true;
                     }
@@ -292,11 +292,11 @@ describe('InteractionDetectionProxy', () => {
                 const lProxy: () => number = lChangeDetection.proxy;
 
                 // Process.
-                let lResultValue: number;
+                let lResultValue: number | null = null;
                 try {
                     lProxy();
                 } catch (pError) {
-                    lResultValue = pError;
+                    lResultValue = <number>pError;
                 }
 
                 // Evaluation.
@@ -311,7 +311,7 @@ describe('InteractionDetectionProxy', () => {
 
                 // Setup. ChangeDetection.
                 let lPropertyChanged: boolean = false;
-                lChangeDetection.onChange = (_pTargetObject: { a: number; }, pPropertyName: any) => {
+                lChangeDetection.onChange = (_pTargetObject: object, pPropertyName: any) => {
                     if (pPropertyName === lFunction) {
                         lPropertyChanged = true;
                     }
@@ -347,7 +347,7 @@ describe('InteractionDetectionProxy', () => {
 
                 // Setup. ChangeDetection.
                 let lPropertyChanged: boolean = false;
-                lChangeDetection.onChange = (_pTargetObject: { a: number; }, pPropertyName: any) => {
+                lChangeDetection.onChange = (_pTargetObject: object, pPropertyName: any) => {
                     if (pPropertyName === lFunction) {
                         lPropertyChanged = true;
                     }
@@ -367,7 +367,7 @@ describe('InteractionDetectionProxy', () => {
                 const lProxy: () => Promise<number> = lChangeDetection.proxy;
 
                 // Process.
-                let lResultValue: number;
+                let lResultValue: number | null = null;
                 await lProxy().catch((pError) => { lResultValue = pError; });
 
                 // Evaluation.
@@ -382,14 +382,14 @@ describe('InteractionDetectionProxy', () => {
 
                 // Setup. ChangeDetection.
                 let lPropertyChanged: boolean = false;
-                lChangeDetection.onChange = (_pTargetObject: { a: number; }, pPropertyName: any) => {
+                lChangeDetection.onChange = (_pTargetObject: object, pPropertyName: any) => {
                     if (pPropertyName === lFunction) {
                         lPropertyChanged = true;
                     }
                 };
 
                 // Process
-                await lProxy().catch((pError) => { /* Empty */ });
+                await lProxy().catch((_pError) => { /* Empty */ });
 
                 // Evaluation.
                 expect(lPropertyChanged).to.be.true;
@@ -404,10 +404,10 @@ describe('InteractionDetectionProxy', () => {
                 const lChangeDetection: InteractionDetectionProxy<{ a: number; }> = new InteractionDetectionProxy(lOriginalObject);
 
                 // Process.
-                const lResultValue: PropertyDescriptor = Object.getOwnPropertyDescriptor(lChangeDetection.proxy, 'a');
+                const lResultValue: PropertyDescriptor | undefined = Object.getOwnPropertyDescriptor(lChangeDetection.proxy, 'a');
 
                 // Evaluation.
-                expect(lResultValue.value).to.equal(lValue);
+                expect(lResultValue?.value).to.equal(lValue);
             });
 
             it('-- OBSERVER_DESCRIPTOR_KEY', () => {
@@ -416,10 +416,10 @@ describe('InteractionDetectionProxy', () => {
                 const lChangeDetection: InteractionDetectionProxy<{ a: number; }> = new InteractionDetectionProxy(lOriginalObject);
 
                 // Process.
-                const lResultValue: PropertyDescriptor = Object.getOwnPropertyDescriptor(lChangeDetection.proxy, (<any>InteractionDetectionProxy).OBSERVER_DESCRIPTOR_KEY);
+                const lResultValue: PropertyDescriptor | undefined = Object.getOwnPropertyDescriptor(lChangeDetection.proxy, (<any>InteractionDetectionProxy).OBSERVER_DESCRIPTOR_KEY);
 
                 // Evaluation.
-                expect(lResultValue.value).to.equal(lChangeDetection);
+                expect(lResultValue?.value).to.equal(lChangeDetection);
             });
         });
 
@@ -431,7 +431,7 @@ describe('InteractionDetectionProxy', () => {
 
             // Setup. ChangeDetection.
             let lPropertyChanged: boolean = false;
-            lDetectionProxy.onChange = (_pTargetObject: { a: number; }, pPropertyName: string) => {
+            lDetectionProxy.onChange = (_pTargetObject: object, pPropertyName: any) => {
                 if (pPropertyName === 'a') {
                     lPropertyChanged = true;
                 }

@@ -15,7 +15,7 @@ export class ChangeDetection implements IDeconstructable {
      */
     public static get current(): ChangeDetection {
         const lCurrentZone: ExecutionZone = ExecutionZone.current;
-        let lCurrentChangeDetection: ChangeDetection = ChangeDetection.mZoneConnectedChangeDetections.get(lCurrentZone);
+        let lCurrentChangeDetection: ChangeDetection | undefined = ChangeDetection.mZoneConnectedChangeDetections.get(lCurrentZone);
 
         // Initialize new change detection
         if (!lCurrentChangeDetection) {
@@ -30,13 +30,13 @@ export class ChangeDetection implements IDeconstructable {
      * Ignores all silent zones and returns next none silent zone.
      */
     public static get currentNoneSilent(): ChangeDetection | null {
-        let lCurrent: ChangeDetection = ChangeDetection.current;
+        let lCurrent: ChangeDetection | null = ChangeDetection.current;
 
         while (lCurrent?.isSilent) {
             lCurrent = lCurrent.mParent;
         }
 
-        return lCurrent ?? null;
+        return lCurrent;
     }
 
     /**
@@ -51,8 +51,8 @@ export class ChangeDetection implements IDeconstructable {
     private readonly mChangeListenerList: List<ChangeListener>;
     private readonly mErrorListenerList: List<ErrorListener>;
     private readonly mExecutionZone: ExecutionZone;
-    private readonly mLooseParent: ChangeDetection;
-    private readonly mParent: ChangeDetection;
+    private readonly mLooseParent: ChangeDetection | null;
+    private readonly mParent: ChangeDetection | null;
     private readonly mSilent: boolean;
     private readonly mWindowErrorListener: (pEvent: ErrorEvent) => void;
     private readonly mWindowRejectionListener: (pEvent: PromiseRejectionEvent) => void;
@@ -69,8 +69,8 @@ export class ChangeDetection implements IDeconstructable {
      * Get change detection loose parent.
      * A parent not connected by change detection rather than zones.
      */
-    public get looseParent(): ChangeDetection {
-        return this.mLooseParent ?? null;
+    public get looseParent(): ChangeDetection | null {
+        return this.mLooseParent;
     }
 
     /**
@@ -83,8 +83,8 @@ export class ChangeDetection implements IDeconstructable {
     /**
      * Get change detection parent.
      */
-    public get parent(): ChangeDetection {
-        return this.mParent ?? null;
+    public get parent(): ChangeDetection | null {
+        return this.mParent;
     }
 
     /**
@@ -136,9 +136,10 @@ export class ChangeDetection implements IDeconstructable {
         // Catch global error, check if allocated zone is child of this change detection and report the error.
         const lErrorHandler = (pErrorEvent: Event, pError: any) => {
             // Get change detection
-            const lErrorZone: ExecutionZone = ErrorAllocation.getExecutionZoneOfError(pError);
+            const lErrorZone: ExecutionZone | null = ErrorAllocation.getExecutionZoneOfError(pError);
             if (lErrorZone) {
-                const lChangeDetection: ChangeDetection = ChangeDetection.mZoneConnectedChangeDetections.get(lErrorZone);
+                // Zone error has allways a ChangeDetection.
+                const lChangeDetection: ChangeDetection = <ChangeDetection>ChangeDetection.mZoneConnectedChangeDetections.get(lErrorZone);
 
                 // Check if error change detection is child of the change detection.
                 if (lChangeDetection.isChildOf(this)) {

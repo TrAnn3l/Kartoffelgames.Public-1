@@ -14,7 +14,7 @@ export class ExecutionZone {
         return ExecutionZone.mCurrentZone;
     }
 
-    private mInteractionCallback: InteractionCallback;
+    private mInteractionCallback: InteractionCallback | null;
     private readonly mName: string;
 
     /**
@@ -27,14 +27,14 @@ export class ExecutionZone {
     /**
      * Get change callback.
      */
-    public get onInteraction(): InteractionCallback {
-        return this.mInteractionCallback ?? null;
+    public get onInteraction(): InteractionCallback | null {
+        return this.mInteractionCallback;
     }
 
     /**
      * Set change callback.
      */
-    public set onInteraction(pInteractionCallback: InteractionCallback) {
+    public set onInteraction(pInteractionCallback: InteractionCallback | null) {
         this.mInteractionCallback = pInteractionCallback;
     }
 
@@ -45,6 +45,7 @@ export class ExecutionZone {
      */
     public constructor(pZoneName: string) {
         this.mName = pZoneName;
+        this.mInteractionCallback = null;
     }
 
     /**
@@ -68,7 +69,7 @@ export class ExecutionZone {
             throw pError;
         } finally {
             // Dispach change event.
-            this.dispatchChangeEvent(this.mName, pFunction, Error().stack);
+            this.dispatchChangeEvent(this.mName, pFunction, <string>Error().stack);
 
             // Reset to last zone.
             ExecutionZone.mCurrentZone = lLastZone;

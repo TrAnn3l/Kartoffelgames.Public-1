@@ -69,7 +69,7 @@ export class Patcher {
                 continue;
             }
 
-            const lDescriptor: PropertyDescriptor = Object.getOwnPropertyDescriptor(lPrototype, lClassMemberName);
+            const lDescriptor: PropertyDescriptor = <PropertyDescriptor>Object.getOwnPropertyDescriptor(lPrototype, lClassMemberName);
             const lValue: any = lDescriptor.value;
 
             // Only try to patch methods.
@@ -135,7 +135,7 @@ export class Patcher {
         if (!(Patcher.ORIGINAL_FUNCTION_KEY in lProto.removeEventListener)) {
             // Remove event.
             const lOriginalRemoveEventListener = lProto.removeEventListener;
-            lProto.removeEventListener = function (pType: string, pCallback: EventListenerOrEventListenerObject | null, pOptions?: EventListenerOptions | boolean): void {
+            lProto.removeEventListener = function (pType: string, pCallback: EventListenerOrEventListenerObject, pOptions?: EventListenerOptions | boolean): void {
                 const lPatchedCallback: any = Reflect.get(pCallback, Patcher.PATCHED_FUNCTION_KEY);
                 lOriginalRemoveEventListener.call(this, pType, lPatchedCallback, pOptions);
             };
@@ -154,7 +154,7 @@ export class Patcher {
      */
     private patchFunctionParameter(pFunction: (...pArgs: Array<any>) => any): (...pArgs: Array<any>) => any {
         const lSelf: this = this;
-        const lPatchedFunction = function (...pArgs: Array<any>) {
+        const lPatchedFunction = function (this: any, ...pArgs: Array<any>) {
             // Get zone.
             const lCurrentZone = ExecutionZone.current;
 
@@ -267,7 +267,7 @@ export class Patcher {
                 continue;
             }
 
-            const lDescriptorInformation: PropertyDescriptor = Object.getOwnPropertyDescriptor(pObject, lPropertyName);
+            const lDescriptorInformation: PropertyDescriptor | undefined = Object.getOwnPropertyDescriptor(pObject, lPropertyName);
 
             // if the descriptor not exists or is not configurable skip the property patch.
             if (!lDescriptorInformation || !lDescriptorInformation.configurable) {
@@ -278,7 +278,7 @@ export class Patcher {
             delete lDescriptorInformation.writable;
             delete lDescriptorInformation.value;
 
-            lDescriptorInformation.set = function (pEventListener: (...pArgs: Array<any>) => any): void {
+            lDescriptorInformation.set = function (this: EventTarget & { [storeValue: string]: any; }, pEventListener: (...pArgs: Array<any>) => any): void {
                 // Remove current added listener.
                 if (typeof this[lStorageKey] === 'function') {
                     this.removeEventListener(lEventName, this[lStorageKey]);
@@ -296,7 +296,7 @@ export class Patcher {
                 }
             };
 
-            lDescriptorInformation.get = function (...pArgs: Array<any>): any {
+            lDescriptorInformation.get = function (this: EventTarget & { [storeValue: string]: any; }): any {
                 const lPatchedFunction = this[lStorageKey];
                 if (typeof lPatchedFunction === 'function') {
                     return lPatchedFunction[Patcher.ORIGINAL_FUNCTION_KEY];

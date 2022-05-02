@@ -18,7 +18,7 @@ export class InteractionDetectionProxy<T extends object> {
 
         if (typeof pProxy === 'object' && pProxy !== null || typeof pProxy === 'function') {
             // Try to get Proxy wrapper.
-            const lWrapper: InteractionDetectionProxy<any> = InteractionDetectionProxy.getWrapper(<any>pProxy);
+            const lWrapper: InteractionDetectionProxy<any> | undefined = InteractionDetectionProxy.getWrapper(<any>pProxy);
             lOriginalValue = lWrapper?.mOriginalObject ?? pProxy;
         } else {
             // Value can't be a proxy object.
@@ -33,9 +33,9 @@ export class InteractionDetectionProxy<T extends object> {
      * @param pProxy - Proxy object.
      * @returns InteractionDetectionProxy or null if not a InteractionDetectionProxy-proxy.
      */
-    private static getWrapper<TObject extends object>(pProxy: TObject): InteractionDetectionProxy<TObject> {
+    private static getWrapper<TObject extends object>(pProxy: TObject): InteractionDetectionProxy<TObject> | undefined {
         // Check if object is a InteractionDetectionProxy-proxy.
-        const lDesciptor: PropertyDescriptor = Object.getOwnPropertyDescriptor(pProxy, InteractionDetectionProxy.OBSERVER_DESCRIPTOR_KEY);
+        const lDesciptor: PropertyDescriptor | undefined = Object.getOwnPropertyDescriptor(pProxy, InteractionDetectionProxy.OBSERVER_DESCRIPTOR_KEY);
         if (lDesciptor && lDesciptor.value instanceof InteractionDetectionProxy) {
             return <InteractionDetectionProxy<TObject>>lDesciptor.value;
         }
@@ -46,24 +46,24 @@ export class InteractionDetectionProxy<T extends object> {
             return lWrapper;
         }
 
-        return null;
+        return undefined;
     }
 
-    private mChangeCallback: ChangeCallback;
+    private mChangeCallback: ChangeCallback | null;
     private readonly mOriginalObject: T;
     private readonly mProxyObject: T;
 
     /**
      * Get change callback.
      */
-    public get onChange(): ChangeCallback {
-        return this.mChangeCallback ?? null;
+    public get onChange(): ChangeCallback | null {
+        return this.mChangeCallback;
     }
 
     /**
      * Set change callback.
      */
-    public set onChange(pChangeCallback: ChangeCallback) {
+    public set onChange(pChangeCallback: ChangeCallback | null) {
         this.mChangeCallback = pChangeCallback;
     }
 
@@ -81,8 +81,13 @@ export class InteractionDetectionProxy<T extends object> {
      * @param pChangeDetectionCallback 
      */
     public constructor(pTarget: T) {
+        // Initialize values. Set to null as long as other wrapper was found. 
+        this.mChangeCallback = null;
+        this.mOriginalObject = <any>null;
+        this.mProxyObject = <any>null;
+
         // Use already created wrapper if it exist.
-        const lWrapper: InteractionDetectionProxy<T> = InteractionDetectionProxy.getWrapper(pTarget);
+        const lWrapper: InteractionDetectionProxy<T> | undefined = InteractionDetectionProxy.getWrapper(pTarget);
         if (lWrapper) {
             return lWrapper;
         }
@@ -120,7 +125,7 @@ export class InteractionDetectionProxy<T extends object> {
              */
             set(pTargetObject: T, pPropertyName: ObjectFieldPathPart, pNewPropertyValue: any): boolean {
                 const lResult: boolean = Reflect.set(pTargetObject, pPropertyName, pNewPropertyValue);
-                lSelf.dispatchChangeEvent(pTargetObject, pPropertyName, Error().stack);
+                lSelf.dispatchChangeEvent(pTargetObject, pPropertyName, <string>Error().stack);
                 return lResult;
             },
 
@@ -137,7 +142,7 @@ export class InteractionDetectionProxy<T extends object> {
                 if (typeof lResult === 'object' && lResult !== null || typeof lResult === 'function') {
                     const lProxy: InteractionDetectionProxy<any> = new InteractionDetectionProxy(lResult);
                     lProxy.onChange = (pSourceObject: object, pProperty: ObjectFieldPathPart | ((...pArgs: Array<any>) => any)) => {
-                        lSelf.dispatchChangeEvent(pSourceObject, pProperty, Error().stack);
+                        lSelf.dispatchChangeEvent(pSourceObject, pProperty, <string>Error().stack);
                     };
 
                     return lProxy.proxy;
@@ -153,7 +158,7 @@ export class InteractionDetectionProxy<T extends object> {
              */
             deleteProperty(pTargetObject: T, pPropertyName: ObjectFieldPathPart): boolean {
                 Reflect.deleteProperty(pTargetObject, pPropertyName);
-                lSelf.dispatchChangeEvent(pTargetObject, pPropertyName, Error().stack);
+                lSelf.dispatchChangeEvent(pTargetObject, pPropertyName, <string>Error().stack);
                 return true;
             },
 
@@ -172,7 +177,7 @@ export class InteractionDetectionProxy<T extends object> {
                 try {
                     lFunctionResult = (<(...args: Array<any>) => any>pTargetObject).call(lOriginalThisObject, ...pArgumentsList);
                 } catch (e) {
-                    lSelf.dispatchChangeEvent(lOriginalThisObject, <(...args: Array<any>) => any>pTargetObject, Error().stack);
+                    lSelf.dispatchChangeEvent(lOriginalThisObject, <(...args: Array<any>) => any>pTargetObject, <string>Error().stack);
                     throw e;
                 }
 
@@ -190,15 +195,15 @@ export class InteractionDetectionProxy<T extends object> {
                         // Wrong: await THIS() -> Code after THIS() -> Dispatched Event.
                         // Right: await THIS() -> Dispatched Event -> Code after THIS().
                         lFunctionResult.then((pResult: any) => {
-                            lSelf.dispatchChangeEvent(lOriginalThisObject, <(...args: Array<any>) => any>pTargetObject, Error().stack);
+                            lSelf.dispatchChangeEvent(lOriginalThisObject, <(...args: Array<any>) => any>pTargetObject, <string>Error().stack);
                             pResolve(pResult);
                         }).catch((pReason: any) => {
-                            lSelf.dispatchChangeEvent(lOriginalThisObject, <(...args: Array<any>) => any>pTargetObject, Error().stack);
+                            lSelf.dispatchChangeEvent(lOriginalThisObject, <(...args: Array<any>) => any>pTargetObject, <string>Error().stack);
                             pReject(pReason);
                         });
                     });
                 } else {
-                    lSelf.dispatchChangeEvent(lOriginalThisObject, <(...args: Array<any>) => any>pTargetObject, Error().stack);
+                    lSelf.dispatchChangeEvent(lOriginalThisObject, <(...args: Array<any>) => any>pTargetObject, <string>Error().stack);
                     lResult = lFunctionResult;
                 }
 
@@ -210,7 +215,7 @@ export class InteractionDetectionProxy<T extends object> {
              * @param pTargetObject - Original object.
              * @param pPropertyName - Name of property.
              */
-            getOwnPropertyDescriptor(pTargetObject: T, pPropertyName: ObjectFieldPathPart): PropertyDescriptor {
+            getOwnPropertyDescriptor(pTargetObject: T, pPropertyName: ObjectFieldPathPart): PropertyDescriptor | undefined {
                 // Get "fake" descriptor containing this observer.
                 if (pPropertyName === InteractionDetectionProxy.OBSERVER_DESCRIPTOR_KEY) {
                     return { configurable: true, enumerable: true, value: lSelf };
