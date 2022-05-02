@@ -39,10 +39,10 @@ describe('ChangeDetection', () => {
             const lSilentChangeDetection: ChangeDetection = new ChangeDetection('Name', lNoneSilentChangeDetection, false, true);
 
             // Process.
-            let lCurrentChangeDetectionName: string | undefined = undefined;
+            let lCurrentChangeDetectionName: string | null = null;
             lNoneSilentChangeDetection.execute(() => {
                 lSilentChangeDetection.execute(() => {
-                    lCurrentChangeDetectionName = ChangeDetection.currentNoneSilent?.name;
+                    lCurrentChangeDetectionName = ChangeDetection.currentNoneSilent.name;
                 });
             });
 
@@ -52,7 +52,7 @@ describe('ChangeDetection', () => {
 
         it('-- No zone', () => {
             // Process.
-            const lCurrentNoneSilentChangeDetection: ChangeDetection | null = ChangeDetection.currentNoneSilent;
+            const lCurrentNoneSilentChangeDetection: ChangeDetection = ChangeDetection.currentNoneSilent;
 
             // Evaluation.
             expect(lCurrentNoneSilentChangeDetection).to.be.instanceOf(ChangeDetection);

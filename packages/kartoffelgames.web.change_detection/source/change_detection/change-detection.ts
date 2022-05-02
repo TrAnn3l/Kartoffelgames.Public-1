@@ -29,14 +29,15 @@ export class ChangeDetection implements IDeconstructable {
      * Get current change detection.
      * Ignores all silent zones and returns next none silent zone.
      */
-    public static get currentNoneSilent(): ChangeDetection | null {
+    public static get currentNoneSilent(): ChangeDetection {
         let lCurrent: ChangeDetection | null = ChangeDetection.current;
 
         while (lCurrent?.isSilent) {
             lCurrent = lCurrent.mParent;
         }
 
-        return lCurrent;
+        // There is allways an none silent zone.
+        return <ChangeDetection>lCurrent;
     }
 
     /**
