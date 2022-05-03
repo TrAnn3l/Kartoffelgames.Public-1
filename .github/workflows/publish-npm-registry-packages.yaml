@@ -1,9 +1,8 @@
 name: Github Package Release
 
 on:
-  push:
-    branches:
-      - 'development'
+  release:
+    types: [published]
 
 jobs:
   test:
@@ -31,25 +30,24 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16.x'
-          registry-url: 'https://npm.pkg.github.com'
+          registry-url: 'https://registry.npmjs.org'
           scope: '@kartoffelgames'
       - name: Set up git for commits
         run: |
           git config user.name "GITHUBACTION"
+          git config user.email 'kartoffelgames@users.noreply.github.com'
       - name: Npm install
         run: npm ci --ignore-scripts
       - name: Bump version numbers
         run: |
           npx turbo run build:release --force
-          git config --global user.name 'KartoffelGames CI'
-          git config --global user.email 'kartoffelgames@users.noreply.github.com'
           npm version patch -ws
           npm run update-dependency-versions
           git commit -am "Bump package versions."
           git push --follow-tags --no-verify
       - run: npm publish -ws
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.CI_NPM_TOKEN }}
           GITHUB\_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
 
   empty-job:
