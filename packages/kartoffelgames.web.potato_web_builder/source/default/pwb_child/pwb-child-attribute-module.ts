@@ -21,7 +21,8 @@ export class PwbChildAttributeModule {
      * @param pAttributeReference - Attribute of module.
      */
     public constructor(pTargetReference: ModuleTargetReference, pValueReference: ModuleLayerValuesReference, pAttributeReference: ModuleAttributeReference, pComponentManager: ComponentManagerReference) {
-        const lRegistedElement: Node = pComponentManager.value.updateHandler.registerObject(pTargetReference.value);
+        const lTarget: Node = <Node>pTargetReference.value;
+        const lRegistedElement: Node = pComponentManager.value.updateHandler.registerObject(lTarget);
 
         // Add current html element to temporary root values. Delete starting #.
         pValueReference.value.setRootValue(pAttributeReference.value.qualifiedName.substring(1), lRegistedElement);

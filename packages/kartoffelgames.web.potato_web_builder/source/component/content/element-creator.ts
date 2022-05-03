@@ -16,7 +16,7 @@ export class ElementCreator {
      * @param pXmlElement - Xml content node.
      */
     public static createElement(pXmlElement: XmlElement): Element {
-        const lNamespace: string = pXmlElement.namespace;
+        const lNamespace: string | null = pXmlElement.namespace;
         const lTagname: string = pXmlElement.qualifiedTagName;
 
         // On custom element

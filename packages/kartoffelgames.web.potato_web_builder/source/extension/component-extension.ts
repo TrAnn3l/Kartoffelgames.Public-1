@@ -27,7 +27,7 @@ type ComponentExtensionConstructorParameter = {
     extensionClass: IPwbExtensionClass;
     componentManager: ComponentManager;
     targetClass: InjectionConstructor;
-    targetObject: object;
+    targetObject: object | null;
 
     // Component
     componentElement: HTMLElement;

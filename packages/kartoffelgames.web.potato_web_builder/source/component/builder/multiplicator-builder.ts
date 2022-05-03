@@ -36,13 +36,13 @@ export class MultiplicatorBuilder extends BaseBuilder {
         if (!this.contentManager.multiplicatorModule) {
             const lTemplate: XmlElement = <XmlElement>this.template;
 
-            // Create module and save inside
-            const lManipulatorModule: MultiplicatorModule = this.contentManager.modules.getElementMultiplicatorModule(lTemplate, this.values);
+            // Create module and save inside. Allways has existing module bc. can only be called with found multiplicator module.
+            const lManipulatorModule: MultiplicatorModule = <MultiplicatorModule>this.contentManager.modules.getElementMultiplicatorModule(lTemplate, this.values);
             this.contentManager.multiplicatorModule = lManipulatorModule;
         }
 
         // Call module update.
-        const lModuleResult: MultiplicatorResult = this.contentManager.multiplicatorModule.update();
+        const lModuleResult: MultiplicatorResult | null = (<MultiplicatorModule>this.contentManager.multiplicatorModule).update();
         if (lModuleResult) {
             // Add shadow parent to all module results.
             for (const lResult of lModuleResult.elementList) {
@@ -66,7 +66,7 @@ export class MultiplicatorBuilder extends BaseBuilder {
      * @param pNewContent - New content.
      * @param pLastContent - Last content that comes before new content.
      */
-    private insertNewContent(pNewContent: ManipulatorElement, pLastContent: StaticBuilder): StaticBuilder {
+    private insertNewContent(pNewContent: ManipulatorElement, pLastContent: StaticBuilder | null): StaticBuilder {
         // Create new static builder.
         const lStaticBuilder: StaticBuilder = new StaticBuilder(pNewContent.template, this.shadowParent, this.contentManager.modules, pNewContent.componentValues, this);
 
@@ -95,7 +95,7 @@ export class MultiplicatorBuilder extends BaseBuilder {
         // Get differences of old an new content.
         const lDifferenceList: Array<HistoryItem<StaticBuilder, ManipulatorElement>> = lDifferenceSearch.differencesOf(pOldContentList, pNewContentList);
 
-        let lLastContent: StaticBuilder = null;
+        let lLastContent: StaticBuilder | null = null;
         for (const lHistoryItem of lDifferenceList) {
             // Update, Remove or do nothing with static builder depended on change state.
             if (lHistoryItem.changeState === ChangeState.Keep) {

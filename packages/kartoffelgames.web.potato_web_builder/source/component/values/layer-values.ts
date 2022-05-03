@@ -10,7 +10,7 @@ import { ComponentManager } from '../component-manager';
  */
 export class LayerValues {
     private readonly mComponentManager: ComponentManager;
-    private readonly mParentLayer: LayerValues;
+    private readonly mParentLayer: LayerValues | null;
     private readonly mTemporaryValues: Dictionary<string, any>;
 
     /**

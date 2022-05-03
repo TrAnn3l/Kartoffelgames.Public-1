@@ -44,11 +44,12 @@ describe('Custom Module', () => {
         class TestComponent { }
 
         // Process. Create element.
-        let lErrorMessage: string;
+        let lErrorMessage: string | null = null;
         try {
             await <any>TestUtil.createComponent(TestComponent, true);
-        } catch (e) {
-            lErrorMessage = e.message;
+        } catch (pError) {
+            const lError: Error = <Error>pError;
+            lErrorMessage = lError.message;
         }
 
         // Evaluation.
@@ -71,11 +72,12 @@ describe('Custom Module', () => {
         class TestComponent { }
 
         // Process. Create element.
-        let lErrorMessage: string;
+        let lErrorMessage: string | null = null;
         try {
             await <any>TestUtil.createComponent(TestComponent, true);
-        } catch (e) {
-            lErrorMessage = e.message;
+        } catch (pError) {
+            const lError: Error = <Error>pError;
+            lErrorMessage = lError.message;
         }
 
         // Evaluation.

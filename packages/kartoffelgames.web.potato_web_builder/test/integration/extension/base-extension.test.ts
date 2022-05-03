@@ -46,8 +46,8 @@ describe('BaseExtension', () => {
                 lExtensionCalled = true;
             }
 
-            public onCollectInjections(): Array<object> {
-                const lInjectionList: Array<object> = new Array<object>();
+            public onCollectInjections(): Array<object | null> {
+                const lInjectionList: Array<object | null> = new Array<object | null>();
                 lInjectionList.push(null);
                 lInjectionList.push(<any>1);
                 return lInjectionList;

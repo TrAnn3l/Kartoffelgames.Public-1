@@ -21,7 +21,7 @@ describe('PwbChildAttributeModule', () => {
         class TestComponent {
             @PwbExport
             @PwbChild(lIdName)
-            public idChild: HTMLDivElement;
+            public idChild!: HTMLDivElement;
         }
 
         // Setup. Create element.
@@ -62,7 +62,7 @@ describe('PwbChildAttributeModule', () => {
         class TestComponent {
             @PwbExport
             @PwbChild(lWrongName)
-            public idChild: HTMLDivElement;
+            public idChild!: HTMLDivElement;
         }
 
         // Setup. Create element.
@@ -73,5 +73,22 @@ describe('PwbChildAttributeModule', () => {
 
         // Evaluation. Two Anchors. Static-Root => Manipulator => No Childs, no anchors.
         expect(lErrorFunction).to.throw(Exception, `Can't find child "${lWrongName}".`);
+    });
+
+    it('-- Child decorator on none Component object', () => {
+        // Setup. Define class.
+        class TestClass {
+            @PwbChild('SomeName')
+            public child!: HTMLElement;
+        }
+
+        // Process. Create class and read child.
+        const lErrorFunction = () => {
+            const lObject: TestClass = new TestClass();
+            lObject.child;
+        };
+
+        // Evaluation.
+        expect(lErrorFunction).to.throw(Exception, 'Target is not a Component');
     });
 });

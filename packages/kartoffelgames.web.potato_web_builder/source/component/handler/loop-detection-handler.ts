@@ -6,7 +6,7 @@ export class LoopDetectionHandler {
     private mInActiveChain: boolean;
     private readonly mMaxStackSize: number;
     private mNextSheduledCall: number;
-    private mOnError: ErrorHandler;
+    private mOnError: ErrorHandler | null;
 
     /**
      * Get if loop detection has an active chain.
@@ -30,6 +30,9 @@ export class LoopDetectionHandler {
     public constructor(pMaxStackSize: number) {
         this.mCurrentCallChain = new List<ChangeDetectionReason>();
         this.mMaxStackSize = pMaxStackSize;
+        this.mOnError = null;
+        this.mNextSheduledCall = 0;
+        this.mInActiveChain = false;
     }
 
     /**
@@ -96,8 +99,16 @@ export class LoopDetectionHandler {
 type ErrorHandler = (pError: any) => boolean;
 
 export class LoopError extends Error {
-    public readonly chain: Array<ChangeDetectionReason>;
-    public readonly message: string;
+    private readonly mChain: Array<ChangeDetectionReason>;
+
+    /**
+     * Asynchron call chain.
+     */
+    public get chain(): Array<ChangeDetectionReason> {
+        // More of the same. Needs no testing.
+        /* istanbul ignore next */
+        return this.mChain;
+    }
 
     /**
      * Constructor.
@@ -107,7 +118,6 @@ export class LoopError extends Error {
      */
     public constructor(pMessage: string, pChain: Array<ChangeDetectionReason>) {
         super(pMessage);
-        this.message = pMessage;
-        this.chain = [...pChain];
+        this.mChain = [...pChain];
     }
 }

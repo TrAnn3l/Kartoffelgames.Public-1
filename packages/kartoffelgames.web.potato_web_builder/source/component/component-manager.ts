@@ -67,9 +67,9 @@ export class ComponentManager {
      * @param pHtmlComponent - HTMLElement of component.
      * @param pUpdateScope - Update scope of component.
      */
-    public constructor(pUserClass: UserClass, pTemplateString: string, pExpressionModule: IPwbExpressionModuleClass, pHtmlComponent: HTMLElement, pUpdateScope: UpdateScope) {
+    public constructor(pUserClass: UserClass, pTemplateString: string | null, pExpressionModule: IPwbExpressionModuleClass, pHtmlComponent: HTMLElement, pUpdateScope: UpdateScope) {
         // Load cached or create new module handler and template.
-        let lTemplate: XmlDocument = ComponentManager.mComponentCache.get(pUserClass);
+        let lTemplate: XmlDocument | undefined = ComponentManager.mComponentCache.get(pUserClass);
         if (!lTemplate) {
             lTemplate = ComponentManager.mXmlParser.parse(pTemplateString ?? '');
             ComponentManager.mComponentCache.set(pUserClass, lTemplate);
@@ -78,7 +78,7 @@ export class ComponentManager {
         const lModules: ComponentModules = new ComponentModules(this, pExpressionModule);
 
         // Create update handler.
-        const lUpdateScope: UpdateScope = pUpdateScope ?? UpdateScope.Global;
+        const lUpdateScope: UpdateScope = pUpdateScope;
         this.mUpdateHandler = new UpdateHandler(lUpdateScope);
         this.mUpdateHandler.addUpdateListener(() => {
             // Call user class on update function.
@@ -96,7 +96,7 @@ export class ComponentManager {
         this.mElementHandler = new ElementHandler(pHtmlComponent);
 
         // Initialize user object injections.
-        const lLocalInjections: Array<object> = new Array<object>();
+        const lLocalInjections: Array<object | null> = new Array<object | null>();
         lLocalInjections.push(new ComponentElementReference(pHtmlComponent));
         lLocalInjections.push(new ComponentUpdateReference(this.mUpdateHandler));
 
@@ -164,7 +164,7 @@ export class ComponentManager {
         this.updateHandler.requestUpdate({
             source: this.userObjectHandler.userObject,
             property: Symbol('any'),
-            stacktrace: Error().stack
+            stacktrace: <string>Error().stack
         });
     }
 

@@ -23,18 +23,18 @@ export class BaseExtension {
         this.mInjections = new Dictionary<InjectionConstructor, any>();
         this.mInjections.set(ComponentManagerReference, new ComponentManagerReference(pParameter.componentManager));
         this.mInjections.set(ExtensionTargetClassReference, new ExtensionTargetClassReference(pParameter.targetClass));
-        this.mInjections.set(ExtensionTargetObjectReference, new ExtensionTargetObjectReference(pParameter.targetObject));
+        this.mInjections.set(ExtensionTargetObjectReference, new ExtensionTargetObjectReference(pParameter.targetObject ?? {}));
     }
 
     /**
      * Collect injections
      */
-    public collectInjections(): Array<object>{
-        const lInjectionTypeList: Array<object> = new Array<object>();
+    public collectInjections(): Array<object | null> {
+        const lInjectionTypeList: Array<object | null> = new Array<object | null>();
 
         for (const lExtension of this.mExtensionObjectList) {
-            const lTypeList: Array<object> = lExtension.onCollectInjections?.();
-            if(lTypeList){
+            const lTypeList: Array<object | null> | undefined = lExtension.onCollectInjections?.();
+            if (lTypeList) {
                 lInjectionTypeList.push(...lTypeList);
             }
         }
@@ -49,7 +49,7 @@ export class BaseExtension {
         for (const lExtension of this.mExtensionObjectList) {
             lExtension.onDeconstruct?.();
         }
-    } 
+    }
 
     /**
       * Create extension object.
@@ -76,5 +76,5 @@ type BaseExtensionConstructorParameter = {
     extensionClass: IPwbExtensionClass;
     componentManager: ComponentManager;
     targetClass: InjectionConstructor;
-    targetObject: object;
+    targetObject: object | null;
 };

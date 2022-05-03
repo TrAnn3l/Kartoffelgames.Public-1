@@ -13,7 +13,10 @@ export class StaticModule extends BaseModule<boolean, boolean> {
      */
     public constructor(pParameter: StaticModuleConstructorParameter) {
         super(pParameter);
-        this.mModuleObject = this.createModuleObject(this.attribute.value);
+
+        // Create module object with attribute value. Attribute is always set for static modules.
+        const lAttribute: XmlAttribute = <XmlAttribute>this.attribute;
+        this.mModuleObject = this.createModuleObject(lAttribute.value);
     }
 
     /**

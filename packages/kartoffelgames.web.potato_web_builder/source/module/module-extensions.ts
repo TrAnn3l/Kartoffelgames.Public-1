@@ -33,8 +33,8 @@ export class ModuleExtensions {
      * Execute patcher extensions.
      * @param pParameter - Parameter.
      */
-     public executeInjectorExtensions(pParameter: ModuleExtensionsExecuteInjectorExtensionsParameter): Array<object> {
-        const lInjectionTypeList: Array<object> = new Array<object>();
+    public executeInjectorExtensions(pParameter: ModuleExtensionsExecuteInjectorExtensionsParameter): Array<object|null> {
+        const lInjectionTypeList: Array<object|null> = new Array<object|null>();
 
         for (const lExtensionClass of Extensions.moduleInjectorExtensions) {
             // Create extension and add to extension list.
@@ -71,7 +71,7 @@ export class ModuleExtensions {
                 layerValues: pParameter.layerValues,
                 targetClass: pParameter.targetClass,
                 targetObject: pParameter.targetObject,
-                element: pParameter.element
+                element: <Node>pParameter.element
             }));
         }
     }
@@ -82,16 +82,16 @@ type ModuleExtensionsExecutePatcherExtensionsParameter = {
     targetClass: InjectionConstructor,
     targetObject: object,
     template: BaseXmlNode,
-    attribute: XmlAttribute,
+    attribute: XmlAttribute | null, // Null for native text expressions.
     layerValues: LayerValues,
-    element: Node;
+    element: Node | null; // Null for multiplicator modules
 };
 
 type ModuleExtensionsExecuteInjectorExtensionsParameter = {
     componentManager: ComponentManager,
     targetClass: InjectionConstructor,
     template: BaseXmlNode,
-    attribute: XmlAttribute,
+    attribute: XmlAttribute | null, // Null for native text expressions.
     layerValues: LayerValues,
-    element: Node;
+    element: Node | null; // Null for multiplicator modules
 };

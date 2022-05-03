@@ -5,8 +5,9 @@ import { IPwbExpressionModuleClass, IPwbExpressionModuleObject, ModuleDefinition
 import { BaseModule } from './base-module';
 
 export class ExpressionModule extends BaseModule<boolean, string> {
-    private mLastResult: string;
+    private mLastResult: string | null;
     private readonly mProcessList: Array<string | IPwbExpressionModuleObject>;
+    private mValueWasSet: boolean = false;
 
     /**
      * Constructor.
@@ -18,6 +19,8 @@ export class ExpressionModule extends BaseModule<boolean, string> {
             targetAttribute: ('targetAttribute' in pParameter) ? pParameter.targetAttribute : null
         });
         this.mProcessList = new Array<string | IPwbExpressionModuleObject>();
+        this.mLastResult = null;
+        this.mValueWasSet = false;
 
         // Get value from attribute or use target textnode.
         let lTargetValue: string;
@@ -65,12 +68,18 @@ export class ExpressionModule extends BaseModule<boolean, string> {
         }, '');
 
         // Update value if new value was processed.
-        if (this.mLastResult !== lNewValue) {
+        if (!this.mValueWasSet || this.mLastResult !== lNewValue) {
+            this.mValueWasSet = true;
+
+            // Node for expressions is allways set.
+            const lNode: Node = <Node>this.node;
+
             // Add result text to TextNode or as attribute.
-            if (this.node instanceof Element) {
-                this.node.setAttribute(this.attribute.qualifiedName, lNewValue);
+            if (lNode instanceof Element) {
+                const lAttribute: XmlAttribute = <XmlAttribute>this.attribute;
+                lNode.setAttribute(lAttribute.qualifiedName, lNewValue);
             } else { // Text
-                this.node.nodeValue = lNewValue;
+                lNode.nodeValue = lNewValue;
             }
 
             // Save last value.

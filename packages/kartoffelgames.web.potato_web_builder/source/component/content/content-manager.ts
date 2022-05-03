@@ -16,7 +16,7 @@ export class ContentManager {
     private readonly mContentAnchor: Comment;
     private readonly mLinkedModules: Dictionary<Node, Array<BaseModule<boolean, any>>>;
     private readonly mModules: ComponentModules;
-    private mMultiplicatorModule: MultiplicatorModule;
+    private mMultiplicatorModule: MultiplicatorModule | null;
     private readonly mRootChildList: List<Content>;
 
 
@@ -38,7 +38,7 @@ export class ContentManager {
     /**
      * Get all linked module lists.
      */
-     public get linkedModuleList(): Array<BaseModule<boolean, any>> {
+    public get linkedModuleList(): Array<BaseModule<boolean, any>> {
         const lAllModuleList: Array<BaseModule<boolean, any>> = new Array<BaseModule<boolean, any>>();
         for (const lNodeModuleList of this.mLinkedModules.values()) {
             lAllModuleList.push(...lNodeModuleList);
@@ -56,14 +56,14 @@ export class ContentManager {
     /**
      * Get multiplicator module of layer.
      */
-    public get multiplicatorModule(): MultiplicatorModule {
+    public get multiplicatorModule(): MultiplicatorModule | null {
         return this.mMultiplicatorModule;
     }
 
     /**
      * Set multiplicator module of layer.
      */
-    public set multiplicatorModule(pModule: MultiplicatorModule) {
+    public set multiplicatorModule(pModule: MultiplicatorModule | null) {
         this.mMultiplicatorModule = pModule;
     }
 
@@ -79,6 +79,7 @@ export class ContentManager {
      * Constructor.
      */
     public constructor(pModules: ComponentModules, pAnchorPrefix: string) {
+        this.mMultiplicatorModule = null;
         this.mModules = pModules;
         this.mRootChildList = new List<Content>();
         this.mChildBuilderList = new List<BaseBuilder>();
@@ -106,7 +107,7 @@ export class ContentManager {
      * @param pChild - Child node.
      * @param pParentElement - Parent element of child.
      */
-    public append(pChild: Content, pParentElement: Element): void {
+    public append(pChild: Content, pParentElement: Element | null): void {
         this.insertContent(pChild, pParentElement, 'Append');
     }
 
@@ -121,7 +122,8 @@ export class ContentManager {
 
         // Deconstruct components.
         for (const lComponent of this.mChildComponentList) {
-            const lComponentManager: ComponentManager = ComponentConnection.componentManagerOf(lComponent);
+            // Child component has always an component manager.
+            const lComponentManager: ComponentManager = <ComponentManager>ComponentConnection.componentManagerOf(lComponent);
             lComponentManager.deconstruct();
         }
 
@@ -172,7 +174,7 @@ export class ContentManager {
      */
     public linkModule(pModule: StaticModule | ExpressionModule, pNode: Node): void {
         // Get module list of node. Create if it not exists.
-        let lModuleList: Array<BaseModule<boolean, any>> = this.mLinkedModules.get(pNode);
+        let lModuleList: Array<BaseModule<boolean, any>> | undefined = this.mLinkedModules.get(pNode);
         if (!lModuleList) {
             lModuleList = new Array<BaseModule<boolean, any>>();
             this.mLinkedModules.set(pNode, lModuleList);
@@ -200,7 +202,7 @@ export class ContentManager {
             pChild.deconstruct();
         } else {
             // Check if element is a component. If so deconstruct.
-            const lComponentManager: ComponentManager = ComponentConnection.componentManagerOf(pChild);
+            const lComponentManager: ComponentManager | undefined = ComponentConnection.componentManagerOf(pChild);
             lComponentManager?.deconstruct();
 
             // Remove from parent.
@@ -211,7 +213,7 @@ export class ContentManager {
             }
 
             // Unlink modules.
-            const lModuleList: Array<BaseModule<boolean, any>> = this.mLinkedModules.get(pChild);
+            const lModuleList: Array<BaseModule<boolean, any>> | undefined = this.mLinkedModules.get(pChild);
             if (lModuleList) {
                 // Deconstruct all linked modules.
                 for (const lModule of lModuleList) {
@@ -234,8 +236,8 @@ export class ContentManager {
      * @param pMode - Add mode for child.
      */
     private insertContent(pChild: Content, pTarget: Content, pMode: 'After'): void;
-    private insertContent(pChild: Content, pParent: Element, pMode: 'Append' | 'Prepend'): void;
-    private insertContent(pChild: Content, pTarget: Content, pMode: 'Append' | 'After' | 'Prepend'): void {
+    private insertContent(pChild: Content, pParent: Element | null, pMode: 'Append' | 'Prepend'): void;
+    private insertContent(pChild: Content, pTarget: Content | null, pMode: 'Append' | 'After' | 'Prepend'): void {
         // Get anchor of child if child is a builder.
         const lRealChildNode: Node = (pChild instanceof BaseBuilder) ? pChild.anchor : pChild;
 
@@ -251,7 +253,7 @@ export class ContentManager {
         } else { // pMode === 'After'
             // Native elements currently not used. But good to have.
             /* istanbul ignore next */
-            lRealParent = (pTarget instanceof BaseBuilder) ? pTarget.anchor.parentElement : pTarget.parentElement;
+            lRealParent = (pTarget instanceof BaseBuilder) ? <Element>pTarget.anchor.parentElement : <Element>(<Node>pTarget).parentElement;
 
             // Parent is null, because direct parent is the component shadow root.
             // When parent element is null "this.mContentAnchor.parentElement" is also null. So this check would be unnessessary. 
@@ -264,7 +266,7 @@ export class ContentManager {
         // Get node the child gets insert AFTER.
         let lRealTarget: Node | null;
         if (pMode === 'Append') {
-            const lParent: Element = <Element>pTarget;
+            const lParent: Element | null = <Element | null>pTarget;
             // Last element of parent.
             if (lParent) {
                 // Parent is element. Get last child of element.
@@ -290,8 +292,8 @@ export class ContentManager {
             lRealTarget = (pTarget instanceof BaseBuilder) ? pTarget.boundary.end : pTarget;
         }
 
-        // Get previous sibling content onyl if added on root.
-        let lTargetContent: Content;
+        // Get previous sibling content only if added on root.
+        let lTargetContent: Content | null = null;
         if (lIsRoot) {
             if (pMode === 'Prepend') {
                 // Sibling before first element => null.
@@ -317,7 +319,11 @@ export class ContentManager {
 
         // Register content.
         if (lIsRoot) {
-            this.registerContent(pChild, lIsRoot, lTargetContent);
+            if (lTargetContent !== null) {
+                this.registerContent(pChild, lIsRoot, lTargetContent);
+            } else {
+                this.registerContent(pChild, lIsRoot);
+            }
         } else {
             this.registerContent(pChild, lIsRoot);
         }
@@ -342,7 +348,7 @@ export class ContentManager {
         // Add element in order if element is on root level.
         if (pRoot) {
             // Set index to -1 of no previous sibling exists.
-            const lSiblingIndex: number = this.mRootChildList.indexOf(pPreviousSibling);
+            const lSiblingIndex: number = (pPreviousSibling) ? this.mRootChildList.indexOf(pPreviousSibling) : -1;
 
             // Extend boundary if child is new last element.
             if ((lSiblingIndex + 1) === this.mRootChildList.length) {

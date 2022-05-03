@@ -17,7 +17,7 @@ import { ComponentScopeExecutor } from '../../module/execution/component-scope-e
 })
 export class TwoWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
     private readonly mAttributeReference: ModuleAttributeReference;
-    private readonly mTargetReference: ModuleTargetReference;
+    private readonly mTarget: Node;
     private readonly mThisProperty: string;
     private readonly mUserObjectCompareHandler: CompareHandler<any>;
     private readonly mValueHandler: LayerValues;
@@ -31,7 +31,7 @@ export class TwoWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
      * @param pAttribute - Attribute of module.
      */
     public constructor(pTargetReference: ModuleTargetReference, pValueReference: ModuleLayerValuesReference, pAttributeReference: ModuleAttributeReference, pComponentManagerReference: ComponentManagerReference) {
-        this.mTargetReference = pTargetReference;
+        this.mTarget = <Node>pTargetReference.value;
         this.mValueHandler = pValueReference.value;
         this.mAttributeReference = pAttributeReference;
 
@@ -45,7 +45,7 @@ export class TwoWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
         this.mViewCompareHandler = new CompareHandler(Symbol('Uncompareable'), 4);
 
         // Patch target. Do nothing with it.
-        pComponentManagerReference.value.updateHandler.registerObject(pTargetReference.value);
+        pComponentManagerReference.value.updateHandler.registerObject(this.mTarget);
     }
 
     /**
@@ -60,7 +60,7 @@ export class TwoWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
         // Check for changes in this value.
         if (!this.mUserObjectCompareHandler.compareAndUpdate(lThisValue)) {
             // Update target view
-            Reflect.set(this.mTargetReference.value, this.mViewProperty, lThisValue);
+            Reflect.set(this.mTarget, this.mViewProperty, lThisValue);
 
             // Update view compare with same value. 
             this.mViewCompareHandler.update(lThisValue);
@@ -68,7 +68,7 @@ export class TwoWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
             // Set flag that value was updated.
             lValueChanged = true;
         } else {
-            const lTargetViewValue: any = Reflect.get(this.mTargetReference.value, this.mViewProperty);
+            const lTargetViewValue: any = Reflect.get(this.mTarget, this.mViewProperty);
 
             // Check for changes in view.
             if (!this.mViewCompareHandler.compareAndUpdate(lTargetViewValue)) {

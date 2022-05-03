@@ -33,7 +33,7 @@ export class ComponentEventExtension {
 
             // Override each property with the corresponding component event emitter.
             for (const lEventName of lEventProperties.keys()) {
-                const lPropertyKey: string = lEventProperties.get(lEventName);
+                const lPropertyKey: string = <string>lEventProperties.get(lEventName);
 
                 // Check property type.
                 if (Metadata.get(pTargetClassReference.value).getProperty(lPropertyKey).type !== ComponentEventEmitter) {

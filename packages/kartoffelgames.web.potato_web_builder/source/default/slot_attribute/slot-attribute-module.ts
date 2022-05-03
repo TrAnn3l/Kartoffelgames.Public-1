@@ -1,4 +1,4 @@
-import { XmlElement } from '@kartoffelgames/core.xml';
+import { XmlAttribute, XmlElement } from '@kartoffelgames/core.xml';
 import { LayerValues } from '../../component/values/layer-values';
 import { PwbMultiplicatorAttributeModule } from '../../module/decorator/pwb-multiplicator-attribute-module.decorator';
 import { IPwbMultiplicatorModuleOnUpdate } from '../../module/interface/module';
@@ -15,7 +15,7 @@ export class SlotAttributeModule implements IPwbMultiplicatorModuleOnUpdate {
     private mCalled: boolean;
     private readonly mTemplateReference: ModuleTemplateReference;
     private readonly mValueHandler: LayerValues;
-    
+
     /**
      * Constructor.
      * @param pTargetTemplate - Target templat.
@@ -26,20 +26,22 @@ export class SlotAttributeModule implements IPwbMultiplicatorModuleOnUpdate {
         this.mTemplateReference = pTemplateReference;
         this.mValueHandler = pValueReference.value;
         this.mAttributeReference = pAttributeReference;
+        this.mCalled = false;
     }
 
     /**
      * Process module.
      */
-    public onUpdate(): MultiplicatorResult {
+    public onUpdate(): MultiplicatorResult | null {
         // Skip update if slot is already set.
-        if(!this.mCalled){
+        if (!this.mCalled) {
             this.mCalled = true;
             return null;
         }
 
         // Get name of slot. Remove starting $.
-        const lSlotName: string = this.mAttributeReference.value.name.substr(1);
+        const lAttribute: XmlAttribute = <XmlAttribute>this.mAttributeReference.value;
+        const lSlotName: string = lAttribute.name.substring(1);
 
         // Clone currrent template element.
         const lClone: XmlElement = <XmlElement>this.mTemplateReference.value.clone();

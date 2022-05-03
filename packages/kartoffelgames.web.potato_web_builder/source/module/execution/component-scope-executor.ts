@@ -82,7 +82,7 @@ export class ComponentScopeExecutor {
         lSystemNames.push('do', 'if', 'in', 'for', 'let', 'new', 'try', 'var', 'case', 'else', 'enum', 'eval', 'false', 'null', 'this', 'true', 'void', 'with', 'break', 'catch', 'class', 'const', 'super', 'throw', 'while', 'yield', 'delete', 'export', 'import', 'public', 'return', 'static', 'switch', 'typeof', 'default', 'extends', 'finally', 'package', 'private', 'continue', 'debugger', 'function', 'arguments', 'interface', 'protected', 'implements', 'instanceof', 'self', 'window');
 
         const lFindingRegex: RegExp = /"[^"]*?"|'[^']*?'|`[^`]*?`|\.[a-zA-Z0-9_$#]*|[a-zA-Z0-9_$#]+/g;
-        let lFoundOccurrence: RegExpExecArray;
+        let lFoundOccurrence: RegExpExecArray | null;
 
         const lResult: List<string> = new List<string>();
 

@@ -9,7 +9,7 @@ import { TestUtil } from '../../utility/test-util';
 describe('PwbAppInjectionExtension', () => {
     it('-- PwbApp injection on global element', async () => {
         // Process.
-        let lApp: PwbApp;
+        let lApp: PwbApp | null = null;
 
         // Process. Define component.    
         @PwbComponent({
@@ -33,7 +33,7 @@ describe('PwbAppInjectionExtension', () => {
         const lCapsuledSelector: string = TestUtil.randomSelector();
 
         // Process.
-        let lApp: PwbApp;
+        let lApp: PwbApp | null = null;
 
         // Setup. Define component.
         @PwbComponent({
@@ -57,7 +57,7 @@ describe('PwbAppInjectionExtension', () => {
 
         // Process. Create elements and wait for update.
         const lComponent: HTMLElement = await <any>TestUtil.createComponent(TestComponent);
-        const lChildContent: HTMLElement = <any>lComponent.shadowRoot.childNodes[1];
+        const lChildContent: HTMLElement = <HTMLElement>(<ShadowRoot>lComponent.shadowRoot).childNodes[1];
         await TestUtil.waitForUpdate(lChildContent);
 
         // Evaluation.
@@ -69,7 +69,7 @@ describe('PwbAppInjectionExtension', () => {
         const lCapsuledSelector: string = TestUtil.randomSelector();
 
         // Process.
-        let lApp: PwbApp;
+        let lApp: PwbApp | null = null;
 
         // Setup. Define component.
         @PwbComponent({
@@ -93,7 +93,7 @@ describe('PwbAppInjectionExtension', () => {
 
         // Process. Create elements and wait for update.
         const lComponent: HTMLElement = await <any>TestUtil.createComponent(TestComponent);
-        const lChildContent: HTMLElement = <any>lComponent.shadowRoot.childNodes[1];
+        const lChildContent: HTMLElement = <HTMLElement>(<ShadowRoot>lComponent.shadowRoot).childNodes[1];
         await TestUtil.waitForUpdate(lChildContent);
 
         // Evaluation.
@@ -106,7 +106,7 @@ describe('PwbAppInjectionExtension', () => {
         const lChildChildSelector: string = TestUtil.randomSelector();
 
         // Process.
-        let lApp: PwbApp;
+        let lApp: PwbApp | null = null;
 
         // Setup. Define component.
         @PwbComponent({
@@ -139,9 +139,9 @@ describe('PwbAppInjectionExtension', () => {
 
         // Process. Create elements and wait for update.
         const lComponent: HTMLElement = await <any>TestUtil.createComponent(TestComponent);
-        const lChildContent: HTMLElement & ChildTestComponent = <any>lComponent.shadowRoot.childNodes[1];
+        const lChildContent: HTMLElement & ChildTestComponent = <any>(<ShadowRoot>lComponent.shadowRoot).childNodes[1];
         await TestUtil.waitForUpdate(lChildContent);
-        const lChildChildContent: HTMLElement & ChildTestComponent = <any>lComponent.shadowRoot.childNodes[1];
+        const lChildChildContent: HTMLElement & ChildTestComponent = <any>(<ShadowRoot>lComponent.shadowRoot).childNodes[1];
         await TestUtil.waitForUpdate(lChildChildContent);
 
         // Evaluation.
@@ -163,15 +163,18 @@ describe('PwbAppInjectionExtension', () => {
         }
 
         // Process. Create element.
-        const lComponentConstructor: CustomElementConstructor = window.customElements.get(lSelector);
-        
+        const lComponentConstructor: CustomElementConstructor | undefined = window.customElements.get(lSelector);
+
         // Process.
-        let lMessage: string = null;
+        let lMessage: string | null = null;
         try {
-            const lComponent: HTMLElement = new lComponentConstructor();
-            await TestUtil.waitForUpdate(lComponent);
+            if (lComponentConstructor) {
+                const lComponent: HTMLElement = new lComponentConstructor();
+                await TestUtil.waitForUpdate(lComponent);
+            }
         } catch (pException) {
-            lMessage = pException.message;
+            const lError: Error = <Error>pException;
+            lMessage = lError.message;
         }
 
         // Evaluation.

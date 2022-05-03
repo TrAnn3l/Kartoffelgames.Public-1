@@ -43,7 +43,7 @@ describe('MustacheExpressionModule', () => {
         })
         class TestComponent {
             @PwbExport
-            public text: string;
+            public text: string | undefined;
         }
 
         // Setup. Create element.

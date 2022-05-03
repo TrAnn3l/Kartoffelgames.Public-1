@@ -41,12 +41,12 @@ export class ForOfManipulatorAttributeModule implements IPwbMultiplicatorModuleO
      * Process module.
      * Execute attribute value and decide if template should be rendered.
      */
-    public onUpdate(): MultiplicatorResult {
+    public onUpdate(): MultiplicatorResult | null {
         // [CustomName:1] of [List value:2] (;[CustomIndexName:4]=[Index calculating with "index" as key:5])?
         const lRegexAttributeInformation: RegExp = new RegExp(/^\s*([a-zA-Z]+[a-zA-Z0-9]*)\s*of\s+([^;]+)\s*(;\s*([a-zA-Z]+[a-zA-Z0-9]*)\s*=\s*(.*)\s*)?$/);
 
         // If attribute value does match regex.
-        const lAttributeInformation: RegExpExecArray = lRegexAttributeInformation.exec(this.mAttributeReference.value.value);
+        const lAttributeInformation: RegExpExecArray | null = lRegexAttributeInformation.exec(this.mAttributeReference.value.value);
         if (lAttributeInformation) {
 
             // Split match into useable parts.
@@ -71,10 +71,10 @@ export class ForOfManipulatorAttributeModule implements IPwbMultiplicatorModuleO
             // Only proceed if value is added to html element.
             if (typeof lListObject === 'object' && lListObject !== null || Array.isArray(lListObject)) {
                 // Iterator iterator and
-                if(Symbol.iterator in lListObject){
+                if (Symbol.iterator in lListObject) {
                     const lIterator: Generator<any, any> = <Generator<any, any>>lListObject;
                     let lIndex: number = 0;
-                    for(const lValue of lIterator){
+                    for (const lValue of lIterator) {
                         // Add new template item and count index.
                         this.addTempateForElement(lModuleResult, lExpression, lValue, lIndex++);
                     }
@@ -112,8 +112,8 @@ export class ForOfManipulatorAttributeModule implements IPwbMultiplicatorModuleO
             const lExternalValues: Dictionary<string, any> = new Dictionary<string, any>();
             lExternalValues.add('$index', pObjectKey);
 
-            // Execute index expression
-            const lIndexExpressionResult: any = ComponentScopeExecutor.executeSilent(pExpression.indexExpression, lComponentValues, lExternalValues);
+            // Execute index expression. Expression is set when index name is set.
+            const lIndexExpressionResult: any = ComponentScopeExecutor.executeSilent(<string>pExpression.indexExpression, lComponentValues, lExternalValues);
 
             // Set custom index name as temporary value.
             lComponentValues.setLayerValue(pExpression.indexName, lIndexExpressionResult);

@@ -16,6 +16,7 @@ import { ComponentScopeExecutor } from '../../module/execution/component-scope-e
 })
 export class IfManipulatorAttributeModule implements IPwbMultiplicatorModuleOnUpdate {
     private readonly mAttributeReference: ModuleAttributeReference;
+    private mFirstCompare: boolean;
     private mLastBoolean: boolean;
     private readonly mTemplateReference: ModuleTemplateReference;
     private readonly mValueHandler: LayerValues;
@@ -30,17 +31,20 @@ export class IfManipulatorAttributeModule implements IPwbMultiplicatorModuleOnUp
         this.mTemplateReference = pTemplateReference;
         this.mValueHandler = pValueReference.value;
         this.mAttributeReference = pAttributeReference;
+        this.mLastBoolean = false;
+        this.mFirstCompare = true;
     }
 
     /**
      * Decide if module / element should be updated.
      * @returns if element of module should be updated.
      */
-    public onUpdate(): MultiplicatorResult {
+    public onUpdate(): MultiplicatorResult | null {
         const lExecutionResult: any = ComponentScopeExecutor.executeSilent(this.mAttributeReference.value.value, this.mValueHandler);
 
-        if (!!lExecutionResult !== this.mLastBoolean) {
+        if (this.mFirstCompare || !!lExecutionResult !== this.mLastBoolean) {
             this.mLastBoolean = !!lExecutionResult;
+            this.mFirstCompare = false;
 
             // If in any way the execution result is true, add template to result.
             const lModuleResult: MultiplicatorResult = new MultiplicatorResult();

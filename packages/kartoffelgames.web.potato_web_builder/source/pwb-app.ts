@@ -14,8 +14,8 @@ export class PwbApp {
      * Get app of change detection.
      * @param pChangeDetection - Change detection.
      */
-    public static getChangeDetectionApp(pChangeDetection: ChangeDetection): PwbApp | null {
-        let lCurrent: ChangeDetection = pChangeDetection;
+    public static getChangeDetectionApp(pChangeDetection: ChangeDetection): PwbApp | undefined {
+        let lCurrent: ChangeDetection | null = pChangeDetection;
 
         while (lCurrent) {
             if (PwbApp.mChangeDetectionToApp.has(lCurrent)) {
@@ -25,7 +25,7 @@ export class PwbApp {
             lCurrent = lCurrent.looseParent;
         }
 
-        return null;
+        return undefined;
     }
 
     private readonly mAppComponent: HTMLElement;
@@ -76,6 +76,7 @@ export class PwbApp {
         this.mShadowRoot.appendChild(this.mSplashScreen);
 
         // Set default splash screen.
+        this.mSplashScreenOptions = { background: '', content: '' };
         this.setSplashScreen({
             background: 'linear-gradient(0deg, rgba(47,67,254,1) 8%, rgba(0,23,255,1) 70%)',
             content: '<span style="color: #fff; font-family: arial; font-weight: bold;">PWB</span>',
@@ -163,7 +164,7 @@ export class PwbApp {
                     }
 
                     // Get ComponentManager of component and add update waiter to the waiter list. 
-                    const lComponentManager: ComponentManager = ComponentConnection.componentManagerOf(lComponent);
+                    const lComponentManager: ComponentManager = <ComponentManager>ComponentConnection.componentManagerOf(lComponent);
                     lUpdateWaiter.push(lComponentManager.updateHandler.waitForUpdate());
                 }
 
@@ -187,6 +188,8 @@ export class PwbApp {
      * Remove splash screen.
      */
     public async removeSplashScreen(): Promise<void> {
+        // Not good for testing.
+        /* istanbul ignore next */
         const lTransistionTimerMilliseconds: number = this.mSplashScreenOptions.animationTime ?? 500;
 
         this.mSplashScreen.style.setProperty('transition', `opacity ${(lTransistionTimerMilliseconds / 1000).toString()}s linear`);
@@ -255,7 +258,7 @@ export class PwbApp {
         lContentTemplate.tagName = lSelector;
 
         // Create content from template inside change detection.
-        let lContent: HTMLElement;
+        let lContent: HTMLElement | null = null;
         this.mChangeDetection.execute(() => {
             lContent = <HTMLElement>ElementCreator.createElement(lContentTemplate);
 
@@ -263,7 +266,7 @@ export class PwbApp {
             this.mShadowRoot.appendChild(lContent);
         });
 
-        return lContent;
+        return <HTMLElement><any>lContent;
     }
 }
 

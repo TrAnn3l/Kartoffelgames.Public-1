@@ -19,7 +19,7 @@ export class ComponentUpdateReference {
         this.mUpdateHandler.forceUpdate({
             source: this,
             property: Symbol('manual update'),
-            stacktrace: Error().stack
+            stacktrace: <string>Error().stack
         });
     }
 }
