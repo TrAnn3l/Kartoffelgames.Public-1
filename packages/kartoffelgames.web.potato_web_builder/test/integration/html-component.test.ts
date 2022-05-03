@@ -27,7 +27,7 @@ describe('HtmlComponent', () => {
 
         // Evaluation
         // 2 => StaticAnchor, Div.
-        expect(lComponent.shadowRoot.childNodes).to.have.lengthOf(2);
+        expect(lComponent.shadowRoot?.childNodes).to.have.lengthOf(2);
         expect(lComponent).to.have.componentStructure([Comment, HTMLDivElement], true);
     });
 
@@ -44,7 +44,7 @@ describe('HtmlComponent', () => {
 
         // Evaluation
         // 2 => StaticAnchor, Div, Span.
-        expect(lComponent.shadowRoot.childNodes).to.have.lengthOf(3);
+        expect(lComponent.shadowRoot?.childNodes).to.have.lengthOf(3);
         expect(lComponent).to.have.componentStructure([Comment, HTMLDivElement, HTMLSpanElement], true);
     });
 
@@ -61,7 +61,7 @@ describe('HtmlComponent', () => {
 
         // Evaluation
         // 2 => StaticAnchor, Div.
-        expect(lComponent.shadowRoot.childNodes).to.have.lengthOf(2);
+        expect(lComponent.shadowRoot?.childNodes).to.have.lengthOf(2);
         expect(lComponent).to.have.componentStructure([
             Comment,
             {
@@ -85,7 +85,7 @@ describe('HtmlComponent', () => {
 
         // Evaluation
         // 2 => StaticAnchor, Div.
-        expect(lComponent.shadowRoot.childNodes).to.have.lengthOf(2);
+        expect(lComponent.shadowRoot?.childNodes).to.have.lengthOf(2);
         expect(lComponent).to.have.componentStructure([
             Comment,
             {
@@ -113,8 +113,8 @@ describe('HtmlComponent', () => {
 
         // Process. Create element.
         const lComponent: HTMLElement = await TestUtil.createComponent(TestComponent);
-        const lFirstChild: HTMLElement = <HTMLElement>lComponent.shadowRoot.childNodes[1];
-        const lSecondChild: HTMLElement = <HTMLElement>lComponent.shadowRoot.childNodes[2];
+        const lFirstChild: HTMLElement = <HTMLElement>(<ShadowRoot>lComponent.shadowRoot).childNodes[1];
+        const lSecondChild: HTMLElement = <HTMLElement>(<ShadowRoot>lComponent.shadowRoot).childNodes[2];
 
         // Evaluation
         expect(lFirstChild).instanceOf(HTMLElement);
@@ -150,7 +150,7 @@ describe('HtmlComponent', () => {
 
         // Process. Create element.
         const lComponent: HTMLElement = await TestUtil.createComponent(TestComponent);
-        const lStyleElement: HTMLStyleElement = <HTMLStyleElement>lComponent.shadowRoot.childNodes[0];
+        const lStyleElement: HTMLStyleElement = <HTMLStyleElement>(<ShadowRoot>lComponent.shadowRoot).childNodes[0];
 
         // Evaluation
         expect(lComponent).to.have.componentStructure([
@@ -173,7 +173,7 @@ describe('HtmlComponent', () => {
         const lComponent: HTMLElement = await TestUtil.createComponent(TestComponent);
 
         // Evaluation.
-        expect(lComponent.shadowRoot.childNodes).to.have.lengthOf(1);
+        expect(lComponent.shadowRoot?.childNodes).to.have.lengthOf(1);
     });
 
     it('-- Manual update. User triggered update.', async () => {
@@ -201,7 +201,7 @@ describe('HtmlComponent', () => {
         await TestUtil.waitForUpdate(lComponent);
 
         // Evaluation.
-        expect(lComponent.shadowRoot.childNodes).to.have.lengthOf(2);
+        expect(lComponent.shadowRoot?.childNodes).to.have.lengthOf(2);
     });
 
     it('-- Capsuled update scope', async () => {
@@ -231,19 +231,19 @@ describe('HtmlComponent', () => {
         // Process. Create and initialize element.
         const lComponent: HTMLElement & TestComponent = await <any>TestUtil.createComponent(TestComponent);
         await TestUtil.waitForUpdate(lComponent);
-        const lCapsuledContent: HTMLElement & CapsuledTestComponent = <any>lComponent.shadowRoot.childNodes[1];
+        const lCapsuledContent: HTMLElement & CapsuledTestComponent = <any>(<ShadowRoot>lComponent.shadowRoot).childNodes[1];
         await TestUtil.waitForUpdate(lComponent);
         await TestUtil.waitForUpdate(lCapsuledContent);
 
         // Set update listener.
         let lWasUpdated: boolean = false;
-        TestUtil.getComponentManager(lComponent).updateHandler.addUpdateListener((pReason: ChangeDetectionReason) => {
+        TestUtil.getComponentManager(lComponent)?.updateHandler.addUpdateListener((pReason: ChangeDetectionReason) => {
             lWasUpdated = pReason.property === 'innerValue' || lWasUpdated;
         });
 
         // Set update listener.
         let lInnerValueWasUpdated: boolean = false;
-        TestUtil.getComponentManager(lCapsuledContent).updateHandler.addUpdateListener((pReason: ChangeDetectionReason) => {
+        TestUtil.getComponentManager(lCapsuledContent)?.updateHandler.addUpdateListener((pReason: ChangeDetectionReason) => {
             lInnerValueWasUpdated = pReason.property === 'innerValue' || lInnerValueWasUpdated;
         });
 
@@ -305,7 +305,7 @@ describe('HtmlComponent', () => {
 
         // Evaluation
         // 2 => StaticAnchor, unknown-component.
-        expect(lComponent.shadowRoot.childNodes).to.have.lengthOf(2);
+        expect(lComponent.shadowRoot?.childNodes).to.have.lengthOf(2);
         expect(lComponent).to.have.componentStructure([Comment, HTMLUnknownElement], true);
     });
 
@@ -322,7 +322,7 @@ describe('HtmlComponent', () => {
 
         // Evaluation
         // 2 => StaticAnchor, unknown-component.
-        expect(lComponent.shadowRoot.childNodes).to.have.lengthOf(2);
+        expect(lComponent.shadowRoot?.childNodes).to.have.lengthOf(2);
         expect(lComponent).to.have.componentStructure([Comment, HTMLElement], true); // HTMLUnknownElement not creates in JSDOM.
     });
 
@@ -478,7 +478,7 @@ describe('HtmlComponent', () => {
         // Process. Create element.
         let lError: any;
         try {
-            await <any>TestUtil.createComponent(TestComponent, true); // TODO: Loop error is printed. Why??
+            await <any>TestUtil.createComponent(TestComponent, true);
         } catch (e) {
             lError = e;
         }
@@ -499,8 +499,11 @@ describe('HtmlComponent', () => {
         class TestComponent { }
 
         // Process. Create element.
-        const lComponentConstructor: CustomElementConstructor = window.customElements.get(lSelector);
-        const lComponent: HTMLElement = new lComponentConstructor();
+        const lComponentConstructor: CustomElementConstructor | undefined = window.customElements.get(lSelector);
+        let lComponent: HTMLElement | null = null;
+        if (lComponentConstructor) {
+            lComponent = new lComponentConstructor();
+        }
 
         // Evaluation.
         expect(lComponent).to.be.instanceOf(HTMLElement);

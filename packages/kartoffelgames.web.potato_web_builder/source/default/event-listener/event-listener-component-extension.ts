@@ -17,7 +17,7 @@ export class EventListenerComponentExtension implements IPwbExtensionOnDeconstru
     public static readonly METADATA_USER_EVENT_LISTENER_PROPERIES: string = 'pwb:user_event_listener_properties';
 
     private readonly mEventListenerList: Array<[string, EventListener]>;
-    private readonly mTargetElement: HTMLElement;
+    private readonly mTargetElement: HTMLElement | null;
 
     /**
      * Constructor.
@@ -56,6 +56,8 @@ export class EventListenerComponentExtension implements IPwbExtensionOnDeconstru
                 this.mEventListenerList.push([lEventName, lEventListener]);
                 this.mTargetElement.addEventListener(lEventName, lEventListener);
             }
+        } else {
+            this.mTargetElement = null;
         }
     }
 
@@ -63,6 +65,12 @@ export class EventListenerComponentExtension implements IPwbExtensionOnDeconstru
      * Remove all listener.
      */
     public onDeconstruct(): void {
+        // Exit if no events where set.
+        if (this.mTargetElement === null) {
+            return;
+        }
+
+        // Remove all events from target element.
         for (const lListener of this.mEventListenerList) {
             const [lEventName, lFunction] = lListener;
             this.mTargetElement.removeEventListener(lEventName, lFunction);

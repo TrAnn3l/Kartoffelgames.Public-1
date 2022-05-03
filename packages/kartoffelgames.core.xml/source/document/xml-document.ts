@@ -25,7 +25,7 @@ export class XmlDocument extends BaseXmlNode {
     /**
      * Get xml nodes document.
      */
-    public get document(): XmlDocument {
+    public override get document(): XmlDocument {
         return this;
     }
 

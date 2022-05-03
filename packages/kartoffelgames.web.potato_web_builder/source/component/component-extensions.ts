@@ -33,8 +33,8 @@ export class ComponentExtensions {
      * Execute patcher extensions.
      * @param pParameter - Parameter.
      */
-    public executeInjectorExtensions(pParameter: ComponentExtensionsExecuteInjectorExtensionsParameter): Array<object> {
-        const lInjectionTypeList: Array<object> = new Array<object>();
+    public executeInjectorExtensions(pParameter: ComponentExtensionsExecuteInjectorExtensionsParameter): Array<object | null> {
+        const lInjectionTypeList: Array<object | null> = new Array<object | null>();
 
         for (const lExtensionClass of Extensions.componentInjectorExtensions) {
             // Create extension and add to extension list.

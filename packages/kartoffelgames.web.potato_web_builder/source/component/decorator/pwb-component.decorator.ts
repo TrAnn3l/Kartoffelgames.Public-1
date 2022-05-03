@@ -31,10 +31,10 @@ export function PwbComponent(pParameter: HtmlComponentParameter): any {
                 // Create component handler.
                 this.mComponentManager = new ComponentManager(
                     pUserClassConstructor,
-                    pParameter.template,
+                    pParameter.template ?? null,
                     pParameter.expressionmodule,
                     this,
-                    pParameter.updateScope
+                    pParameter.updateScope ?? UpdateScope.Global
                 );
 
                 // Append style if specified. Styles are scoped on components shadow root.

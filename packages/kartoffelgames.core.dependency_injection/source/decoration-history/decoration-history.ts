@@ -21,7 +21,7 @@ export class DecorationHistory {
         // Iterate over history as long as history can't go back.
         let lNextEntry: InjectionConstructor = pConstructor;
         while (DecorationHistory.mBackwardHistory.has(lNextEntry)) {
-            lNextEntry = DecorationHistory.mBackwardHistory.get(lNextEntry);
+            lNextEntry = <InjectionConstructor>DecorationHistory.mBackwardHistory.get(lNextEntry);
         }
 
         return lNextEntry;

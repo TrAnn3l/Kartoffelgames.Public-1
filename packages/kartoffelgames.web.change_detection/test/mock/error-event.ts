@@ -13,7 +13,7 @@ export class PromiseRejectionEvent extends Event {
 export class PreventableErrorEvent extends ErrorEvent {
     public defaultWasPrevented: boolean = false;
 
-    public preventDefault(): void {
+    public override preventDefault(): void {
         super.preventDefault();
         this.defaultWasPrevented = true;
     }

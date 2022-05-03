@@ -42,7 +42,7 @@ export class Injection {
         // Replace current constructor with global replacement.
         let lConstructor: InjectionConstructor;
         if (Injection.mInjectableReplacement.has(lRegisteredConstructor)) {
-            const lReplacementConstructor = Injection.mInjectableReplacement.get(lRegisteredConstructor);
+            const lReplacementConstructor: InjectionConstructor = <InjectionConstructor>Injection.mInjectableReplacement.get(lRegisteredConstructor);
             lConstructor = lReplacementConstructor;
 
             // Set replacement constructor that was used for registering. Is allways registered.
@@ -52,13 +52,13 @@ export class Injection {
         }
 
         // Get constructor parameter type information and default to empty parameter list.
-        let lParameterTypeList: Array<InjectionConstructor> = Metadata.get(lRegisteredConstructor).parameterTypeList;
-        if (!lParameterTypeList) {
+        let lParameterTypeList: Array<InjectionConstructor> | null = Metadata.get(lRegisteredConstructor).parameterTypeList;
+        if (lParameterTypeList === null) {
             lParameterTypeList = new Array<InjectionConstructor>();
         }
 
         // Get injection mode.
-        const lInjecttionMode: InjectMode = Injection.mInjectMode.get(lRegisteredConstructor);
+        const lInjecttionMode: InjectMode | undefined = Injection.mInjectMode.get(lRegisteredConstructor);
 
         // Return cached sinleton object if not forced to create a new one.
         if (!lForceCreate && lInjecttionMode === InjectMode.Singleton && Injection.mSingletonMapping.has(lRegisteredConstructor)) {
@@ -79,7 +79,9 @@ export class Injection {
                     // Get injectable parameter.
                     lCreatedParameter = Injection.createObject(lParameterType, lLocalInjections);
                 } catch (pException) {
-                    throw new Exception(`Parameter "${lParameterType?.name}" of ${lConstructor?.name} is not injectable.\n` + pException.message, Injection);
+                    // Error is always an Exception.
+                    const lException: Exception<any> = <Exception<any>>pException;
+                    throw new Exception(`Parameter "${lParameterType.name}" of ${lConstructor.name} is not injectable.\n` + lException.message, Injection);
                 }
             }
 

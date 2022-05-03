@@ -15,7 +15,7 @@ import { IPwbModuleOnDeconstruct } from '../../module/interface/module';
 export class EventAttributeModule implements IPwbModuleOnDeconstruct {
     private readonly mEventName: string;
     private readonly mListener: (this: null, pEvent: any) => void;
-    private readonly mTargetReference: ModuleTargetReference;
+    private readonly mTarget: Node;
 
     /**
      * Constructor.
@@ -24,7 +24,7 @@ export class EventAttributeModule implements IPwbModuleOnDeconstruct {
      * @param pAttributeReference - Attribute of module.
      */
     public constructor(pTargetReference: ModuleTargetReference, pValueReference: ModuleLayerValuesReference, pAttributeReference: ModuleAttributeReference) {
-        this.mTargetReference = pTargetReference;
+        this.mTarget = <Node>pTargetReference.value;
         this.mEventName = pAttributeReference.value.name.substr(1, pAttributeReference.value.name.length - 2);
 
         // Define listener.
@@ -38,13 +38,13 @@ export class EventAttributeModule implements IPwbModuleOnDeconstruct {
         };
 
         // Add native event listener.
-        this.mTargetReference.value.addEventListener(this.mEventName, this.mListener);
+        this.mTarget.addEventListener(this.mEventName, this.mListener);
     }
 
     /**
      * Cleanup event on deconstruction.
      */
     public onDeconstruct(): void {
-        this.mTargetReference.value.removeEventListener(this.mEventName, this.mListener);
+        this.mTarget.removeEventListener(this.mEventName, this.mListener);
     }
 }

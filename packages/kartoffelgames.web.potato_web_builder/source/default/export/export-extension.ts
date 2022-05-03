@@ -80,7 +80,7 @@ export class ExportExtension {
     private patchHtmlAttributes(pExportedProperties: Array<string | symbol>): void {
         // Get original functions.
         const lOriginalSetAttribute: (pQualifiedName: string, pValue: string) => void = this.mHtmlElement.setAttribute;
-        const lOriginalGetAttribute: (pQualifiedName: string) => string = this.mHtmlElement.getAttribute;
+        const lOriginalGetAttribute: (pQualifiedName: string) => string | null = this.mHtmlElement.getAttribute;
 
         // Patch set attribute
         this.mHtmlElement.setAttribute = (pQualifiedName: string, pValue: string) => {
@@ -93,7 +93,7 @@ export class ExportExtension {
         };
 
         // Patch get attribute
-        this.mHtmlElement.getAttribute = (pQualifiedName: string): string => {
+        this.mHtmlElement.getAttribute = (pQualifiedName: string): string | null => {
             // Check if attribute is an exported value and return value of user class object.
             if (pExportedProperties.includes(pQualifiedName)) {
                 return Reflect.get(this.mHtmlElement, pQualifiedName);

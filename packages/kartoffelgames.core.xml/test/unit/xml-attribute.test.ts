@@ -27,7 +27,7 @@ describe('XmlAttribute', () => {
             const lAttribute: XmlAttribute = lXmlElement.setAttribute('Name', 'Value', lNamespacePrefix);
 
             // Process.
-            const lAttributeNamespaceResult: string = lAttribute.namespace;
+            const lAttributeNamespaceResult: string  | null= lAttribute.namespace;
 
             // Evaluation.
             expect(lAttributeNamespaceResult).to.be.equal(lNamespace);
@@ -39,7 +39,7 @@ describe('XmlAttribute', () => {
             const lAttribute: XmlAttribute = lXmlElement.setAttribute('Name', 'Value');
 
             // Process.
-            const lAttributeNamespaceResult: string = lAttribute.namespace;
+            const lAttributeNamespaceResult: string  | null= lAttribute.namespace;
 
             // Evaluation.
             expect(lAttributeNamespaceResult).to.be.null;
@@ -52,7 +52,7 @@ describe('XmlAttribute', () => {
         const lAttribute: XmlAttribute = new XmlAttribute('AttributeName', lAttributeNamespacePrefix);
 
         // Process.
-        const lAttributeNamespacePrefixResult: string = lAttribute.namespacePrefix;
+        const lAttributeNamespacePrefixResult: string | null = lAttribute.namespacePrefix;
 
         // Evaluation.
         expect(lAttributeNamespacePrefixResult).to.be.equal(lAttributeNamespacePrefix);

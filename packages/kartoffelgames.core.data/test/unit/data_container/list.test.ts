@@ -45,7 +45,7 @@ describe('List', () => {
             const lList: List<string> = List.newListWith('Value1', 'Value2');
 
             // Process.
-            const lListIsSame: boolean = lList.equals(null);
+            const lListIsSame: boolean = lList.equals(<any>null);
 
             // Evaluation.
             expect(lListIsSame).to.be.false;
@@ -56,7 +56,7 @@ describe('List', () => {
             const lList: List<string> = List.newListWith('Value1', 'Value2');
 
             // Process.
-            const lListIsSame: boolean = lList.equals(undefined);
+            const lListIsSame: boolean = lList.equals(<any>undefined);
 
             // Evaluation.
             expect(lListIsSame).to.be.false;
@@ -115,7 +115,7 @@ describe('List', () => {
             const lList: List<string> = List.newListWith('Value1', 'Value2', 'Value1');
 
             // Process.
-            const lRemovedValue: string = lList.remove('Value1');
+            const lRemovedValue: string | undefined = lList.remove('Value1');
 
             // Evaluation.
             expect(lRemovedValue).to.be.equal('Value1');
@@ -127,7 +127,7 @@ describe('List', () => {
             const lList: List<string> = List.newListWith('Value1');
 
             // Process.
-            const lRemovedValue: string = lList.remove('Value2');
+            const lRemovedValue: string | undefined = lList.remove('Value2');
 
             // Evaluation.
             expect(lRemovedValue).to.be.an('undefined');
@@ -141,7 +141,7 @@ describe('List', () => {
             const lList: List<string> = List.newListWith('Value1', 'Value2', 'Value1');
 
             // Process.
-            const lRemovedValue: string = lList.replace('Value1', 'Value3');
+            const lRemovedValue: string | undefined = lList.replace('Value1', 'Value3');
 
             // Evaluation.
             expect(lRemovedValue).to.be.equal('Value1');
@@ -153,7 +153,7 @@ describe('List', () => {
             const lList: List<string> = List.newListWith('Value1');
 
             // Process.
-            const lRemovedValue: string = lList.replace('Value2', 'Value3');
+            const lRemovedValue: string | undefined = lList.replace('Value2', 'Value3');
 
             // Evaluation.
             expect(lRemovedValue).to.be.an('undefined');

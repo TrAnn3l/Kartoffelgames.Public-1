@@ -6,7 +6,7 @@ import { IPwbMultiplicatorModuleClass, IPwbMultiplicatorModuleObject, ModuleDefi
 import { BaseModule } from './base-module';
 import { MultiplicatorResult } from './result/multiplicator-result';
 
-export class MultiplicatorModule extends BaseModule<MultiplicatorResult, MultiplicatorResult> {
+export class MultiplicatorModule extends BaseModule<MultiplicatorResult | null, MultiplicatorResult> {
     private readonly mModuleObject: IPwbMultiplicatorModuleObject;
 
     /**
@@ -18,16 +18,19 @@ export class MultiplicatorModule extends BaseModule<MultiplicatorResult, Multipl
             ...pParameter,
             targetNode: null
         });
-        this.mModuleObject = this.createModuleObject(this.attribute.value);
+
+        // Attribute is always set for multiplicator modules.
+        const lAttribute: XmlAttribute = <XmlAttribute>this.attribute;
+        this.mModuleObject = this.createModuleObject(lAttribute.value);
     }
 
     /**
      * Update module.
      */
-    public update(): MultiplicatorResult {
+    public update(): MultiplicatorResult | null {
         if (!this.mModuleObject.onUpdate) {
-            throw new Exception('Multiplicator modules need to implement IPwbMultiplicatorModuleOnUpdate', this);   
-        } 
+            throw new Exception('Multiplicator modules need to implement IPwbMultiplicatorModuleOnUpdate', this);
+        }
 
         return this.mModuleObject.onUpdate();
     }

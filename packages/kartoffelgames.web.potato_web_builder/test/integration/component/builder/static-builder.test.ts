@@ -41,11 +41,12 @@ describe('PwbApp', () => {
         }
 
         // Process.
-        let lMessage: string = null;
+        let lMessage: string | null = null;
         try {
             await <any>TestUtil.createComponent(TestComponent);
-        } catch(pException){
-            lMessage = pException.message;
+        } catch (pException) {
+            const lError: Error = <Error>pException;
+            lMessage = lError.message;
         }
 
         // Evaluation.

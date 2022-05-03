@@ -55,7 +55,7 @@ describe('PwbEventListener', () => {
         })
         class TestComponent {
             @PwbComponentEvent('custom-event')
-            private readonly mCustomEvent: ComponentEventEmitter<string>;
+            private readonly mCustomEvent!: ComponentEventEmitter<string>;
 
             @PwbExport
             public callEvent() {
@@ -100,15 +100,16 @@ describe('PwbEventListener', () => {
         })
         class TestComponent {
             @PwbEventListener('click')
-            private readonly mListener: string;
+            private readonly mListener!: string;
         }
 
         // Setup. Create element.
-        let lErrorMessage: string;
+        let lErrorMessage: string | null = null;
         try {
             await <any>TestUtil.createComponent(TestComponent);
-        } catch (e) {
-            lErrorMessage = e.message;
+        } catch (pError) {
+            const lError: Error = <Error>pError;
+            lErrorMessage = lError.message;
         }
 
         // Evaluation.
@@ -245,7 +246,7 @@ describe('PwbEventListener', () => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         class MyModule {
             @PwbEventListener('click')
-            private readonly mListener: string;
+            private readonly mListener!: string;
         }
 
         // Process. Define component.
@@ -256,11 +257,12 @@ describe('PwbEventListener', () => {
         class TestComponent { }
 
         // Setup. Create element.
-        let lErrorMessage: string;
+        let lErrorMessage: string | null = null;
         try {
             await <any>TestUtil.createComponent(TestComponent);
-        } catch (e) {
-            lErrorMessage = e.message;
+        } catch (pError) {
+            const lError: Error = <Error>pError;
+            lErrorMessage = lError.message;
         }
 
         // Evaluation.
@@ -276,7 +278,7 @@ describe('PwbEventListener', () => {
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         class MyModule implements IPwbMultiplicatorModuleOnUpdate {
-            public constructor(private readonly mTemplate: ModuleTemplateReference, private readonly mValue: ModuleLayerValuesReference){}
+            public constructor(private readonly mTemplate: ModuleTemplateReference, private readonly mValue: ModuleLayerValuesReference) { }
 
             onUpdate(): MultiplicatorResult {
                 const lResult: MultiplicatorResult = new MultiplicatorResult();

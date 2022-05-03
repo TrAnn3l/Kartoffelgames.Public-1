@@ -56,7 +56,7 @@ describe('ExecutionZone', () => {
          const lZone: ExecutionZone = new ExecutionZone(lZoneName);
 
          // Process.
-         let lZoneNameResult: string;
+         let lZoneNameResult: string | null = null;
          lZone.executeInZone(() => {
             lZoneNameResult = ExecutionZone.current.name;
          });
@@ -86,15 +86,15 @@ describe('ExecutionZone', () => {
          const lError: string = 'ErrorName';
 
          // Process.
-         let lZoneNameResult: string;
-         let lErrorResult: string;
+         let lZoneNameResult: string | null = null;
+         let lErrorResult: string | null = null;
          try {
             lZone.executeInZone(() => {
                lZoneNameResult = ExecutionZone.current.name;
                throw lError;
             });
          } catch (pError) {
-            lErrorResult = pError;
+            lErrorResult = <string>pError;
          }
 
          // Evaluation.
@@ -108,8 +108,8 @@ describe('ExecutionZone', () => {
          const lZone: ExecutionZone = new ExecutionZone(lZoneName);
 
          // Process.
-         let lZoneNameResultFunktion: string;
-         let lZoneNameResultException: string;
+         let lZoneNameResultFunktion: string | null = null;
+         let lZoneNameResultException: string | null = null;
          const lZoneNameResultBefore = ExecutionZone.current.name;
          try {
             lZone.executeInZone(() => {
@@ -135,9 +135,9 @@ describe('ExecutionZone', () => {
          const lFunction = () => { /* Empty */ };
 
          // Process.
-         let lZoneNameResult: string;
+         let lZoneNameResult: string | null = null;
          let lExecutedFunction: any;
-         lZone.onInteraction = (pZoneName: string, pFunction: (...pArgs: Array<any>) => any, pStacktrace: string) => {
+         lZone.onInteraction = (pZoneName: string, pFunction: (...pArgs: Array<any>) => any, _pStacktrace: string) => {
             lZoneNameResult = pZoneName;
             lExecutedFunction = pFunction;
          };
@@ -156,7 +156,7 @@ describe('ExecutionZone', () => {
          const lZone: ExecutionZone = new ExecutionZone(lZoneName);
 
          // Process.
-         let lZoneNameResult: string;
+         let lZoneNameResult: string | null = null;
          lZone.executeInZoneSilent(() => {
             lZoneNameResult = ExecutionZone.current.name;
          });
@@ -186,15 +186,15 @@ describe('ExecutionZone', () => {
          const lError: string = 'ErrorName';
 
          // Process.
-         let lZoneNameResult: string;
-         let lErrorResult: string;
+         let lZoneNameResult: string | null = null;
+         let lErrorResult: string | null = null;
          try {
             lZone.executeInZoneSilent(() => {
                lZoneNameResult = ExecutionZone.current.name;
                throw lError;
             });
          } catch (pError) {
-            lErrorResult = pError;
+            lErrorResult = <string>pError;
          }
 
          // Evaluation.
@@ -208,8 +208,8 @@ describe('ExecutionZone', () => {
          const lZone: ExecutionZone = new ExecutionZone(lZoneName);
 
          // Process.
-         let lZoneNameResultFunktion: string;
-         let lZoneNameResultException: string;
+         let lZoneNameResultFunktion: string | null = null;
+         let lZoneNameResultException: string | null = null;
          const lZoneNameResultBefore = ExecutionZone.current.name;
          try {
             lZone.executeInZoneSilent(() => {

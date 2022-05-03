@@ -17,7 +17,7 @@ describe('XmlElement', () => {
             lDocument.appendChild(lXmlElement);
 
             // Process.
-            const lXmlElementDocument: XmlDocument = lXmlElement.document;
+            const lXmlElementDocument: XmlDocument | null = lXmlElement.document;
 
             // Evaluation.
             expect(lXmlElementDocument).to.be.equal(lDocument);
@@ -28,7 +28,7 @@ describe('XmlElement', () => {
             const lXmlElement: XmlElement = new XmlElement();
 
             // Process.
-            const lXmlElementDocument: XmlDocument = lXmlElement.document;
+            const lXmlElementDocument: XmlDocument | null = lXmlElement.document;
 
             // Evaluation.
             expect(lXmlElementDocument).to.be.null;
@@ -96,7 +96,7 @@ describe('XmlElement', () => {
             lXmlElement.setAttribute(lNamespacePrefix, lNamespace, 'xmlns');
 
             // Process.
-            const lNamespaceResult: string = lXmlElement.namespace;
+            const lNamespaceResult: string | null = lXmlElement.namespace;
 
             // Evaluation.
             expect(lNamespaceResult).to.equal(lNamespace);
@@ -118,7 +118,7 @@ describe('XmlElement', () => {
             lParentXmlElement.appendChild(lXmlElement);
 
             // Process.
-            const lNamespaceResult: string = lXmlElement.namespace;
+            const lNamespaceResult: string | null = lXmlElement.namespace;
 
             // Evaluation.
             expect(lNamespaceResult).to.equal(lNamespace);
@@ -133,7 +133,7 @@ describe('XmlElement', () => {
             lXmlElement.setAttribute('xmlns', lNamespace);
 
             // Process.
-            const lNamespaceResult: string = lXmlElement.namespace;
+            const lNamespaceResult: string | null = lXmlElement.namespace;
 
             // Evaluation.
             expect(lNamespaceResult).to.equal(lNamespace);
@@ -152,7 +152,7 @@ describe('XmlElement', () => {
             lParentXmlElement.appendChild(lXmlElement);
 
             // Process.
-            const lNamespaceResult: string = lXmlElement.namespace;
+            const lNamespaceResult: string | null = lXmlElement.namespace;
 
             // Evaluation.
             expect(lNamespaceResult).to.equal(lNamespace);
@@ -163,7 +163,7 @@ describe('XmlElement', () => {
             const lXmlElement: XmlElement = new XmlElement();
 
             // Process.
-            const lNamespaceResult: string = lXmlElement.namespace;
+            const lNamespaceResult: string | null = lXmlElement.namespace;
 
             // Evaluation.
             expect(lNamespaceResult).to.be.null;
@@ -179,7 +179,7 @@ describe('XmlElement', () => {
             lDocument.appendChild(lXmlElement);
 
             // Process.
-            const lNamespaceResult: string = lXmlElement.namespace;
+            const lNamespaceResult: string | null = lXmlElement.namespace;
 
             // Evaluation.
             expect(lNamespaceResult).to.equal(lDefaultNamespace);
@@ -191,7 +191,7 @@ describe('XmlElement', () => {
             lXmlElement.namespacePrefix = 'prefix';
 
             // Process.
-            const lNamespaceResult: string = lXmlElement.namespace;
+            const lNamespaceResult: string | null = lXmlElement.namespace;
 
             // Evaluation.
             expect(lNamespaceResult).to.be.null;
@@ -336,7 +336,7 @@ describe('XmlElement', () => {
 
         // Process.
         lParentXmlElement.appendChild(lChildElement);
-        const lParent: BaseXmlNode = lChildElement.parent;
+        const lParent: BaseXmlNode | null = lChildElement.parent;
 
         // Evaluation.
         expect(lParent).to.equal(lParentXmlElement);
@@ -520,7 +520,7 @@ describe('XmlElement', () => {
             const lAttribute: XmlAttribute = lXmlElement.attributeList[0];
 
             // Process.
-            const lAttributeResult: XmlAttribute = lXmlElement.getAttribute('Key');
+            const lAttributeResult: XmlAttribute | undefined = lXmlElement.getAttribute('Key');
 
             // Evaluation.
             expect(lAttributeResult).to.equal(lAttribute);
@@ -531,7 +531,7 @@ describe('XmlElement', () => {
             const lXmlElement: XmlElement = new XmlElement();
 
             // Process.
-            const lAttributeResult: XmlAttribute = lXmlElement.getAttribute('Key');
+            const lAttributeResult: XmlAttribute | undefined = lXmlElement.getAttribute('Key');
 
             // Evaluation.
             expect(lAttributeResult).to.be.undefined;
@@ -579,7 +579,7 @@ describe('XmlElement', () => {
             lXmlElement.appendChild(lChildXmlElement);
 
             // Process.
-            const lRemovedChild: BaseXmlNode = lXmlElement.removeChild(lChildXmlElement);
+            const lRemovedChild: BaseXmlNode | undefined = lXmlElement.removeChild(lChildXmlElement);
             const lChildList: Array<BaseXmlNode> = lXmlElement.childList;
 
             // Evaluation.
@@ -593,7 +593,7 @@ describe('XmlElement', () => {
             const lChildXmlElement: XmlElement = new XmlElement();
 
             // Process.
-            const lRemovedChild: BaseXmlNode = lXmlElement.removeChild(lChildXmlElement);
+            const lRemovedChild: BaseXmlNode | undefined = lXmlElement.removeChild(lChildXmlElement);
             const lChildList: Array<BaseXmlNode> = lXmlElement.childList;
 
             // Evaluation.

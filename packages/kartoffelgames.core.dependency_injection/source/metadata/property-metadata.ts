@@ -4,50 +4,54 @@ import { InjectionConstructor } from '../type';
 
 export class PropertyMetadata {
     private readonly mCustomMetadata: Dictionary<string, any>;
-    private mParameterTypes: Array<InjectionConstructor>;
-    private mReturnType: InjectionConstructor;
-    private mType: InjectionConstructor;
+    private mParameterTypes: Array<InjectionConstructor> | null;
+    private mReturnType: InjectionConstructor | null;
+    private mType: InjectionConstructor | null;
 
     /**
      * Get parameter type information.
      */
-    public get parameterTypeList(): Array<InjectionConstructor> {
-        return this.mParameterTypes ?? null;
+    public get parameterTypes(): Array<InjectionConstructor> | null {
+        return this.mParameterTypes;
     }
 
     /**
      * Set parameter type information.
      */
-    public set parameterTypeList(pParameterTypes: Array<InjectionConstructor>) {
+    public set parameterTypes(pParameterTypes: Array<InjectionConstructor> | null) {
         // Copy array.
-        this.mParameterTypes = List.newListWith(...pParameterTypes);
+        if (pParameterTypes !== null) {
+            this.mParameterTypes = List.newListWith(...pParameterTypes);
+        } else {
+            this.mParameterTypes = null;
+        }
     }
 
     /**
      * Get return type information.
      */
-    public get returnType(): InjectionConstructor {
-        return this.mReturnType ?? null;
+    public get returnType(): InjectionConstructor | null {
+        return this.mReturnType;
     }
 
     /**
      * Set return type information.
      */
-    public set returnType(pReturnType: InjectionConstructor) {
+    public set returnType(pReturnType: InjectionConstructor | null) {
         this.mReturnType = pReturnType;
     }
 
     /**
      * Get property type information.
      */
-    public get type(): InjectionConstructor {
-        return this.mType ?? null;
+    public get type(): InjectionConstructor | null {
+        return this.mType;
     }
 
     /**
      * Set property type information.
      */
-    public set type(pReturnType: InjectionConstructor) {
+    public set type(pReturnType: InjectionConstructor | null) {
         this.mType = pReturnType;
     }
 
@@ -57,6 +61,9 @@ export class PropertyMetadata {
      */
     public constructor() {
         this.mCustomMetadata = new Dictionary<string, any>();
+        this.mParameterTypes = null;
+        this.mType = null;
+        this.mReturnType = null;
     }
 
     /**

@@ -11,7 +11,7 @@ describe('ChangeDetection', () => {
             const lSecondChangeDetection: ChangeDetection = new ChangeDetection(lName);
 
             // Process.
-            let lCurrentChangeDetectionName: string;
+            let lCurrentChangeDetectionName: string | null = null;
             lFirstChangeDetection.execute(() => {
                 lSecondChangeDetection.execute(() => {
                     lCurrentChangeDetectionName = ChangeDetection.current.name;
@@ -39,7 +39,7 @@ describe('ChangeDetection', () => {
             const lSilentChangeDetection: ChangeDetection = new ChangeDetection('Name', lNoneSilentChangeDetection, false, true);
 
             // Process.
-            let lCurrentChangeDetectionName: string;
+            let lCurrentChangeDetectionName: string | null = null;
             lNoneSilentChangeDetection.execute(() => {
                 lSilentChangeDetection.execute(() => {
                     lCurrentChangeDetectionName = ChangeDetection.currentNoneSilent.name;
@@ -64,7 +64,7 @@ describe('ChangeDetection', () => {
             const lNoneSilentChangeDetection: ChangeDetection = new ChangeDetection(lName, null, false, true);
 
             // Process.
-            let lCurrentChangeDetection: ChangeDetection;
+            let lCurrentChangeDetection: ChangeDetection | null = null;
             lNoneSilentChangeDetection.execute(() => {
                 lCurrentChangeDetection = ChangeDetection.currentNoneSilent;
             });
@@ -106,7 +106,7 @@ describe('ChangeDetection', () => {
             const lChildChangeDetection: ChangeDetection = new ChangeDetection('Name', lParentChangeDetection, true);
 
             // Process.
-            const lParentChangeDetectionName: string = lChildChangeDetection.looseParent.name;
+            const lParentChangeDetectionName: string | undefined = lChildChangeDetection.looseParent?.name;
 
             // Evaluation.
             expect(lParentChangeDetectionName).to.equal(lParentName);
@@ -117,7 +117,7 @@ describe('ChangeDetection', () => {
             const lChildChangeDetection: ChangeDetection = new ChangeDetection('Name');
 
             // Process.
-            const lParentChangeDetection: ChangeDetection = lChildChangeDetection.looseParent;
+            const lParentChangeDetection: ChangeDetection | null = lChildChangeDetection.looseParent;
 
             // Evaluation.
             expect(lParentChangeDetection).to.be.null;
@@ -128,7 +128,7 @@ describe('ChangeDetection', () => {
             const lChildChangeDetection: ChangeDetection = new ChangeDetection('Name', null, true);
 
             // Process.
-            const lParentChangeDetection: ChangeDetection = lChildChangeDetection.looseParent;
+            const lParentChangeDetection: ChangeDetection | null = lChildChangeDetection.looseParent;
 
             // Evaluation.
             expect(lParentChangeDetection).to.be.null;
@@ -143,7 +143,7 @@ describe('ChangeDetection', () => {
             const lChildChangeDetection: ChangeDetection = new ChangeDetection('Name', lParentChangeDetection);
 
             // Process.
-            const lParentChangeDetectionName: string = lChildChangeDetection.parent.name;
+            const lParentChangeDetectionName: string | undefined = lChildChangeDetection.parent?.name;
 
             // Evaluation.
             expect(lParentChangeDetectionName).to.equal(lParentName);
@@ -154,7 +154,7 @@ describe('ChangeDetection', () => {
             const lChildChangeDetection: ChangeDetection = new ChangeDetection('Name');
 
             // Process.
-            const lParentChangeDetection: ChangeDetection = lChildChangeDetection.parent;
+            const lParentChangeDetection: ChangeDetection | null = lChildChangeDetection.parent;
 
             // Evaluation.
             expect(lParentChangeDetection).to.be.null;
@@ -173,7 +173,7 @@ describe('ChangeDetection', () => {
         lChangeDetection.addChangeListener(lListener);
 
         // Process. Call listener.
-        lChangeDetection.dispatchChangeEvent(null);
+        lChangeDetection.dispatchChangeEvent({ source: this, property: '', stacktrace: '' });
 
         // Evaluation.
         expect(lListenerCalled).to.be.true;
@@ -195,9 +195,10 @@ describe('ChangeDetection', () => {
                 throw 11;
             });
         } catch (pError) {
+            const lError: number = <number>pError;
             window.dispatchEvent(new ErrorEvent('error', {
-                error: pError,
-                message: pError,
+                error: lError,
+                message: lError.toString(),
             }));
         }
 
@@ -213,7 +214,7 @@ describe('ChangeDetection', () => {
 
         // Process.
         const lChildChangeDetection: ChangeDetection = lParentChangeDetection.createChildDetection(lChildName);
-        const lParentNameResult: string = lChildChangeDetection.parent.name;
+        const lParentNameResult: string | undefined = lChildChangeDetection.parent?.name;
         const lChildNameResult: string = lChildChangeDetection.name;
 
         // Evaluation.
@@ -229,7 +230,7 @@ describe('ChangeDetection', () => {
 
             // Process. Add listener.
             let lListenerCalled: boolean = false;
-            let lReasonResult: ChangeDetectionReason;
+            let lReasonResult: ChangeDetectionReason | null = null;
             const lListener = (pReason: ChangeDetectionReason) => {
                 lListenerCalled = true;
                 lReasonResult = pReason;
@@ -256,7 +257,7 @@ describe('ChangeDetection', () => {
             lChangeDetection.addChangeListener(lListener);
 
             // Process. Call listener.
-            lChangeDetection.dispatchChangeEvent(null);
+            lChangeDetection.dispatchChangeEvent({ source: this, property: '', stacktrace: '' });
 
             // Evaluation.
             expect(lListenerCalled).to.be.false;
@@ -271,7 +272,7 @@ describe('ChangeDetection', () => {
 
             // Process. Add listener.
             let lListenerCalled: boolean = false;
-            let lReasonResult: ChangeDetectionReason;
+            let lReasonResult: ChangeDetectionReason | null = null;
             const lListener = (pReason: ChangeDetectionReason) => {
                 lListenerCalled = true;
                 lReasonResult = pReason;
@@ -292,7 +293,7 @@ describe('ChangeDetection', () => {
             const lChangeDetection: ChangeDetection = lParentChangeDetection.createChildDetection('CD-child');
 
             // Process. Add listener.
-            let lExecutingChangeDetectionName: string;
+            let lExecutingChangeDetectionName: string | null = null;
             const lListener = () => {
                 lExecutingChangeDetectionName = ChangeDetection.current.name;
             };
@@ -312,7 +313,7 @@ describe('ChangeDetection', () => {
             const lChangeDetection: ChangeDetection = lParentChangeDetection.createChildDetection(lChildChangeDetectionName);
 
             // Process. Add listener.
-            let lExecutingChangeDetectionName: string;
+            let lExecutingChangeDetectionName: string | null = null;
             const lListener = () => {
                 lExecutingChangeDetectionName = ChangeDetection.current.name;
             };
@@ -335,7 +336,7 @@ describe('ChangeDetection', () => {
         const lChangeDetection: ChangeDetection = new ChangeDetection(lName);
 
         // Process.
-        let lExecutingChangeDetectionName: string;
+        let lExecutingChangeDetectionName: string | null = null;
         const lResult: number = lChangeDetection.execute((pResult: number) => {
             lExecutingChangeDetectionName = ChangeDetection.current.name;
             return pResult;
@@ -392,7 +393,7 @@ describe('ChangeDetection', () => {
 
             // Process. Track change event.
             let lChangeEventCalled: boolean = false;
-            let lReason: ChangeDetectionReason;
+            let lReason: ChangeDetectionReason | null = null;
             lChangeDetection.addChangeListener((pReason: ChangeDetectionReason) => {
                 lChangeEventCalled = true;
                 lReason = pReason;
@@ -403,7 +404,7 @@ describe('ChangeDetection', () => {
 
             // Evaluation.
             expect(lChangeEventCalled).to.be.true;
-            expect(lReason.property).to.equal('a');
+            expect((<ChangeDetectionReason><any>lReason).property).to.equal('a');
         });
     });
 
@@ -420,7 +421,7 @@ describe('ChangeDetection', () => {
         lChangeDetection.removeChangeListener(lListener);
 
         // Process. Call listener.
-        lChangeDetection.dispatchChangeEvent(null);
+        lChangeDetection.dispatchChangeEvent({ source: this, property: '', stacktrace: '' });
 
         // Evaluation.
         expect(lListenerCalled).to.be.false;
@@ -444,9 +445,10 @@ describe('ChangeDetection', () => {
                 throw 11;
             });
         } catch (pError) {
+            const lError: number = <number>pError;
             window.dispatchEvent(new ErrorEvent('error', {
-                error: pError,
-                message: pError,
+                error: lError,
+                message: lError.toString(),
             }));
         }
 
@@ -460,7 +462,7 @@ describe('ChangeDetection', () => {
         const lChangeDetection: ChangeDetection = new ChangeDetection('Name');
 
         // Process.
-        let lIsSilent: boolean;
+        let lIsSilent: boolean = false;
         const lResult: number = lChangeDetection.silentExecution((pResult: number) => {
             lIsSilent = ChangeDetection.current.isSilent;
             return pResult;
@@ -478,20 +480,20 @@ describe('ChangeDetection', () => {
 
         // Process. Set error listener.
         let lErrorListenerCalled: boolean = false;
-        let lErrorResult: string;
+        let lErrorResult: string | null = null;
         lChangeDetection.addErrorListener((pError: string) => {
             lErrorListenerCalled = true;
             lErrorResult = pError;
         });
 
         // Process. Throw error in zone.
-        let lErrorCatched: string;
+        let lErrorCatched: string | null = null;
         try {
             lChangeDetection.execute(() => {
                 throw lError;
             });
         } catch (pError) {
-            const lError: string = pError;
+            const lError: string = <string>pError;
             window.dispatchEvent(new ErrorEvent('error', {
                 error: lError,
                 message: lError,
@@ -512,7 +514,7 @@ describe('ChangeDetection', () => {
 
         // Process. Set error listener.
         let lErrorListenerCalled: boolean = false;
-        let lErrorResult: string;
+        let lErrorResult: string | null = null;
 
         // Async assertion
         await new Promise<void>((pResolve) => {
@@ -522,7 +524,7 @@ describe('ChangeDetection', () => {
                 pResolve();
             });
 
-            let lPromise: Promise<void>;
+            let lPromise: Promise<void> | null = null;
             lChangeDetection.execute(() => {
                 lPromise = new Promise<void>(() => {
                     throw lError;
@@ -530,7 +532,7 @@ describe('ChangeDetection', () => {
             });
 
             window.dispatchEvent(new PromiseRejectionEvent('unhandledrejection', {
-                promise: lPromise,
+                promise: <Promise<void>><any>lPromise,
                 reason: lError
             }));
         });
@@ -547,7 +549,7 @@ describe('ChangeDetection', () => {
 
         // Process. Set error listener.
         let lErrorListenerCalled: boolean = false;
-        let lErrorResult: string;
+        let lErrorResult: string | null = null;
 
         // Async assertion
         await new Promise<void>((pResolve) => {
@@ -557,7 +559,7 @@ describe('ChangeDetection', () => {
                 pResolve();
             });
 
-            let lPromise: Promise<void>;
+            let lPromise: Promise<void> | null = null;
             lChangeDetection.execute(() => {
                 lPromise = new Promise<void>((_pResolve, pReject) => {
                     pReject(lError);
@@ -565,7 +567,7 @@ describe('ChangeDetection', () => {
             });
 
             window.dispatchEvent(new PromiseRejectionEvent('unhandledrejection', {
-                promise: lPromise,
+                promise: <Promise<void>><any>lPromise,
                 reason: lError
             }));
         });
@@ -581,7 +583,7 @@ describe('ChangeDetection', () => {
         const lError: string = 'ERROR-MESSAGE';
 
         // Setup. Set error listener.
-        lChangeDetection.addErrorListener((pError: string) => {
+        lChangeDetection.addErrorListener((_pError: string) => {
             return false;
         });
 
@@ -590,7 +592,7 @@ describe('ChangeDetection', () => {
         const lErrorListener = (pEvent: PreventableErrorEvent) => {
             lErrorPrevented = pEvent.defaultWasPrevented;
         };
-        window.addEventListener('error', lErrorListener);
+        window.addEventListener('error', <any>lErrorListener);
 
         // Process. Throw error inside change detection zone.
         try {
@@ -598,14 +600,15 @@ describe('ChangeDetection', () => {
                 throw lError;
             });
         } catch (pError) {
+            const lError: string = <string>pError;
             window.dispatchEvent(new PreventableErrorEvent('error', {
-                error: pError,
-                message: pError,
+                error: lError,
+                message: lError,
             }));
         }
 
         // Cleanup.
-        window.removeEventListener('error', lErrorListener);
+        window.removeEventListener('error', <any>lErrorListener);
 
         // Evaluation.
         expect(lErrorPrevented).to.be.true;
@@ -617,7 +620,7 @@ describe('ChangeDetection', () => {
 
         // Process. Set error listener.
         let lErrorListenerCalled: boolean = false;
-        lChangeDetection.addErrorListener((pError: string) => {
+        lChangeDetection.addErrorListener((_pError: string) => {
             lErrorListenerCalled = true;
         });
 
@@ -625,10 +628,10 @@ describe('ChangeDetection', () => {
         try {
             throw 11;
         } catch (pError) {
-            const lError: string = pError;
+            const lError: number = <number>pError;
             window.dispatchEvent(new ErrorEvent('error', {
                 error: lError,
-                message: lError,
+                message: lError.toString(),
             }));
         }
 
@@ -644,20 +647,20 @@ describe('ChangeDetection', () => {
 
         // Process. Set error listener.
         let lErrorListenerCalled: boolean = false;
-        let lErrorResult: string;
+        let lErrorResult: string | null = null;
         lChangeDetection.addErrorListener((pError: string) => {
             lErrorListenerCalled = true;
             lErrorResult = pError;
         });
 
         // Process. Throw error in zone.
-        let lErrorCatched: string;
+        let lErrorCatched: string | null = null;
         try {
             lChildChangeDetection.execute(() => {
                 throw lError;
             });
         } catch (pError) {
-            const lError: string = pError;
+            const lError: string = <string>pError;
             window.dispatchEvent(new ErrorEvent('error', {
                 error: lError,
                 message: lError,

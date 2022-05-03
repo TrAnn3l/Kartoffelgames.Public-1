@@ -9,7 +9,7 @@ import { LayerValues } from '../values/layer-values';
 export abstract class BaseBuilder {
     private readonly mComponentValues: LayerValues;
     private readonly mContentManager: ContentManager;
-    private readonly mParentBuilder: BaseBuilder;
+    private readonly mParentBuilder: BaseBuilder | null;
     private readonly mShadowParent: BaseXmlNode;
     private readonly mTemplate: BaseXmlNode;
 
@@ -76,7 +76,7 @@ export abstract class BaseBuilder {
      * @param pParentLayerValues - New component values.
      * @param pManipulatorScope - If builder is inside an manipulator scope.
      */
-    public constructor(pTemplate: BaseXmlNode, pShadowParent: BaseXmlNode, pModules: ComponentModules, pParentLayerValues: LayerValues, pParentBuilder: BaseBuilder) {
+    public constructor(pTemplate: BaseXmlNode, pShadowParent: BaseXmlNode, pModules: ComponentModules, pParentLayerValues: LayerValues, pParentBuilder: BaseBuilder | null) {
         this.mShadowParent = pShadowParent;
         this.mParentBuilder = pParentBuilder;
 

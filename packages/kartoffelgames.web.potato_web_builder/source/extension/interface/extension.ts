@@ -18,6 +18,6 @@ export interface IPwbExtensionOnCollectInjections {
      * Collect all injections.
      * Injection type is aquired by Object.constructor
      */
-    onCollectInjections(): Array<object>;
+    onCollectInjections(): Array<object | null>;
 }
 

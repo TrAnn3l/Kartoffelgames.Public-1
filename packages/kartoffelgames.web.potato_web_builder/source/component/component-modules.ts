@@ -4,7 +4,7 @@ import { MultiplicatorModule } from '../module/multiplicator-module';
 import { StaticModule } from '../module/static-module';
 import { MustacheExpressionModule } from '../default/mustache_expression/mustache-expression-module';
 import { ModuleType } from '../module/enum/module-type';
-import { IPwbExpressionModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass } from '../module/interface/module';
+import { IPwbExpressionModuleClass, IPwbMultiplicatorModuleClass, IPwbStaticModuleClass, ModuleDefinition } from '../module/interface/module';
 import { Modules } from '../module/modules';
 import { ComponentManager } from './component-manager';
 import { LayerValues } from './values/layer-values';
@@ -38,7 +38,7 @@ export class ComponentModules {
      * @param pTemplate - Template element.
      * @param pValues - Values of current layer.
      */
-    public getElementMultiplicatorModule(pTemplate: XmlElement, pValues: LayerValues): MultiplicatorModule {
+    public getElementMultiplicatorModule(pTemplate: XmlElement, pValues: LayerValues): MultiplicatorModule | undefined {
         // Find manipulator module inside attributes.
         for (const lDefinition of Modules.moduleDefinitions) {
             // Only manipulator modules.
@@ -60,6 +60,10 @@ export class ComponentModules {
                 }
             }
         }
+
+        // Line can be called. But current code does not allow it.
+        /* istanbul ignore next */
+        return undefined;
     }
 
     /**
@@ -98,7 +102,7 @@ export class ComponentModules {
             // When no static module is found, use expression module.
             if (!lModuleFound) {
                 const lModule: ExpressionModule = new ExpressionModule({
-                    moduleDefinition: Modules.getModuleDefinition(this.mExpressionModule),
+                    moduleDefinition: <ModuleDefinition>Modules.getModuleDefinition(this.mExpressionModule),
                     moduleClass: this.mExpressionModule,
                     targetTemplate: pTemplate,
                     targetAttribute: lAttribute,
@@ -118,7 +122,7 @@ export class ComponentModules {
      * Check if template uses any manipulator modules.
      * @param pTemplate - Key list for possible multiplicator modules.
      */
-    public getMultiplicatorAttribute(pTemplate: XmlElement): XmlAttribute {
+    public getMultiplicatorAttribute(pTemplate: XmlElement): XmlAttribute | undefined {
         // Find manipulator module inside attributes.
         for (const lDefinition of Modules.moduleDefinitions) {
             // Only manipulator modules.
@@ -131,7 +135,7 @@ export class ComponentModules {
             }
         }
 
-        return null;
+        return undefined;
     }
 
     /**
@@ -142,7 +146,7 @@ export class ComponentModules {
      */
     public getTextExpressionModule(pTemplate: TextNode, pTextNode: Text, pValues: LayerValues): ExpressionModule {
         const lModule: ExpressionModule = new ExpressionModule({
-            moduleDefinition: Modules.getModuleDefinition(this.mExpressionModule),
+            moduleDefinition: <ModuleDefinition>Modules.getModuleDefinition(this.mExpressionModule),
             moduleClass: this.mExpressionModule,
             targetTemplate: pTemplate,
             values: pValues,

@@ -8,10 +8,10 @@ describe('ConstructorMetadata', () => {
             // Setup. Specify values.
             const lParameterTypeList: Array<InjectionConstructor> = [String, Number];
             const lMetadata: PropertyMetadata = new PropertyMetadata();
-            lMetadata.parameterTypeList = lParameterTypeList;
+            lMetadata.parameterTypes = lParameterTypeList;
 
             // Process.
-            const lResultParameterList: Array<InjectionConstructor> = lMetadata.parameterTypeList;
+            const lResultParameterList: Array<InjectionConstructor> = lMetadata.parameterTypes;
 
             // Evaluation.
             expect(lResultParameterList).to.have.ordered.members(lParameterTypeList);
@@ -22,7 +22,7 @@ describe('ConstructorMetadata', () => {
             const lMetadata: PropertyMetadata = new PropertyMetadata();
 
             // Process.
-            const lResultParameterList: Array<InjectionConstructor> = lMetadata.parameterTypeList;
+            const lResultParameterList: Array<InjectionConstructor> | null = lMetadata.parameterTypes;
 
             // Evaluation.
             expect(lResultParameterList).to.be.null;
@@ -34,11 +34,23 @@ describe('ConstructorMetadata', () => {
             const lMetadata: PropertyMetadata = new PropertyMetadata();
 
             // Process.
-            lMetadata.parameterTypeList = lParameterTypeList;
-            const lResultParameterList: Array<InjectionConstructor> = lMetadata.parameterTypeList;
+            lMetadata.parameterTypes = lParameterTypeList;
+            const lResultParameterList: Array<InjectionConstructor> = lMetadata.parameterTypes;
 
             // Evaluation.
             expect(lResultParameterList).to.have.ordered.members(lParameterTypeList);
+        });
+
+        it('-- Write null', () => {
+            // Setup. Specify values.
+            const lMetadata: PropertyMetadata = new PropertyMetadata();
+
+            // Process.
+            lMetadata.parameterTypes = null;
+            const lResultParameterList: null = lMetadata.parameterTypes;
+
+            // Evaluation.
+            expect(lResultParameterList).to.be.null;
         });
     });
 
@@ -61,7 +73,7 @@ describe('ConstructorMetadata', () => {
             const lMetadata: PropertyMetadata = new PropertyMetadata();
 
             // Process.
-            const lResultReturnType: InjectionConstructor = lMetadata.returnType;
+            const lResultReturnType: InjectionConstructor | null = lMetadata.returnType;
 
             // Evaluation.
             expect(lResultReturnType).to.be.null;
@@ -100,7 +112,7 @@ describe('ConstructorMetadata', () => {
             const lMetadata: PropertyMetadata = new PropertyMetadata();
 
             // Process.
-            const lResultType: InjectionConstructor = lMetadata.type;
+            const lResultType: InjectionConstructor | null = lMetadata.type;
 
             // Evaluation.
             expect(lResultType).to.be.null;

@@ -48,16 +48,16 @@ export abstract class BaseXmlParser<TXmlElement extends XmlElement, TText extend
             return pMatch.replace('<', '&ltxp;').replace('>', '&gtxp;');
         });
 
-        // Break Xml into parts and filter empty lines.
-        const lXmlPartList: Array<string> = lXmlString.match(lRegexXmlParts).filter((pValue) => {
+        // Break Xml into parts and filter empty lines. Does allways match.
+        const lXmlPartsMatch: RegExpMatchArray = <RegExpMatchArray>lXmlString.match(lRegexXmlParts);
+        const lXmlPartList: Array<string> = lXmlPartsMatch.filter((pValue) => {
             return pValue && !pValue.match(/^\s*$/);
         });
 
         // Convert xml parts to more specified simple nodes.
         const lXmlElementList: Array<SimpleNode> = lXmlPartList.map((pValue: string): SimpleNode => {
-            const lNode: SimpleNode = new SimpleNode();
+            const lNode: SimpleNode = new SimpleNode(this.getNodeType(pValue));
             lNode.nodeHead = pValue;
-            lNode.nodeType = this.getNodeType(pValue);
 
             // If node is not a text node and not comment, add NodeName.
             if (lNode.nodeType !== NodeType.Text && lNode.nodeType !== NodeType.Comment) {
@@ -111,7 +111,7 @@ export abstract class BaseXmlParser<TXmlElement extends XmlElement, TText extend
 
             // Add all child element.
             for (const lChild of pSimpleNode.nodeBody) {
-                const lXmlNode: BaseXmlNode = this.convertSimpleNode(lChild);
+                const lXmlNode: BaseXmlNode | null = this.convertSimpleNode(lChild);
 
                 // Do not add wrong or empty nodes.
                 if (lXmlNode) {
@@ -134,7 +134,7 @@ export abstract class BaseXmlParser<TXmlElement extends XmlElement, TText extend
             return lCommentNode;
         }
 
-        return undefined;
+        return null;
     }
 
     /**
@@ -180,14 +180,14 @@ export abstract class BaseXmlParser<TXmlElement extends XmlElement, TText extend
         const lRegexNameCheck: RegExp = new RegExp(`^[${this.mConfig.allowedAttributeCharacters}]+$`);
 
         // Iterate over each attribute.
-        let lAttributeParts: RegExpExecArray;
+        let lAttributeParts: RegExpExecArray | null;
         while ((lAttributeParts = lRegexAttributeParts.exec(pAttributeString))) {
             // Check noneparseable regex group.
             if (lAttributeParts[4]) {
                 throw new Exception(`Can't parse attribute part: "${lAttributeParts[4]}"`, this);
             }
 
-            let lNamespacePrefix: string = null;
+            let lNamespacePrefix: string | null = null;
             let lName: string = lAttributeParts[1];
             const lValue: string = lAttributeParts[3] ?? '';
 
@@ -196,8 +196,8 @@ export abstract class BaseXmlParser<TXmlElement extends XmlElement, TText extend
                 throw new Exception(`Can't parse attribute name: "${lName}"`, this);
             }
 
-            // Split name with namespace prefix.
-            const lAttributeNameParts: RegExpExecArray = /(([^\s]+):)?([^\s]+)/.exec(lAttributeParts[1]);
+            // Split name with namespace prefix. Does allways match.
+            const lAttributeNameParts: RegExpExecArray = <RegExpExecArray>/(([^\s]+):)?([^\s]+)/.exec(lAttributeParts[1]);
 
             // Check if namespace exists and add namespace prefix.
             if (lAttributeNameParts[2]) {
@@ -227,7 +227,7 @@ export abstract class BaseXmlParser<TXmlElement extends XmlElement, TText extend
         const lRegexNameCheck: RegExp = new RegExp(`^[${this.mConfig.allowedTagNameCharacters}]+$`);
 
         // Test if node starts and ends with lower/greater than.
-        const lTagName: RegExpExecArray = lRegexPossibleTagName.exec(pXmlPart);
+        const lTagName: RegExpExecArray | null = lRegexPossibleTagName.exec(pXmlPart);
 
         // Only return tagname if found and correct name syntax.
         if (lTagName && lRegexNameCheck.test(lTagName[1])) {
@@ -269,10 +269,10 @@ export abstract class BaseXmlParser<TXmlElement extends XmlElement, TText extend
      */
     private getXmlElementInformation(pFullQualifiedTagName: string): XmlElementTagNameInformation {
         let lTagname: string;
-        let lNamespacePrefix: string;
+        let lNamespacePrefix: string | null = null;
 
-        // Find namespace prefix and tagname of qualified tagname.
-        const lTagnameGroups: RegExpExecArray = /(([^\s]+):)?([^\s]+)/.exec(pFullQualifiedTagName);
+        // Find namespace prefix and tagname of qualified tagname. Does allways match something.
+        const lTagnameGroups: RegExpExecArray = <RegExpExecArray>/(([^\s]+):)?([^\s]+)/.exec(pFullQualifiedTagName);
 
         // If namespace before tagname exists.
         if (lTagnameGroups[2]) {
@@ -396,32 +396,62 @@ type XmlParserConfig = {
  * Simple node for better organising.
  */
 class SimpleNode {
+    public readonly mNodeBody: Array<SimpleNode>;
+    public mNodeHead: string;
+    public mNodeName: string;
+    public readonly mNodeType: NodeType;
 
     /**
      * Node body. Sorted.
      */
-    public nodeBody: Array<SimpleNode>;
-    /**
-     * Node head.
-     */
-    public nodeHead: string;
+    public get nodeBody(): Array<SimpleNode> {
+        return this.mNodeBody;
+    }
 
     /**
-     * Node name. Cant have any name if node is a text node.
+     * Get node head.
      */
-    public nodeName: string;
+    public get nodeHead(): string {
+        return this.mNodeHead;
+    }
 
     /**
-     * Type of node.
+     * Set node head.
      */
-    public nodeType: NodeType;
+    public set nodeHead(pHead: string) {
+        this.mNodeHead = pHead;
+    }
+
+    /**
+     * Get node name. Cant have any name if node is a text node.
+     */
+    public get nodeName(): string {
+        return this.mNodeName;
+    }
+
+    /**
+     * Set node name.
+     */
+    public set nodeName(pName: string) {
+        this.mNodeName = pName;
+    }
+
+    /**
+     * Get type of node.
+     */
+    public get nodeType(): NodeType {
+        return this.mNodeType;
+    }
 
     /**
      * Constructor.
      * Create new simple node.
      */
-    public constructor() {
-        this.nodeBody = new Array<SimpleNode>();
+    public constructor(pNodeType: NodeType) {
+        this.mNodeBody = new Array<SimpleNode>();
+        this.mNodeHead = '';
+        this.mNodeName = '';
+        this.mNodeType = pNodeType;
     }
 }
 
@@ -430,7 +460,7 @@ class SimpleNode {
  */
 type AttributeInformation = {
     name: string,
-    namespacePrefix: string,
+    namespacePrefix: string | null,
     value: string,
 };
 
@@ -439,5 +469,5 @@ type AttributeInformation = {
  */
 type XmlElementTagNameInformation = {
     name: string,
-    namespacePrefix: string,
+    namespacePrefix: string | null,
 };

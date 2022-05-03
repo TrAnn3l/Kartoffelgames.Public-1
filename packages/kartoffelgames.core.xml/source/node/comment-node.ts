@@ -9,7 +9,7 @@ export class CommentNode extends BaseXmlNode {
     /**
      * Get nodes namespace.
      */
-    public get defaultNamespace(): string {
+    public override get defaultNamespace(): string | null {
         return this.parent?.defaultNamespace ?? null;
     }
 
@@ -26,6 +26,14 @@ export class CommentNode extends BaseXmlNode {
      */
     public set text(pText: string) {
         this.mText = pText;
+    }
+
+    /**
+     * Constructor.
+     */
+    public constructor() {
+        super();
+        this.mText = '';
     }
 
     /**

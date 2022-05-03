@@ -18,7 +18,7 @@ describe('CommentNode', () => {
             lXmlElement.appendChild(lCommentNode);
 
             // Process.
-            const lCommentNodeDefaultNamespace: string = lCommentNode.defaultNamespace;
+            const lCommentNodeDefaultNamespace: string | null= lCommentNode.defaultNamespace;
 
             // Evaluation.
             expect(lCommentNodeDefaultNamespace).to.equal(lNamespace);
@@ -29,7 +29,7 @@ describe('CommentNode', () => {
             const lCommentNode: CommentNode = new CommentNode();
 
             // Process.
-            const lCommentNodeDefaultNamespace: string = lCommentNode.defaultNamespace;
+            const lCommentNodeDefaultNamespace: string  | null= lCommentNode.defaultNamespace;
 
             // Evaluation.
             expect(lCommentNodeDefaultNamespace).to.be.null;

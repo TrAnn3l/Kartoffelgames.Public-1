@@ -132,7 +132,7 @@ describe('Export', () => {
         // Process. Create element and click div.
         const lComponent: HTMLElement & TestComponent = await <any>TestUtil.createComponent(TestComponent);
         lComponent.value = lTestValue;
-        const lResultValue: string = lComponent.getAttribute('value');
+        const lResultValue: string | null = lComponent.getAttribute('value');
 
         // Evaluation.
         expect(lResultValue).to.equal(lTestValue);
@@ -151,7 +151,7 @@ describe('Export', () => {
         // Process. Create element and click div.
         const lComponent: HTMLElement & TestComponent = await <any>TestUtil.createComponent(TestComponent);
         lComponent.setAttribute('value', lTestValue);
-        const lResultValue: string = lComponent.getAttribute('value');
+        const lResultValue: string | null = lComponent.getAttribute('value');
 
         // Evaluation.
         expect(lResultValue).to.equal(lTestValue);

@@ -19,7 +19,7 @@ describe('SlotAttribute', () => {
 
         // Setup. Create element.
         const lComponent: HTMLElement & TestComponent = await <any>TestUtil.createComponent(TestComponent);
-        const lSlotName: string = TestUtil.getComponentNode<HTMLSlotElement>(lComponent, 'div slot').getAttribute('name');
+        const lSlotName: string | null = TestUtil.getComponentNode<HTMLSlotElement>(lComponent, 'div slot').getAttribute('name');
 
         // Evaluation.
         expect(lComponent).to.have.componentStructure([

@@ -12,7 +12,7 @@ export class BaseReference<TValue> {
      * Constructor.
      * @param pValue - Value.
      */
-    public constructor(pValue: TValue){
+    public constructor(pValue: TValue) {
         this.mValue = pValue;
     }
 }

@@ -1,5 +1,6 @@
 import { Exception } from '@kartoffelgames/core.data';
 import { ComponentConnection } from '../../component/component-connection';
+import { ComponentManager } from '../../component/component-manager';
 import { UserObject } from '../../component/interface/user-class';
 
 /**
@@ -16,7 +17,14 @@ export function PwbChild(pIdChildName: string): any {
         // Define getter accessor that returns id child.
         Object.defineProperty(pTarget, pPropertyKey, {
             get(this: UserObject) {
-                const lIdChild: any = ComponentConnection.componentManagerOf(this).rootValues.getValue(pIdChildName);
+                // Get component manager and exit if target is not a component.
+                const lComponentManager: ComponentManager|undefined = ComponentConnection.componentManagerOf(this);
+                if(!lComponentManager){
+                    throw new Exception('Target is not a Component', this);
+                }
+
+                // Get root value. This should be the child.
+                const lIdChild: any = lComponentManager.rootValues.getValue(pIdChildName);
 
                 if (lIdChild instanceof Element) {
                     return lIdChild;

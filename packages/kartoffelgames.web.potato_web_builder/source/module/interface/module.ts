@@ -11,19 +11,19 @@ export interface IPwbModuleClass<TResult> {
 }
 
 // Expression.
-export interface IPwbExpressionModuleObject extends IPwbModuleObject<string> {}
-export interface IPwbExpressionModuleClass extends IPwbModuleClass<string> {}
-export interface IPwbExpressionModuleOnUpdate extends IPwbModuleOnUpdate<string> {}
+export interface IPwbExpressionModuleObject extends IPwbModuleObject<string> { }
+export interface IPwbExpressionModuleClass extends IPwbModuleClass<string> { }
+export interface IPwbExpressionModuleOnUpdate extends IPwbModuleOnUpdate<string> { }
 
 // Static.
-export interface IPwbStaticModuleObject extends IPwbModuleObject<boolean> {}
-export interface IPwbStaticModuleClass extends IPwbModuleClass<boolean> {}
-export interface IPwbStaticModuleOnUpdate extends IPwbModuleOnUpdate<boolean> {}
+export interface IPwbStaticModuleObject extends IPwbModuleObject<boolean> { }
+export interface IPwbStaticModuleClass extends IPwbModuleClass<boolean> { }
+export interface IPwbStaticModuleOnUpdate extends IPwbModuleOnUpdate<boolean> { }
 
 // Multiplicator.
-export interface IPwbMultiplicatorModuleObject extends IPwbModuleObject<MultiplicatorResult> {}
-export interface IPwbMultiplicatorModuleClass extends IPwbModuleClass<MultiplicatorResult> {}
-export interface IPwbMultiplicatorModuleOnUpdate extends IPwbModuleOnUpdate<MultiplicatorResult> {}
+export interface IPwbMultiplicatorModuleObject extends IPwbModuleObject<MultiplicatorResult> { }
+export interface IPwbMultiplicatorModuleClass extends IPwbModuleClass<MultiplicatorResult> { }
+export interface IPwbMultiplicatorModuleOnUpdate extends IPwbModuleOnUpdate<MultiplicatorResult | null> { }
 
 export interface IPwbModuleOnUpdate<TResult> {
     /**

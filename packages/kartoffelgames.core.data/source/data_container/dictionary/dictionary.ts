@@ -43,8 +43,10 @@ export class Dictionary<TKey, TValue> extends Map<TKey, TValue> {
      * @param pDefault - Default value if key was not found.
      */
     public getOrDefault(pKey: TKey, pDefault: TValue): TValue {
-        if (this.has(pKey)) {
-            return this.get(pKey);
+        const lValue: TValue | undefined = this.get(pKey);
+        
+        if (typeof lValue !== 'undefined') {
+            return lValue;
         } else {
             return pDefault;
         }

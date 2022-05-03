@@ -33,7 +33,7 @@ export class UserObjectHandler {
      * Constrcutor.
      * @param pUserClass - User object constructor.
      */
-    public constructor(pUserClass: UserClass, pUpdateHandler: UpdateHandler, pInjectionList: Array<object>) {
+    public constructor(pUserClass: UserClass, pUpdateHandler: UpdateHandler, pInjectionList: Array<object | null>) {
         // Create injection mapping. Ignores none objects.
         const lLocalInjections: Dictionary<InjectionConstructor, any> = new Dictionary<InjectionConstructor, any>();
         for (const lInjectionObject of pInjectionList) {
@@ -44,11 +44,11 @@ export class UserObjectHandler {
 
         // Create user object inside update zone.
         // Constructor needs to be called inside zone.
-        let lUntrackedUserObject: UserObject;
+        let lUntrackedUserObject: UserObject | null = null;
         pUpdateHandler.executeInZone(() => {
-            lUntrackedUserObject = Injection.createObject(pUserClass, lLocalInjections);
+            lUntrackedUserObject = Injection.createObject<UserObject>(pUserClass, lLocalInjections);
         });
-        this.mUserObject = pUpdateHandler.registerObject(lUntrackedUserObject);
+        this.mUserObject = pUpdateHandler.registerObject(<UserObject><any>lUntrackedUserObject);
         this.mUserClass = pUserClass;
     }
 

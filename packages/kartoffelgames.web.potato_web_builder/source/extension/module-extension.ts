@@ -21,7 +21,9 @@ export class ModuleExtension extends BaseExtension {
         // Create local injection mapping.
         const lInjections: Dictionary<InjectionConstructor, any> = new Dictionary<InjectionConstructor, any>();
         lInjections.set(ModuleTemplateReference, new ModuleTemplateReference(pParameter.template));
-        lInjections.set(ModuleAttributeReference, new ModuleAttributeReference(pParameter.attribute));
+        if (pParameter.attribute !== null) {
+            lInjections.set(ModuleAttributeReference, new ModuleAttributeReference(pParameter.attribute));
+        }
         lInjections.set(ModuleLayerValuesReference, new ModuleLayerValuesReference(pParameter.layerValues));
         lInjections.set(ModuleTargetReference, new ModuleTargetReference(pParameter.element));
 
@@ -35,11 +37,11 @@ type ModuleExtensionConstructorParameter = {
     extensionClass: IPwbExtensionClass,
     componentManager: ComponentManager,
     targetClass: InjectionConstructor,
-    targetObject: object,
+    targetObject: object | null,
 
     // Module
     template: BaseXmlNode,
-    attribute: XmlAttribute,
+    attribute: XmlAttribute | null, // Null for native text expressions.
     layerValues: LayerValues,
-    element: Node;
+    element: Node | null;  // Null for multiplicator modules
 };

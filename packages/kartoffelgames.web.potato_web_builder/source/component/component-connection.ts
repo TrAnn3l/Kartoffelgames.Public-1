@@ -9,7 +9,7 @@ export class ComponentConnection {
      * @param pObject - Instace that is connected to 
      * @returns 
      */
-    public static componentManagerOf(pObject: object): ComponentManager | null {
+    public static componentManagerOf(pObject: object): ComponentManager | undefined {
         return ComponentConnection.mComponentManagerConnections.get(pObject);
     }
 

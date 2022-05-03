@@ -22,10 +22,10 @@ export class TestUtil {
         await lPwbApp.appendTo(document.body);
 
         // Get component.
-        const lComponent: HTMLElement = <HTMLElement>lPwbApp.content.shadowRoot.childNodes[1];
+        const lComponent: HTMLElement = <HTMLElement>(<ShadowRoot>lPwbApp.content.shadowRoot).childNodes[1];
 
         // Wait for any update to happen.
-        await ComponentConnection.componentManagerOf(lComponent).updateHandler.waitForUpdate();
+        await ComponentConnection.componentManagerOf(lComponent)?.updateHandler.waitForUpdate();
 
         return lComponent;
     }
@@ -35,14 +35,14 @@ export class TestUtil {
      * @param pComponent - Pwb component.
      */
     public static deconstructComponent(pComponent: HTMLElement): void {
-        ComponentConnection.componentManagerOf(pComponent).deconstruct();
+        ComponentConnection.componentManagerOf(pComponent)?.deconstruct();
     }
 
     /**
      * Get component manager of component.
      * @param pComponent - Pwb component.
      */
-    public static getComponentManager(pComponent: HTMLElement): ComponentManager {
+    public static getComponentManager(pComponent: HTMLElement): ComponentManager | undefined {
         return ComponentConnection.componentManagerOf(pComponent);
     }
 
@@ -59,9 +59,9 @@ export class TestUtil {
 
         // Check if element has shadow root.
         if (lComponent.shadowRoot) {
-            lComponent = lComponent.shadowRoot.querySelector(lSelectorList.shift());
+            lComponent = <Element>lComponent.shadowRoot.querySelector(<string>lSelectorList.shift());
         } else {
-            lComponent = lComponent.querySelector(lSelectorList.shift());
+            lComponent = <Element>lComponent.querySelector(<string>lSelectorList.shift());
         }
 
         // Search next selector.
@@ -77,8 +77,8 @@ export class TestUtil {
      * @param pComponent - Component.
      */
     public static manualUpdate(pComponent: HTMLElement): void {
-        const lComponentManager: ComponentManager = ComponentConnection.componentManagerOf(pComponent);
-        lComponentManager.updateHandler.requestUpdate({ source: pComponent, property: null, stacktrace: '' });
+        const lComponentManager: ComponentManager | undefined = ComponentConnection.componentManagerOf(pComponent);
+        lComponentManager?.updateHandler.requestUpdate({ source: pComponent, property: 0, stacktrace: '' });
     }
 
     /**
@@ -99,8 +99,8 @@ export class TestUtil {
      * @param pComponent - Component.
      */
     public static async waitForUpdate(pComponent: HTMLElement): Promise<void> {
-        const lComponentManager: ComponentManager = ComponentConnection.componentManagerOf(pComponent);
-        await lComponentManager.updateHandler.waitForUpdate();
+        const lComponentManager: ComponentManager | undefined = ComponentConnection.componentManagerOf(pComponent);
+        await lComponentManager?.updateHandler.waitForUpdate();
     }
 }
 

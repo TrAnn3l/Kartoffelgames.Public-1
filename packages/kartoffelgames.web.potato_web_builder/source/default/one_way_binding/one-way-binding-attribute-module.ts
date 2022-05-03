@@ -19,8 +19,8 @@ import { ComponentScopeExecutor } from '../../module/execution/component-scope-e
 })
 export class OneWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
     private readonly mExecutionString: string;
+    private readonly mTarget: Node;
     private readonly mTargetProperty: string;
-    private readonly mTargetReference: ModuleTargetReference;
     private readonly mValueCompare: CompareHandler<any>;
     private readonly mValueHandler: LayerValues;
 
@@ -31,7 +31,7 @@ export class OneWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
      * @param pAttributeReference - Attribute of module.
      */
     public constructor(pTargetReference: ModuleTargetReference, pValueReference: ModuleLayerValuesReference, pAttributeReference: ModuleAttributeReference) {
-        this.mTargetReference = pTargetReference;
+        this.mTarget = <Node>pTargetReference.value;
         this.mValueHandler = pValueReference.value;
 
         // Get execution string.
@@ -54,7 +54,7 @@ export class OneWayBindingAttributeModule implements IPwbStaticModuleOnUpdate {
 
         if (!this.mValueCompare.compareAndUpdate(lExecutionResult)) {
             // Set view object property.
-            Reflect.set(this.mTargetReference.value, this.mTargetProperty, lExecutionResult);
+            Reflect.set(this.mTarget, this.mTargetProperty, lExecutionResult);
 
             return true;
         }

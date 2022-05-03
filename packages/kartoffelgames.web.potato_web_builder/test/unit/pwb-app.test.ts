@@ -36,7 +36,7 @@ describe('PwbApp', () => {
             // Process.
             lApp.addContent(TestComponent);
             await lApp.appendTo(document.body);
-            const lContent: Element = <Element>lApp.content.shadowRoot.childNodes[1];
+            const lContent: Element = <Element>(<ShadowRoot>lApp.content.shadowRoot).childNodes[1];
 
             // Evaluation.
             expect(lContent.tagName.toLowerCase()).to.equal(lComponentSelector);
@@ -79,7 +79,7 @@ describe('PwbApp', () => {
             // Process.
             lApp.addContent(TestComponent);
             await lApp.appendTo(document.body);
-            const lContent: HTMLElement & TestComponent = <any>lApp.content.shadowRoot.childNodes[1];
+            const lContent: HTMLElement & TestComponent = <any>(<ShadowRoot>lApp.content.shadowRoot).childNodes[1];
             await TestUtil.waitForUpdate(lContent);
 
             // Evaluation.
@@ -125,7 +125,7 @@ describe('PwbApp', () => {
 
             // Process.
             await lApp.appendTo(lDummyElement);
-            const lContent: ShadowRoot = lApp.content.shadowRoot;
+            const lContent: ShadowRoot = <ShadowRoot>lApp.content.shadowRoot;
 
             // Evaluation.
             expect(lContent.childNodes).to.have.lengthOf(0);
@@ -134,7 +134,7 @@ describe('PwbApp', () => {
         it('-- No double splash screen remove', async () => {
             // Setup. Create app.
             const lApp: PwbApp = new PwbApp('Name');
-            const lContent: ShadowRoot = lApp.content.shadowRoot;
+            const lContent: ShadowRoot = <ShadowRoot>lApp.content.shadowRoot;
 
             // Process. Create splash screen.
             lApp.setSplashScreen({
@@ -177,7 +177,7 @@ describe('PwbApp', () => {
         lApp.addContent(TestComponent);
 
         // Process. Lof error.
-        let lErrorMessageResult: string;
+        let lErrorMessageResult: string | null = null;
         lApp.addErrorListener((pError: Error) => {
             lErrorMessageResult = pError.message;
         });
@@ -186,9 +186,10 @@ describe('PwbApp', () => {
         try {
             await lApp.appendTo(document.body);
         } catch (pError) {
+            const lError: Error = <Error>pError;
             window.dispatchEvent(new ErrorEvent('error', {
-                error: pError,
-                message: pError.message,
+                error: lError,
+                message: lError.message,
             }));
         }
 
@@ -204,7 +205,7 @@ describe('PwbApp', () => {
 
             // Process.
             lApp.addStyle(lStyleContent);
-            const lContent: HTMLStyleElement = <HTMLStyleElement>lApp.content.shadowRoot.childNodes[0];
+            const lContent: HTMLStyleElement = <HTMLStyleElement>(<ShadowRoot>lApp.content.shadowRoot).childNodes[0];
 
             // Evaluation.
             expect(lContent instanceof HTMLStyleElement).to.be.true;
@@ -234,7 +235,7 @@ describe('PwbApp', () => {
 
         // Process
         await lApp.removeSplashScreen();
-        const lContent: ShadowRoot = lApp.content.shadowRoot;
+        const lContent: ShadowRoot = <ShadowRoot>lApp.content.shadowRoot;
 
         // Evaluation.
         expect(lContent.childNodes).to.have.lengthOf(0);
@@ -257,7 +258,7 @@ describe('PwbApp', () => {
             });
 
             // Process. Read splash screen data.
-            const lSplashScreen: HTMLElement = <HTMLElement>lApp.content.shadowRoot.childNodes[0];
+            const lSplashScreen: HTMLElement = <HTMLElement>(<ShadowRoot>lApp.content.shadowRoot).childNodes[0];
             const lContentWrapper: HTMLElement = <HTMLElement>lSplashScreen.childNodes[0];
             const lContentElement: HTMLElement = <HTMLElement>lContentWrapper.childNodes[0];
             const lContentString: string = lContentElement.innerHTML;
@@ -269,7 +270,7 @@ describe('PwbApp', () => {
         it('-- Manual splash screen', async () => {
             // Setup. Create app.
             const lApp: PwbApp = new PwbApp('Name');
-            const lContent: ShadowRoot = lApp.content.shadowRoot;
+            const lContent: ShadowRoot = <ShadowRoot>lApp.content.shadowRoot;
 
             // Process. Create splash screen.
             lApp.setSplashScreen({

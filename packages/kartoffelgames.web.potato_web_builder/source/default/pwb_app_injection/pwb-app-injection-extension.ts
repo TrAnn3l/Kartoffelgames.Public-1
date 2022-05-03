@@ -13,9 +13,9 @@ export class PwbAppInjectionExtension implements IPwbExtensionOnCollectInjection
     /**
      * Collect all injectables.
      */
-    public onCollectInjections(): Array<object> {
-        const lInjectionList: Array<object> = new Array<object>();
-        lInjectionList.push(PwbApp.getChangeDetectionApp(ChangeDetection.current));
+    public onCollectInjections(): Array<object | null> {
+        const lInjectionList: Array<object | null> = new Array<object | null>();
+        lInjectionList.push(PwbApp.getChangeDetectionApp(ChangeDetection.current) ?? null);
         return lInjectionList;
     }
 }

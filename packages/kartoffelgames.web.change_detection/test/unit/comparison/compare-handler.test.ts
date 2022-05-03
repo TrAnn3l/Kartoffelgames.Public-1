@@ -139,7 +139,7 @@ describe('CompareHandler', () => {
             it('-- Compare same object', () => {
                 // Setup.
                 // Create recursive object.
-                const lRecursiveObject: { a: object; } = { a: null };
+                const lRecursiveObject: { a: object; } = { a: {} };
                 lRecursiveObject.a = lRecursiveObject;
 
                 // Create handler.

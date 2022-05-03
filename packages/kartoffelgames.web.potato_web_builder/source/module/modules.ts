@@ -26,7 +26,7 @@ export class Modules {
      * Get module definition for module class.
      * @param pModuleClass - Module class.
      */
-    public static getModuleClass(pModuleDefinition: ModuleDefinition): IPwbModuleClass<unknown> {
+    public static getModuleClass(pModuleDefinition: ModuleDefinition): IPwbModuleClass<unknown> | undefined {
         return Modules.mModuleClasses.get(pModuleDefinition);
     }
 
@@ -34,7 +34,7 @@ export class Modules {
      * Get module definition for module class.
      * @param pModuleClass - Module class.
      */
-    public static getModuleDefinition(pModuleClass: IPwbModuleClass<unknown>): ModuleDefinition {
+    public static getModuleDefinition(pModuleClass: IPwbModuleClass<unknown>): ModuleDefinition | undefined {
         return Modules.mModuleDefinition.get(pModuleClass);
     }
 }

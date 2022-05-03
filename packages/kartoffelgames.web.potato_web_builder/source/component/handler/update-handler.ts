@@ -53,6 +53,8 @@ export class UpdateHandler {
         if (this.mUpdateScope !== UpdateScope.Manual) {
             this.mChangeDetectionListener = (pReason: ChangeDetectionReason) => { this.sheduleUpdate(pReason); };
             this.mChangeDetection.addChangeListener(this.mChangeDetectionListener);
+        } else {
+            this.mChangeDetectionListener = () => {/* Empty */ };
         }
 
         // Define error handler.
