@@ -1,8 +1,9 @@
 name: Github Package Release
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - 'development'
 
 jobs:
   test:
@@ -35,18 +36,17 @@ jobs:
       - name: Set up git for commits
         run: |
           git config user.name "GITHUBACTION"
+          git config user.email 'kartoffelgames@users.noreply.github.com'
       - name: Npm install
         run: npm ci --ignore-scripts
       - name: Bump version numbers
         run: |
           npx turbo run build:release --force
-          git config --global user.name 'KartoffelGames CI'
-          git config --global user.email 'kartoffelgames@users.noreply.github.com'
           npm version patch -ws
           npm run update-dependency-versions
           git commit -am "Bump package versions."
           git push --follow-tags --no-verify
-      - run: echo "This should release to github // TODO:"
+      - run: npm publish -ws
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB\_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}

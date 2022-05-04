@@ -1,9 +1,12 @@
-name: Pull Request Test
+name: Test All
 
 on:
   pull_request:
     branches:
       - 'development'
+      - 'master'
+  push:
+    branches:
       - 'master'
 
 jobs:

@@ -1,13 +1,11 @@
-name: Github Package Release
+name: NPM Package Release
 
 on:
-  push:
-    branches:
-      - 'development'
+  release:
+    types: [published]
 
 jobs:
   test:
-    if: "!contains(github.event.head_commit.author.name, 'GITHUBACTION')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,7 +16,6 @@ jobs:
       - run: npx turbo run test --force
 
   publish-github-packages:
-    if: "!contains(github.event.head_commit.author.name, 'GITHUBACTION')"
     needs: test
     runs-on: ubuntu-latest
     permissions:
@@ -31,33 +28,24 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '16.x'
-          registry-url: 'https://npm.pkg.github.com'
+          registry-url: 'https://registry.npmjs.org'
           scope: '@kartoffelgames'
       - name: Set up git for commits
         run: |
           git config user.name "GITHUBACTION"
+          git config user.email 'kartoffelgames@users.noreply.github.com'
       - name: Npm install
         run: npm ci --ignore-scripts
       - name: Bump version numbers
         run: |
           npx turbo run build:release --force
-          git config --global user.name 'KartoffelGames CI'
-          git config --global user.email 'kartoffelgames@users.noreply.github.com'
           npm version patch -ws
           npm run update-dependency-versions
           git commit -am "Bump package versions."
           git push --follow-tags --no-verify
-      - run: npm publish -ws
+      - run: npm publish -ws --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.CI_NPM_TOKEN }}
           GITHUB\_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
-
-  empty-job:
-    runs-on: ubuntu-latest
-    if: success()
-    steps:
-      - name: Catch no job
-        run: echo "Catch no job"
-
 
       
