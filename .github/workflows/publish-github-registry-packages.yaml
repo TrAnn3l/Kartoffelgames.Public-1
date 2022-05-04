@@ -15,6 +15,7 @@ jobs:
         with:
           node-version: 16
       - run: npm ci --ignore-scripts
+      - run: npm run update-dependency-versions
       - run: npx turbo run test --force
 
   publish-github-packages:
@@ -37,13 +38,15 @@ jobs:
         run: |
           git config user.name "GITHUBACTION"
           git config user.email 'kartoffelgames@users.noreply.github.com'
-      - name: Npm install
-        run: npm ci --ignore-scripts
       - name: Bump version numbers
         run: |
-          npx turbo run build:release --force
           npm version patch -ws
           npm run update-dependency-versions
+      - name: Npm install
+        run: npm ci --ignore-scripts
+      - name: Build and release
+        run: |
+          npx turbo run build:release --force   
           git commit -am "Bump package versions."
           git push --follow-tags --no-verify
       - run: npm publish -ws
